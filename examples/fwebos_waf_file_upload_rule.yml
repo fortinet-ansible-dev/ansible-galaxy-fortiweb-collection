@@ -1,0 +1,44 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: delete
+      fwebos_waf_file_upload_rule:
+       action: delete 
+       name: 123
+       vdom: root 
+          
+    - name: Create
+      fwebos_waf_file_upload_rule:
+       action: add 
+       json_key_for_filename: key
+       name: test4
+       host_status: enable
+       request_type: regular
+       json_key_field: key
+       request_file: test
+       host: 192.168.1.1
+       octet_stream_filename_headers: filename
+       file_size_limit: 0
+       type: Allow
+       json_file_support: enable
+       vdom: root
+
+    - name: edit
+      fwebos_waf_file_upload_rule:
+       action: edit 
+       json_key_for_filename: key
+       name: test4
+       host_status: enable
+       request_type: regular
+       json_key_field: key
+       request_file: test
+       host: 192.168.1.2
+       octet_stream_filename_headers: filename
+       file_size_limit: 0
+       type: Allow
+       json_file_support: enable
+       vdom: root

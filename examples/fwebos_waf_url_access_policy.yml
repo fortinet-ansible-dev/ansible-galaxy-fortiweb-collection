@@ -1,0 +1,12 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_url_access_policy:
+       action: add
+       name: test4
+       vdom: root

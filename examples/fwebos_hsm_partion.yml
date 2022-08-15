@@ -1,0 +1,30 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: delete 
+      fwebos_hsm_partion:
+       action: delete 
+       name: aaa
+       vdom: root
+          
+    - name: Create
+      fwebos_hsm_partion:
+       action: add
+       vdom: root
+       password: 
+       name: test4
+       server: test4
+       label: 1231
+
+    - name: edit
+      fwebos_hsm_partion:
+       action: edit 
+       vdom: root
+       password: 
+       name: test4
+       server: test4
+       label: 1231

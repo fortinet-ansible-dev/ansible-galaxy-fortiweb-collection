@@ -1,0 +1,14 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_url_access_rule_condition:
+       action: add
+       table_name: test4
+       url_type: simple-string
+       reg_exp: /999
+       vdom: root

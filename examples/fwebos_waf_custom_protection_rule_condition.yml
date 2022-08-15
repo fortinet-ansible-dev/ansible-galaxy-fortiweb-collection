@@ -1,0 +1,15 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_custom_protection_rule_condition:
+       action: add
+       table_name: test4
+       operator: RE
+       expression: test_exp
+       request_target: "REQUEST_RAW_BODY"
+       vdom: root

@@ -1,0 +1,13 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_server_pool:
+       action: add
+       name: test4
+       server_balance: disable
+       vdom: t1

@@ -1,0 +1,38 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create certificate public key pinning
+      fwebos_certificate_public_key_pinning:
+       action: add 
+       vdom: root1
+       name: aaa
+       pin_sha256: 111 aaa
+       max_age: 1296000
+       subdomains: disable
+       subdomains_val: 0
+       report_uri: aaa.com
+       report_only: enable
+       report_only_val: 1
+
+    - name: edit certificate public key pining
+      fwebos_certificate_public_key_pinning:
+       action: edit 
+       vdom: root1
+       name: aaa
+       pin_sha256: 111 aaa
+       max_age: 1296011
+       subdomains: disable
+       subdomains_val: 0
+       report_uri: aaa.com
+       report_only: enable
+       report_only_val: 1
+
+    - name: delete certificate public key pinning
+      fwebos_certificate_public_key_pinning:
+       action: delete 
+       vdom: root1
+       name: aaa 

@@ -1,0 +1,35 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create admin 
+      fwebos_admin:
+       action: add 
+       name: test1
+       access_profile: admin_no_access
+       trusthostv4: 0.0.0.0/0 
+       trusthostv6: ::/0 
+       domains: root
+       type: local-user
+       admin_usergrp: 
+       force_password_change: disable
+       password: 11111111
+
+    - name: edit admin 
+      fwebos_admin:
+       action: edit 
+       name: test1
+       access_profile: admin_no_access
+       trusthostv4: 0.0.0.0/0 
+       trusthostv6: ::/0 
+       domains: root1
+       type: remote-user
+       admin_usergrp: test 
+
+    - name: delete admin 
+      fwebos_admin:
+       action: delete 
+       name: test1 

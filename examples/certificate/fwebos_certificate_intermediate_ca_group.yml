@@ -1,0 +1,18 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: delete intermediate ca group 
+      fwebos_certificate_intermediate_ca_group:
+       action: delete 
+       name: test 
+       vdom: root1
+          
+    - name: Create intermediate ca group 
+      fwebos_certificate_intermediate_ca_group:
+       action: add 
+       name: test
+       vdom: root1

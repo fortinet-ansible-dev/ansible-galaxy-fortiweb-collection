@@ -1,0 +1,13 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_xml_policy_rule_list:
+       action: add
+       table_name: test4
+       input_rule: test4
+       vdom: root

@@ -1,0 +1,33 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create certificate multi local
+      fwebos_certificate_local_multi:
+       action: add 
+       vdom: root1
+       name: test
+       rsa_cert: 
+       dsa_cert: 
+       ecc_cert: 
+       comment: testtest
+
+    - name: edit certificate multi local
+      fwebos_certificate_local_multi:
+       action: edit 
+       vdom: root1
+       name: test
+       rsa_cert: 
+       dsa_cert: 
+       ecc_cert: 
+       comment: testtest1
+
+    - name: delete certificate multi local 
+      fwebos_certificate_local_multi:
+       action: delete 
+       vdom: root1
+       name: test 
+ 

@@ -1,0 +1,22 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: edit snmp sysinfo 
+      fwebos_snmp_sysinfo:
+       action: edit 
+       status: enable
+       description: test 
+       contact_info: test1
+       location: test2
+
+    - name: edit snmp sysinfo 
+      fwebos_snmp_sysinfo:
+       action: edit 
+       status: disable
+       description: test 
+       contact_info: test1
+       location: test2

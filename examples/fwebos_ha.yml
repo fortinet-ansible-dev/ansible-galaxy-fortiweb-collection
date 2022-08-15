@@ -1,0 +1,127 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: edit ha 
+      vars:
+       ansible_command_timeout: 90 
+      fwebos_ha:
+       action: edit 
+       mode: active-passive
+       mode_val: 0
+       group_id: 9
+       group_name: tttt
+       priority: 5
+       override: disable
+       override_val: 0
+       network_type: flat
+       network_type_val: 0
+       tunnel_local: 
+       tunnel_peer: 
+       hbdev: port2
+       hbdev_val: 0
+       hbdev_backup: port3
+       hbdev_backup_val: 0
+       boot_time: 30
+       hb_interval: 3
+       hb_lost_threshold: 3
+       arps: 10
+       arp_interval: 3
+       monitor: port1 port8
+       lacp_ha_slave: enable
+       lacp_ha_slave_val: 1
+       ha_mgmt_status: disable
+       ha_mgmt_status_val: 0
+       ha_mgmt_interface: 
+       session_pickup: disable
+       session_pickup_val: 0
+       session_sync_dev: 
+       session_sync_broadcast: disable
+       session_sync_broadcast_val: 0
+       session_warm_up: 10
+       schedule: ip
+       schedule_val: 1
+       weight_1: 40
+       weight_2: 40
+       weight_3: 40
+       weight_4: 40
+       weight_5: 40
+       weight_6: 40
+       weight_7: 40
+       weight_8: 40
+       link_failed_signal: disable
+       link_failed_signal_val: 0
+       l7_persistence_sync: disable
+       l7_persistence_sync_val: 0
+       eip_addr: 0.0.0.0
+       eip_aid: 
+       ha_eth_type: 8890
+       hc_eth_type: 8892
+       l2ep_eth_type: 8893
+       server_policy_hlck: disable
+       server_policy_hlck_val: 0
+       multi_cluster: disable
+       multi_cluster_val: 0
+       multi_cluster_group: primary
+       multi_cluster_group_val: 0
+       multi_cluster_switch_by: nodes_availability
+       multi_cluster_switch_by_val: 0
+       multi_cluster_move_primary_cluster: disable
+       multi_cluster_move_primary_cluster_val: 0
+       encryption: disable
+       encryption_val: 0
+       cluster_arp: enable
+       cluster_arp_val: 1
+       sdn_connector: 
+       sdn_connector_val: 0
+       lb_name: 
+       lb_ocid: 
+
+    - name: edit ha
+      vars:
+       ansible_command_timeout: 90 
+      fwebos_ha:
+       action: edit 
+       mode: standalone
+
+    - name: edit ha 
+      vars:
+       ansible_command_timeout: 90 
+      fwebos_ha:
+       action: edit 
+       mode: active-active-standard 
+       group_id: 9
+       group_name: tttt
+       priority: 5
+       override: disable
+       network_type: flat
+       tunnel_local: 
+       tunnel_peer: 
+       hbdev: port2
+       hbdev_backup: port3
+       boot_time: 30
+       hb_interval: 3
+       hb_lost_threshold: 3
+       monitor: port1 port8
+       lacp_ha_slave: enable
+       ha_mgmt_status: disable
+       ha_mgmt_interface: 
+       session_pickup: disable
+       session_sync_dev: 
+       session_sync_broadcast: disable
+       session_warm_up: 10
+       schedule: ip
+       link_failed_signal: disable
+       l7_persistence_sync: disable
+       eip_addr: 0.0.0.0
+       eip_aid: 
+       server_policy_hlck: disable
+       multi_cluster: disable
+       multi_cluster_group: primary
+       multi_cluster_switch_by: nodes_availability
+       multi_cluster_move_primary_cluster: disable
+       encryption: disable
+       cluster_arp: enable

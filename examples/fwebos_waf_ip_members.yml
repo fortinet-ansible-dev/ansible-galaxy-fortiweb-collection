@@ -1,0 +1,14 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_ip_members:
+       action: add
+       table_name: test4
+       member_type: trust-ip
+       ip: 5.5.5.5
+       vdom: root
