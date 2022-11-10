@@ -1,0 +1,16 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_file_upload_rule_filetype:
+       action: post
+       table_name: test4
+       video_files:
+               - 3GPP
+       text_files:
+               - EXE
+       vdom: root

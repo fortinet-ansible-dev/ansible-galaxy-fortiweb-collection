@@ -1,0 +1,26 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: download cli configuration 
+      fwebos_backup_download:
+       action: get 
+       type: cli 
+       password: 12345678
+       filename: /tmp/config_cli.zip
+
+    - name: download entire configuration 
+      fwebos_backup_download:
+       action: get 
+       type: entire 
+       ml_backup: true
+       filename: /tmp/config_entire.zip
+
+    - name: download other configuration 
+      fwebos_backup_download:
+       action: get 
+       type: other
+       filename: /tmp/config_other.zip

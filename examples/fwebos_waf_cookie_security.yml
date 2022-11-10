@@ -1,0 +1,46 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: delete 
+      fwebos_waf_cookie_security:
+       action: delete 
+       vdom: root
+       name: test 
+          
+    - name: Create 
+      fwebos_waf_cookie_security:
+       action: add 
+       vdom: root
+       security_mode: encrypted
+       cookie_replay_protection_type: IP
+       allow_suspicious_cookies: Custom
+       allow_time_model: 2022-10-28T17:11:54.000Z
+       security_action: alert
+       severity: Medium
+       block_period: 600
+       max_age: 0
+       http_only: disable
+       name: test
+       trigger: test
+       allow_time: 2022/10/28
+
+    - name: edit
+      fwebos_waf_cookie_security:
+       action: edit 
+       vdom: root
+       security_mode: encrypted
+       cookie_replay_protection_type: IP
+       allow_suspicious_cookies: Custom
+       allow_time_model: 2022-10-28T17:11:54.000Z
+       security_action: alert
+       severity: Medium
+       block_period: 600
+       max_age: 0
+       http_only: disable
+       name: test
+       trigger: test
+       allow_time: 2022/10/27

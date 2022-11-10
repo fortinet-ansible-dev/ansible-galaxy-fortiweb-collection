@@ -1,0 +1,43 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create profile 
+      fwebos_admin_profiles:
+       action: add
+       name: test
+       mntgrp: r
+       admingrp: rw
+       sysgrp: none
+       netgrp: none
+       loggrp: none
+       authusergrp: none
+       traroutegrp: none
+       wafgrp: none
+       wadgrp: none
+       wvsgrp: none
+       mlgrp: none
+
+    - name: Edit profile 
+      fwebos_admin_profiles:
+       action: edit 
+       name: test
+       mntgrp: rw
+       admingrp: r
+       sysgrp: none
+       netgrp: none
+       loggrp: none
+       authusergrp: none
+       traroutegrp: none
+       wafgrp: none
+       wadgrp: none
+       wvsgrp: none
+       mlgrp: none
+
+    - name: delete profile 
+      fwebos_admin_profiles:
+       action: delete 
+       name: test

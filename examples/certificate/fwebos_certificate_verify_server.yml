@@ -1,0 +1,29 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create certificate server verify 
+      fwebos_certificate_verify_server:
+       action: add 
+       vdom: root1
+       name: test
+       ca: test1
+       crl: 
+
+    - name: edit certificate server verify 
+      fwebos_certificate_verify_server:
+       action: edit 
+       vdom: root1
+       name: test
+       ca: test1
+       crl: test 
+
+    - name: delete certificate server verify 
+      fwebos_certificate_verify_server:
+       action: delete 
+       vdom: root1
+       name: test
+     

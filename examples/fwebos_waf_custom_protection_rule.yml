@@ -1,0 +1,34 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: delete 
+      fwebos_waf_custom_protection_rule:
+       action: delete 
+       vdom: root
+       name: test 
+          
+    - name: Create
+      fwebos_waf_custom_protection_rule:
+       action: add 
+       vdom: root
+       type: request
+       self_action: alert
+       severity: Medium
+       block_period: 600
+       name: test
+       trigger: test
+
+    - name: edit
+      fwebos_waf_custom_protection_rule:
+       action: edit 
+       vdom: root
+       type: request
+       self_action: alert
+       severity: High
+       block_period: 600
+       name: test
+       trigger: test

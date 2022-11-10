@@ -1,0 +1,32 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create certificate ocsp stapling
+      fwebos_certificate_ocsp_stapling:
+       action: add
+       vdom: root1 
+       name: test1
+       ocsp_url: aaaaaaa.com
+       comment: ttttttt
+       certificate: CA_Cert_1
+       local_cert: test1
+
+    - name: edit certificate ocsp stapling 
+      fwebos_certificate_ocsp_stapling:
+       action: edit 
+       vdom: root1
+       name: test1
+       ocsp_url: aaaaaaa.com
+       comment: test
+       certificate: CA_Cert_1
+       local_cert: test1
+
+    - name: delete certificate ocsp stapling
+      fwebos_certificate_ocsp_stapling:
+       action: delete 
+       vdom: root1
+       name: test1 

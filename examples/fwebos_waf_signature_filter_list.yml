@@ -1,0 +1,40 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: delete 
+      fwebos_waf_signature_filter_list:
+       action: delete 
+       vdom: root
+       table_name: test
+       id: 1
+          
+    - name: Create
+      fwebos_waf_signature_filter_list:
+       action: add 
+       vdom: root
+       table_name: test
+       match_target: URI
+       operator: REGEXP_MATCH
+       value_check: disable
+       concatenate_type: AND
+       http_method:          
+       signature_id: 030000128
+       value: a*
+
+    - name: edit
+      fwebos_waf_signature_filter_list:
+       action: edit 
+       vdom: root
+       table_name: test
+       id: 1
+       match_target: URI
+       operator: REGEXP_MATCH
+       value_check: disable
+       concatenate_type: AND
+       http_method:          
+       signature_id: 030000128
+       value: aaaa*

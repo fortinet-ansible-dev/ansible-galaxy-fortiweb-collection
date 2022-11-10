@@ -1,0 +1,30 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: delete 
+      fwebos_waf_signature:
+       action: delete 
+       name: aaa
+       vdom: root
+          
+    - name: Create
+      fwebos_waf_signature:
+       action: add
+       vdom: root
+       comment: 
+       name: 111
+       customSignatureGroup: 12313
+       creditCardDetectionThreshold: 1
+
+    - name: edit
+      fwebos_waf_signature:
+       action: edit 
+       vdom: root
+       comment: 
+       name: 1231
+       customSignatureGroup: t1
+       creditCardDetectionThreshold: 1

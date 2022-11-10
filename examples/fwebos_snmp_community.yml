@@ -1,0 +1,58 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create snmp community 
+      fwebos_snmp_community:
+       action: add 
+       id: 3
+       name: 166 
+       status: enable
+       status_val: 1
+       sz_hosts: -1
+       query_v1_status: enable
+       query_vl_status_val: 1
+       query_vl_port: 163
+       query_v2c_status: enable
+       query_v2c_status_val: 1
+       query_v2c_port: 163
+       trap_v1_status: enable
+       trap_v1_status_val: 1
+       trap_v1_lport: 169
+       trap_v1_rport: 169
+       trap_v2c_status: enable
+       trap_v2c_status_val: 1
+       trap_v2c_lport: 162
+       trap_v2c_rport: 162
+       events: cpu-high mem-low
+       events_val: 0
+
+    - name: edit snmp community 
+      fwebos_snmp_community:
+       action: edit 
+       id: 3 
+       name: 166
+       status: enable
+       status_val: 1
+       sz_hosts: -1
+       query_v1_status: enable
+       query_vl_status_val: 1
+       query_vl_port: 163
+       query_v2c_status: enable
+       query_v2c_status_val: 1
+       query_v2c_port: 163
+       trap_v1_status: enable
+       trap_v1_status_val: 1
+       trap_v1_lport: 189
+       trap_v1_rport: 189
+       trap_v2c_status: enable
+
+    - name: delete snmp community 
+      fwebos_snmp_community:
+       action: delete 
+       id: 3
+       name: 166
+       trap_v2c_status_val: 1

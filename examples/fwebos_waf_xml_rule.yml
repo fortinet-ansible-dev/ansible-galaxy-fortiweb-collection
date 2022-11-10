@@ -1,0 +1,96 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: delete 
+      fwebos_waf_xml_rule:
+       action: delete 
+       name: 12313
+       vdom: root
+          
+    - name: Create
+      fwebos_waf_xml_rule:
+       action: add
+       vdom: root
+       xml_limit_attrvalue_len: 1024
+       soap_attachment: allow
+       xml_limit_element_depth: 20
+       xml_limit_element_name_len: 64
+       ws_i_basic_profile_wsdl_assertion: 
+       validate_soapaction_val: 0
+       severity: Low
+       expansion_entity_check: disable
+       schema_location_exempted_urls: 
+       xml_limit_attrname_len: 64
+       wsdl_file: 
+       trigger: 
+       validate_soap_body: disable
+       x_include_check: disable
+       xml_limit_attr_num: 32
+       data_format: xml
+       request_type: plain
+       ws_security: 
+       external_entity_check: disable
+       host: 
+       allow_additional_soap_headers: disable
+       validate_soapaction: disable
+       schema_location_check: disable
+       validate_soap_headers_val: 0
+       block_period: 600
+       xml_limit_cdata_len: 4096
+       name: test4
+       host_status: disable
+       allow_additional_soap_headers_val: 0
+       request_file: /test_string
+       xml_limit_check: disable
+       trigger_val: 0
+       validate_soap_headers: disable
+       schema_file: 
+       xml_action: alert
+       xml_attributes_check: disable
+       ws_i_basic_profile_assertion: 
+
+    - name: edit
+      fwebos_waf_xml_rule:
+       action: edit 
+       vdom: root
+       xml_limit_attrvalue_len: 1024
+       soap_attachment: allow
+       xml_limit_element_depth: 20
+       xml_limit_element_name_len: 64
+       ws_i_basic_profile_wsdl_assertion: 
+       validate_soapaction_val: 0
+       severity: Low
+       expansion_entity_check: disable
+       schema_location_exempted_urls: 
+       xml_limit_attrname_len: 64
+       wsdl_file: 
+       trigger: 
+       validate_soap_body: disable
+       x_include_check: disable
+       xml_limit_attr_num: 32
+       data_format: xml
+       request_type: plain
+       ws_security: 
+       external_entity_check: disable
+       host: 
+       allow_additional_soap_headers: disable
+       validate_soapaction: disable
+       schema_location_check: disable
+       validate_soap_headers_val: 0
+       block_period: 600
+       xml_limit_cdata_len: 4096
+       name: test4
+       host_status: disable
+       allow_additional_soap_headers_val: 0
+       request_file: /test_string
+       xml_limit_check: disable
+       trigger_val: 0
+       validate_soap_headers: disable
+       schema_file: 
+       xml_action: alert
+       xml_attributes_check: disable
+       ws_i_basic_profile_assertion: 

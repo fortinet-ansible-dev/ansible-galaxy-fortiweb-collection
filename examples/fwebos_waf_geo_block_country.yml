@@ -1,0 +1,16 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_geo_block_country:
+       action: post
+       table_name: test4
+       add:
+               - Armenia
+       delete:
+               - Bahamas
+       vdom: root

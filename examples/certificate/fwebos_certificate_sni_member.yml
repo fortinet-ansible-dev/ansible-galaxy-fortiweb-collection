@@ -1,0 +1,38 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create certificate sni member
+      fwebos_certificate_sni_member:
+       action: add 
+       vdom: root1 
+       table_name: test1 
+       domain_type: plain
+       domain: aaabbb.com
+       multi_local_cert: disable
+       certificate_type: disable
+       inter_group: ttt
+       verify: rrr
+
+    - name: edit certificate sni member
+      fwebos_certificate_sni_member:
+       action: edit 
+       vdom: root1
+       table_name: test1 
+       name: 1 
+       domain_type: plain
+       domain: aaabbb.com
+       multi_local_cert: disable
+       certificate_type: disable
+       inter_group: ttt 
+       verify: test
+
+    - name: delete certificate sni member
+      fwebos_certificate_sni_member:
+       action: delete 
+       vdom: root1
+       table_name: test1 
+       name: 1 

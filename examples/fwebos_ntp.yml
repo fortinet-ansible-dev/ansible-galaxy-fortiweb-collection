@@ -1,0 +1,16 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: edit ntp 
+      fwebos_ntp:
+       action: edit 
+       timeZone: 4
+       daylightSaving: 0
+       mode: ntpServer
+       ntpServer:
+         server: pool1.ntp.org
+         interval: 80

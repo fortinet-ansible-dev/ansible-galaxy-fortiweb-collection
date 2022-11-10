@@ -1,0 +1,24 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Edit fortigurad config 
+      fwebos_fortiguard_config:
+       action: edit 
+       override: True
+       scheduled: True
+       isUpdating: False
+       updateControl: []
+       address: 1.1.1.1 
+       scheduleType: every
+       everySelect: 2
+       dailySelect: 0
+       weeklyDaySelect: 0
+       weeklyHourSelect: 0
+       dbVersionType: 2 
+       bufferSize: 5500
+       useFSD: 1 
+       _id: only
