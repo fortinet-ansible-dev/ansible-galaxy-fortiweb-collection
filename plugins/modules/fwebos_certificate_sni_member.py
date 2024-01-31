@@ -91,6 +91,8 @@ def get_obj(module, connection):
     url = obj_url
     if name:
         url += '?mkey=' + table_name + '&sub_mkey=' + name
+    else:
+        url += '?mkey=' + table_name
     code, response = connection.send_request(url, payload, 'GET')
 
     return code, response
