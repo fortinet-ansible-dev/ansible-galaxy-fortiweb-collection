@@ -3,7 +3,7 @@
 # This file is part of Ansible
 #
 #
-# updata date:2019/03/12
+# Update date: 2024/01/31
 
 from __future__ import (absolute_import, division, print_function)
 import json
@@ -91,6 +91,8 @@ def get_obj(module, connection):
     url = obj_url
     if name:
         url += '?mkey=' + table_name + '&sub_mkey=' + name
+    else:
+        url += '?mkey=' + table_name
     code, response = connection.send_request(url, payload, 'GET')
 
     return code, response
