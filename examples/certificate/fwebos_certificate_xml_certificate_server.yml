@@ -1,0 +1,20 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Upload server certificate 
+      fwebos_certificate_xml_certificate_server:
+       action: add
+       vdom: root1
+       certificatefile: ca.crt 
+       keyfile: ca.key 
+       password: 12345678 
+
+    - name: Delete server certificate 
+      fwebos_certificate_xml_certificate_server:
+       action: delete 
+       vdom: root1
+       name: ca

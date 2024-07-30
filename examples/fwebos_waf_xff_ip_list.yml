@@ -1,0 +1,28 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create ip list 
+      fwebos_waf_xff_ip_list:
+       action: add 
+       vdom: root 
+       table_name: test 
+       ip: 1.1.1.1
+
+    - name: edit ip list
+      fwebos_waf_xff_ip_list:
+       action: edit 
+       vdom: root
+       table_name: test 
+       id: 1
+       ip: 2.2.2.2
+
+    - name: delete ip list
+      fwebos_waf_xff_ip_list:
+       action: delete 
+       vdom: root
+       table_name: test 
+       id: 1 

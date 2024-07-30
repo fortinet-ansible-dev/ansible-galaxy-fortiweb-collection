@@ -1,0 +1,29 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name:  Upload certificate 
+      fwebos_certificate_sign_ca:
+       action: add
+       vdom: root1
+       mode: 2
+       upfile: ca.crt
+       keyfile: ca.key
+       password: 12345678
+
+    - name:  Delete certificate 
+      fwebos_certificate_sign_ca:
+       action: delete
+       vdom: root1
+       name: ca 
+
+    - name: Upload pkcs12 certificate 
+      fwebos_certificate_sign_ca:
+       action: add
+       vdom: root1
+       mode: 1
+       upfile: ca.p12  
+       password: 12345678

@@ -1,0 +1,28 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create tsl ca 
+      fwebos_certificate_ca_tsl:
+       action: add 
+       vdom: root1
+       name: test
+       type: url
+       url: https://www.aaa.xml
+
+    - name: delete tsl ca 
+      fwebos_certificate_ca_tsl:
+       action: delete 
+       vdom: root1
+       name: test
+
+    - name: Upload ca 
+      fwebos_certificate_ca_tsl:
+       action: add 
+       vdom: root1
+       type: localPC 
+       name: test1
+       srcfile: ca.crt 

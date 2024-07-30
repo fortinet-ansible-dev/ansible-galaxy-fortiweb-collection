@@ -1,0 +1,27 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Upload intermediate ca
+      fwebos_certificate_intermediate_ca:
+       action: add
+       vdom: root1
+       type: localPC
+       uploadedFile: ca.crt
+
+    - name: delete intermediate ca 
+      fwebos_certificate_intermediate_ca:
+       action: delete
+       vdom: root1
+       name: Inter_Cert_1
+
+    - name: Create intermediate ca 
+      fwebos_certificate_intermediate_ca:
+       action: add 
+       vdom: root1
+       type: scep
+       url: https://www.aaa.com
+       identifier: test 

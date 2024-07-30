@@ -1,0 +1,20 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create member
+      fwebos_certificate_intermediate_ca_group_member:
+       action: add 
+       vdom: root1 
+       table_name: test 
+       name: Inter_Cert_2
+
+    - name: delete member
+      fwebos_certificate_intermediate_ca_group_member:
+       action: delete 
+       vdom: root1
+       table_name: test 
+       id: 1 

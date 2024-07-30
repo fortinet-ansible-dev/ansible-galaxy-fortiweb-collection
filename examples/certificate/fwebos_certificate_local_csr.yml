@@ -1,0 +1,49 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create certificate csr 
+      fwebos_certificate_local_csr:
+       action: add 
+       vdom: root1
+       idType: hostIp
+       alt_name_type: 2
+       ip: 0.0.0.0
+       keySize: 1024
+       enrollmentMethod: file
+       name: test_1 
+       organization: org
+       localityCity: city1
+       stateProvince: state1
+       countryRegion: US
+       email: test@test.com
+       organizationUnit_1: orgunit
+       alt_name_type_1: 2
+       alt_name_text_1: aaaaaa.com
+
+    - name: delete certificate csr 
+      fwebos_certificate_local_csr:
+       action: delete 
+       vdom: root1
+       name: test_1
+
+    - name: Create certificate csr 
+      fwebos_certificate_local_csr:
+       action: add 
+       vdom: root1
+       idType: email
+       subjectEmail: test@gmail.com
+       alt_name_type: 2
+       ip: 0.0.0.0
+       keySize: 1024
+       enrollmentMethod: file
+       name: test_2 
+       organization: org
+       localityCity: city1
+       stateProvince: state1
+       countryRegion: US
+       email: test@test.com
+       organizationUnit_1: orgunit

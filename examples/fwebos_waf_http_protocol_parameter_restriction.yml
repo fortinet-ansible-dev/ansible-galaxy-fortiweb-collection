@@ -1,0 +1,26 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: delete 
+      fwebos_waf_http_protocol_parameter_restriction:
+       action: delete 
+       name: aaa
+       vdom: root
+          
+    - name: Create
+      fwebos_waf_http_protocol_parameter_restriction:
+       action: add
+       vdom: root
+       exception_name: test4
+       name: test3
+
+    - name: edit
+      fwebos_waf_http_protocol_parameter_restriction:
+       action: edit 
+       vdom: root
+       exception_name: test4
+       name: test4

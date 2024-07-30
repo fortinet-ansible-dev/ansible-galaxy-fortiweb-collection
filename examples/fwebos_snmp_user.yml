@@ -1,0 +1,42 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create snmp user 
+      fwebos_snmp_user:
+       action: add 
+       name: 166 
+       security_level: authnopriv
+       security_level_val: 1
+       auth_proto: sha1
+       auth_proto_val: 1
+       auth_pwd: 111166666
+       priv_proto: aes
+       priv_proto_val: 1
+       priv_pwd: ENC XXXX
+       query_status: enable
+       query_status_val: 1
+       query_port: 199
+       trap_status: enable
+       trap_status_val: 1
+       trapport_local: 162
+       trapport_remote: 162
+       sz_hosts: -1
+
+    - name: edit snmp user
+      fwebos_snmp_user:
+       action: edit 
+       name: 166
+       trapport_local: 168
+       trapport_remote: 168
+       trapevent: cpu-high mem-low
+       trapevent_val: 0
+
+    - name: delete snmp user 
+      fwebos_snmp_user:
+       action: delete 
+       name: 166
+ 

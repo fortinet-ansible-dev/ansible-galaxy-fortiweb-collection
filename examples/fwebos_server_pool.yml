@@ -1,0 +1,43 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: delete server pool 
+      fwebos_server_pool:
+       action: delete 
+       vdom: root
+       name: test 
+          
+    - name: Create server pool 
+      fwebos_server_pool:
+       action: add 
+       vdom: root
+       name: test
+       type: reverse-proxy
+       server_balance: enable
+       lb_algo: round-robin
+       comment: test111
+       health: HLTHCK_ICMP
+       persistence: test
+       reuse_conn_total_time: 100
+       reuse_conn_max_request: 100
+       reuse_conn_max_count: 100
+
+    - name: edit server pool
+      fwebos_server_pool:
+       action: edit 
+       vdom: root
+       name: test
+       type: reverse-proxy
+       server_balance: enable
+       lb_algo: round-robin
+       comment: test111
+       health: HLTHCK_ICMP
+       persistence: test
+       reuse_conn_total_time: 100
+       reuse_conn_idle_time: 20
+       reuse_conn_max_request: 100
+       reuse_conn_max_count: 100

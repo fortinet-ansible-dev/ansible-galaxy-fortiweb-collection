@@ -1,0 +1,19 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: delete certificate letsencrypt 
+      fwebos_certificate_letsencrypt:
+       action: delete 
+       vdom: root1
+       name: test123 
+          
+    - name: Create certificate letsencrypt
+      fwebos_certificate_letsencrypt:
+       action: add 
+       vdom: root1
+       name: test123
+       domain: test123.com

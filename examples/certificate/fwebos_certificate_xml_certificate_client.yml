@@ -1,0 +1,19 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Upload client certificate 
+      fwebos_certificate_xml_certificate_client:
+       action: add
+       vdom: root1
+       certificatefile: ca.crt 
+       keyfile: ca.key 
+
+    - name: Delete client certificate 
+      fwebos_certificate_xml_certificate_client:
+       action: delete 
+       vdom: root1
+       name: ca

@@ -1,0 +1,13 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_server_service:
+       action: add
+       name: test4
+       port: 331
+       vdom: root
