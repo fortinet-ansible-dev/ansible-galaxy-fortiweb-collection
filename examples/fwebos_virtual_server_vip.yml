@@ -1,0 +1,30 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_virtual_server_vip:
+       action: add
+       table_name: test4
+       vip: test
+       status: disable
+       vdom: root
+
+    - name: edit 
+      fwebos_virtual_server_vip:
+       action: edit 
+       table_name: test4
+       vip: test
+       status: enable 
+       name: 1 
+       vdom: root
+
+    - name: delete
+      fwebos_virtual_server_vip:
+       action: delete 
+       table_name: test4
+       name: 1 
+       vdom: root

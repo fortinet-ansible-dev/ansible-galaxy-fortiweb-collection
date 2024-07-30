@@ -1,0 +1,14 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_virtual_ip:
+       action: add
+       name: test4
+       vip: 5.5.5.5
+       interface: port4
+       vdom: root

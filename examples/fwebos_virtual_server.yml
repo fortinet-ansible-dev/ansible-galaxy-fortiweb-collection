@@ -1,0 +1,12 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_virtual_server:
+       action: add
+       name: test4
+       vdom: root

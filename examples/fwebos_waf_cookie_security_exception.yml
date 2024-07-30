@@ -1,0 +1,15 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_cookie_security_exception:
+       action: add
+       table_name: test4
+       cookie_name: test_cookie
+       cookie_domain: test_domain
+       cookie_path: test_path
+       vdom: root

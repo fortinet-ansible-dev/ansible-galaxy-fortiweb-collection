@@ -1,0 +1,11 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: download hsm server cert 
+      fwebos_hsm_server_download:
+       action: get 
+       filename: /tmp/hsm_server.pem

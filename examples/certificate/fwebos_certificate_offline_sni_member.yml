@@ -1,0 +1,32 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create certificate offline sni member
+      fwebos_certificate_offline_sni_member:
+       action: add 
+       vdom: root1 
+       table_name: test2
+       domain_type: plain
+       domain: aaa11.com
+       local_cert: test1 
+
+    - name: edit certificate offline sni member
+      fwebos_certificate_offline_sni_member:
+       action: edit 
+       vdom: root1
+       table_name: test2
+       name: 1 
+       domain_type: plain
+       domain: aaa33.com
+       local_cert: test1 
+
+    - name: delete certificate offline sni member
+      fwebos_certificate_offline_sni_member:
+       action: delete
+       vdom: root1
+       table_name: test2
+       name: 1 

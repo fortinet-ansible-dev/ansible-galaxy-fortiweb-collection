@@ -1,0 +1,27 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Upload ca 
+      fwebos_certificate_ca:
+       action: add 
+       vdom: root1
+       type: localPC 
+       srcfile: ca.crt 
+
+    - name: Delete ca 
+      fwebos_certificate_ca:
+       action: delete 
+       vdom: root1
+       name: CA_Cert_2
+
+    - name: Create ca 
+      fwebos_certificate_ca:
+       action: add 
+       vdom: root1
+       type: scep
+       returl: https://www.aaa.com
+       identifier: test 

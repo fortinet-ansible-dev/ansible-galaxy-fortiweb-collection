@@ -1,0 +1,44 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: delete xff 
+      fwebos_waf_xff:
+       action: delete 
+       vdom: root
+       name: test 
+          
+    - name: Create xff 
+      fwebos_waf_xff:
+       action: add 
+       vdom: root
+       x_forwarded_for_support: enable
+       add_source_port: disable
+       x_forwarded_port: enable
+       tracing_original_ip: enable
+       x_real_ip: enable
+       x_forwarded_proto: enable
+       block_based_on_original_ip: enable
+       ip_location: left
+       original_ip_header: X-FORWARDED-FOR
+       block_based_on_full_scan: ip-reputation
+       name: test 
+
+    - name: edit xff 
+      fwebos_waf_xff:
+       action: edit 
+       vdom: root
+       x_forwarded_for_support: enable
+       add_source_port: enable 
+       x_forwarded_port: enable
+       tracing_original_ip: enable
+       x_real_ip: enable
+       x_forwarded_proto: enable
+       block_based_on_original_ip: enable
+       ip_location: left
+       original_ip_header: X-FORWARDED-FOR
+       block_based_on_full_scan: ip-reputation
+       name: test 

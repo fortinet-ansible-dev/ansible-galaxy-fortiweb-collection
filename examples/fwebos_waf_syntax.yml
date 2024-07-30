@@ -1,0 +1,185 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: delete certificate hpkp 
+      fwebos_waf_syntax:
+       action: delete 
+       name: 123 
+          
+    - name: Create certificate hpkp 
+      fwebos_waf_syntax:
+       action: add 
+       sql_arithmetic_operation_block_period: 600
+       sql_stacked_queries_threat_weight: severe
+       sql_embeded_queries_block_period: 600
+       sql_arithmetic_operation_status: enable
+       sql_condition_based_severity: High
+       xss_html_attribute_based_block_period: 600
+       xss_html_tag_based_trigger: "" 
+       sql_condition_based_threat_weight_value: 4
+       sql_function_based_severity: High
+       xss_javascript_function_based_block_period: 600
+       xss_html_attribute_based_threat_weight_value: 4
+       xss_html_attribute_based_threat_weight: severe
+       sql_embeded_queries_trigger: "" 
+       sql_line_comments_status: enable
+       xss_javascript_variable_based_trigger: 
+       sql_line_comments_threat_weight_value: 4
+       xss_html_tag_based_block_period: 600
+       sql_arithmetic_operation_severity: High
+       sql_embeded_queries_status: enable
+       sql_condition_based_threat_weight: severe
+       xss_html_attribute_based_severity: High
+       sql_condition_based_status: enable
+       sql_stacked_queries_trigger: ""
+       xss_html_css_based_status: enable
+       xss_javascript_variable_based_block_period: 600
+       xss_html_attribute_based_action: alert_deny
+       detection_target_sql: ARGS_NAMES ARGS_VALUE REQUEST_COOKIES
+       sql_stacked_queries_threat_weight_value: 4
+       sql_embeded_queries_threat_weight: severe
+       sql_stacked_queries_status: enable
+       sql_function_based_threat_weight: severe
+       xss_javascript_variable_based_threat_weight: severe
+       sz_exception_element_list: 0
+       xss_html_tag_based_threat_weight: severe
+       sql_stacked_queries_action: alert_deny
+       xss_javascript_variable_based_threat_weight_value: 4
+       sql_arithmetic_operation_action: alert_deny
+       sql_condition_based_block_period: 600
+       sql_function_based_status: enable
+       sql_embeded_queries_severity: High
+       sql_embeded_queries_action: alert_deny
+       sql_arithmetic_operation_trigger: 
+       xss_html_tag_based_action: alert_deny
+       xss_html_tag_based_status: enable
+       sql_stacked_queries_severity: High
+       sql_arithmetic_operation_threat_weight_value: 4
+       sql_function_based_threat_weight_value: 4
+       xss_html_css_based_trigger: ""
+       xss_html_tag_based_severity: High
+       xss_javascript_function_based_severity: High
+       sql_function_based_trigger: ""
+       sql_line_comments_trigger: ""
+       xss_html_css_based_block_period: 600
+       xss_javascript_variable_based_action: alert_deny
+       xss_javascript_function_based_threat_weight_value: 4
+       xss_javascript_function_based_status: enable
+       detection_target_xss: ARGS_NAMES ARGS_VALUE REQUEST_COOKIES
+       xss_javascript_function_based_threat_weight: severe
+       sql_embeded_queries_threat_weight_value: 4
+       xss_javascript_variable_based_status: enable
+       xss_javascript_function_based_trigger: 
+       xss_html_css_based_threat_weight: severe
+       sql_condition_based_action: alert_deny
+       xss_javascript_variable_based_severity: High
+       sql_stacked_queries_block_period: 600
+       sql_line_comments_action: alert_deny
+       xss_html_tag_based_check_level: strict
+       name: test4
+       xss_html_tag_based_threat_weight_value: 4
+       sql_arithmetic_operation_threat_weight: severe
+       xss_html_css_based_severity: High
+       sql_function_based_block_period: 600
+       xss_html_css_based_action: alert_deny
+       sql_line_comments_threat_weight: severe
+       sql_function_based_action: alert_deny
+       xss_javascript_function_based_action: alert_deny
+       sql_line_comments_block_period: 600
+       sql_condition_based_trigger: ""
+       xss_html_attribute_based_status: enable
+       sql_line_comments_severity: High
+       xss_html_css_based_threat_weight_value: 4
+       xss_html_attribute_based_trigger: ""
+       vdom: root
+
+    - name: edit certificate hpkp
+      fwebos_waf_syntax:
+       action: edit 
+       sql_arithmetic_operation_block_period: 600
+       sql_stacked_queries_threat_weight: severe
+       sql_embeded_queries_block_period: 600
+       sql_arithmetic_operation_status: enable
+       sql_condition_based_severity: High
+       xss_html_attribute_based_block_period: 600
+       xss_html_tag_based_trigger: 
+       sql_condition_based_threat_weight_value: 4
+       sql_function_based_severity: High
+       xss_javascript_function_based_block_period: 600
+       xss_html_attribute_based_threat_weight_value: 4
+       xss_html_attribute_based_threat_weight: severe
+       sql_embeded_queries_trigger: 
+       sql_line_comments_status: enable
+       xss_javascript_variable_based_trigger: 
+       sql_line_comments_threat_weight_value: 4
+       xss_html_tag_based_block_period: 600
+       sql_arithmetic_operation_severity: High
+       sql_embeded_queries_status: enable
+       sql_condition_based_threat_weight: severe
+       xss_html_attribute_based_severity: High
+       sql_condition_based_status: enable
+       sql_stacked_queries_trigger: 
+       xss_html_css_based_status: enable
+       xss_javascript_variable_based_block_period: 600
+       xss_html_attribute_based_action: alert_deny
+       detection_target_sql: ARGS_NAMES ARGS_VALUE REQUEST_COOKIES
+       sql_stacked_queries_threat_weight_value: 4
+       sql_embeded_queries_threat_weight: severe
+       sql_stacked_queries_status: enable
+       sql_function_based_threat_weight: severe
+       xss_javascript_variable_based_threat_weight: severe
+       sz_exception_element_list: 0
+       xss_html_tag_based_threat_weight: severe
+       sql_stacked_queries_action: alert_deny
+       xss_javascript_variable_based_threat_weight_value: 4
+       sql_arithmetic_operation_action: alert_deny
+       sql_condition_based_block_period: 600
+       sql_function_based_status: enable
+       sql_embeded_queries_severity: High
+       sql_embeded_queries_action: alert_deny
+       sql_arithmetic_operation_trigger: 
+       xss_html_tag_based_action: alert_deny
+       xss_html_tag_based_status: enable
+       sql_stacked_queries_severity: High
+       sql_arithmetic_operation_threat_weight_value: 4
+       sql_function_based_threat_weight_value: 4
+       xss_html_css_based_trigger: 
+       xss_html_tag_based_severity: High
+       xss_javascript_function_based_severity: High
+       sql_function_based_trigger: 
+       sql_line_comments_trigger: 
+       xss_html_css_based_block_period: 600
+       xss_javascript_variable_based_action: alert_deny
+       xss_javascript_function_based_threat_weight_value: 4
+       xss_javascript_function_based_status: enable
+       detection_target_xss: ARGS_NAMES ARGS_VALUE REQUEST_COOKIES
+       xss_javascript_function_based_threat_weight: severe
+       sql_embeded_queries_threat_weight_value: 4
+       xss_javascript_variable_based_status: enable
+       xss_javascript_function_based_trigger: 
+       xss_html_css_based_threat_weight: severe
+       sql_condition_based_action: alert_deny
+       xss_javascript_variable_based_severity: High
+       sql_stacked_queries_block_period: 600
+       sql_line_comments_action: alert_deny
+       xss_html_tag_based_check_level: strict
+       name: test4
+       xss_html_tag_based_threat_weight_value: 4
+       sql_arithmetic_operation_threat_weight: severe
+       xss_html_css_based_severity: High
+       sql_function_based_block_period: 600
+       xss_html_css_based_action: alert_deny
+       sql_line_comments_threat_weight: severe
+       sql_function_based_action: alert_deny
+       xss_javascript_function_based_action: alert_deny
+       sql_line_comments_block_period: 600
+       sql_condition_based_trigger: 
+       xss_html_attribute_based_status: enable
+       sql_line_comments_severity: High
+       xss_html_css_based_threat_weight_value: 4
+       xss_html_attribute_based_trigger: 
+       vdom: root

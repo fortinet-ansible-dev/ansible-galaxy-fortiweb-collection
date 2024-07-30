@@ -1,0 +1,201 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_server_policy:
+       action: add
+       vdom: root
+       retry_on_connect_failure: disable
+       protocol: HTTP
+       client_certificate_forwarding: disable
+       client_real_ip: disable
+       urlcert_hlen: 32
+       hsts_max_age: 15552000
+       tls13_custom_cipher: TLS_AES_256_GCM_SHA384
+       urlcert: disable
+       syncookie: disable
+       service: HTTP
+       hsts_preload: disable
+       sni_strict: disable
+       client_certificate_forwarding_cert_header: X-Client-Cert
+       retry_times_on_connect_failure: 3
+       ssl_cipher: medium
+       traffic_mirror_type: client-side
+       multi_certificate: enable
+       hsts_header: disable
+       monitor_mode: disable
+       deployment_mode: server-pool
+       tls_v13: disable
+       tls_v10: enable
+       tls_v11: enable
+       proxy_protocol: disable
+       vserver: test4
+       real_ip_addr: 
+       ssl_custom_cipher: ECDHE-ECDSA-AES256-GCM-SHA384 ECDHE-RSA-AES256-GCM-SHA384 ECDHE-ECDSA-CHACHA20-POLY1305 ECDHE-RSA-CHACHA20-POLY1305 ECDHE-ECDSA-AES128-GCM-SHA256 ECDHE-RSA-AES128-GCM-SHA256 ECDHE-ECDSA-AES256-SHA384 ECDHE-RSA-AES256-SHA384 ECDHE-ECDSA-AES128-SHA256 ECDHE-RSA-AES128-SHA256 ECDHE-ECDSA-AES256-SHA ECDHE-RSA-AES256-SHA ECDHE-ECDSA-AES128-SHA ECDHE-RSA-AES128-SHA AES256-GCM-SHA384 AES128-GCM-SHA256 AES256-SHA256 AES128-SHA256
+       retry_on_cache_size: 512
+       http_to_https: disable
+       hsts_include_subdomains: disable
+       half_open_threshold: 8192
+       retry_on_http_layer: disable
+       traffic_mirror: disable
+       client_certificate_forwarding_sub_header: X-Client-DN
+       sni: disable
+       ssl: enable
+       web_cache: disable
+       ssl_noreg: enable
+       retry_on_http_response_codes: 404 408 500 501 502 503 504
+       prefer_current_session: disable
+       retry_times_on_http_layer: 3
+       case_sensitive: disable
+       name: test4
+       replacemsg: Predefined
+       server_pool: test4
+       retry_on: disable
+       tls_v12: enable
+       https_service: HTTPS
+       http2: disable
+       certificate_type: disable
+       http2_custom_cipher: ECDHE-ECDSA-AES256-GCM-SHA384 DHE-DSS-AES128-GCM-SHA256 DHE-RSA-AES128-GCM-SHA256 ECDHE-RSA-AES256-GCM-SHA384
+       web_protection_profile: Inline Standard Protection
+       certificate_group: test
+       allow_hosts: test.com
+       intermediate_certificate_group: test
+       comment: test111
+       tlog: disable
+       chunk_encoding: enable
+
+    - name: edit
+      fwebos_server_policy:
+       action: edit 
+       vdom: root
+       retry_on_connect_failure: disable
+       protocol: HTTP
+       client_certificate_forwarding: disable
+       client_real_ip: disable
+       urlcert_hlen: 32
+       hsts_max_age: 15552000
+       tls13_custom_cipher: TLS_AES_256_GCM_SHA384
+       urlcert: disable
+       syncookie: disable
+       service: HTTP
+       hsts_preload: disable
+       sni_strict: disable
+       client_certificate_forwarding_cert_header: X-Client-Cert
+       retry_times_on_connect_failure: 3
+       ssl_cipher: medium
+       traffic_mirror_type: client-side
+       multi_certificate: disable
+       hsts_header: disable
+       monitor_mode: disable
+       deployment_mode: server-pool
+       tls_v13: disable
+       tls_v10: enable
+       tls_v11: enable
+       proxy_protocol: disable
+       vserver: test4
+       real_ip_addr: 
+       ssl_custom_cipher: ECDHE-ECDSA-AES256-GCM-SHA384 ECDHE-RSA-AES256-GCM-SHA384 ECDHE-ECDSA-CHACHA20-POLY1305 ECDHE-RSA-CHACHA20-POLY1305 ECDHE-ECDSA-AES128-GCM-SHA256 ECDHE-RSA-AES128-GCM-SHA256 ECDHE-ECDSA-AES256-SHA384 ECDHE-RSA-AES256-SHA384 ECDHE-ECDSA-AES128-SHA256 ECDHE-RSA-AES128-SHA256 ECDHE-ECDSA-AES256-SHA ECDHE-RSA-AES256-SHA ECDHE-ECDSA-AES128-SHA ECDHE-RSA-AES128-SHA AES256-GCM-SHA384 AES128-GCM-SHA256 AES256-SHA256 AES128-SHA256
+       retry_on_cache_size: 512
+       http_to_https: disable
+       hsts_include_subdomains: disable
+       half_open_threshold: 8192
+       retry_on_http_layer: disable
+       traffic_mirror: disable
+       client_certificate_forwarding_sub_header: X-Client-DN
+       sni: disable
+       ssl: enable
+       web_cache: disable
+       ssl_noreg: enable
+       retry_on_http_response_codes: 404 408 500 501 502 503 504
+       prefer_current_session: disable
+       retry_times_on_http_layer: 3
+       case_sensitive: disable
+       name: test4
+       replacemsg: Predefined
+       server_pool: test4
+       retry_on: disable
+       tls_v12: enable
+       https_service: HTTPS
+       http2: disable
+       certificate_type: enable
+       http2_custom_cipher: ECDHE-ECDSA-AES256-GCM-SHA384 DHE-DSS-AES128-GCM-SHA256 DHE-RSA-AES128-GCM-SHA256 ECDHE-RSA-AES256-GCM-SHA384
+       web_protection_profile: Inline Standard Protection
+       lets_certificate: test
+       allow_hosts: test.com
+       intermediate_certificate_group: test
+       comment: test111
+       tlog: enable
+       chunk_encoding: enable
+
+    - name: edit
+      fwebos_server_policy:
+       action: edit 
+       vdom: root
+       retry_on_connect_failure: disable
+       protocol: HTTP
+       client_certificate_forwarding: disable
+       client_real_ip: disable
+       urlcert_hlen: 32
+       hsts_max_age: 15552000
+       tls13_custom_cipher: TLS_AES_256_GCM_SHA384
+       urlcert: disable
+       syncookie: disable
+       service: HTTP
+       hsts_preload: disable
+       sni_strict: disable
+       client_certificate_forwarding_cert_header: X-Client-Cert
+       retry_times_on_connect_failure: 3
+       ssl_cipher: medium
+       traffic_mirror_type: client-side
+       multi_certificate: disable
+       hsts_header: disable
+       monitor_mode: disable
+       deployment_mode: server-pool
+       tls_v13: disable
+       tls_v10: enable
+       tls_v11: enable
+       proxy_protocol: disable
+       vserver: test4
+       real_ip_addr: 
+       ssl_custom_cipher: ECDHE-ECDSA-AES256-GCM-SHA384 ECDHE-RSA-AES256-GCM-SHA384 ECDHE-ECDSA-CHACHA20-POLY1305 ECDHE-RSA-CHACHA20-POLY1305 ECDHE-ECDSA-AES128-GCM-SHA256 ECDHE-RSA-AES128-GCM-SHA256 ECDHE-ECDSA-AES256-SHA384 ECDHE-RSA-AES256-SHA384 ECDHE-ECDSA-AES128-SHA256 ECDHE-RSA-AES128-SHA256 ECDHE-ECDSA-AES256-SHA ECDHE-RSA-AES256-SHA ECDHE-ECDSA-AES128-SHA ECDHE-RSA-AES128-SHA AES256-GCM-SHA384 AES128-GCM-SHA256 AES256-SHA256 AES128-SHA256
+       retry_on_cache_size: 512
+       http_to_https: disable
+       hsts_include_subdomains: disable
+       half_open_threshold: 8192
+       retry_on_http_layer: disable
+       traffic_mirror: disable
+       client_certificate_forwarding_sub_header: X-Client-DN
+       sni: disable
+       ssl: enable
+       web_cache: disable
+       ssl_noreg: enable
+       retry_on_http_response_codes: 404 408 500 501 502 503 504
+       prefer_current_session: disable
+       retry_times_on_http_layer: 3
+       case_sensitive: disable
+       name: test4
+       replacemsg: Predefined
+       server_pool: test4
+       retry_on: disable
+       tls_v12: enable
+       https_service: HTTPS
+       http2: disable
+       certificate_type: disable 
+       http2_custom_cipher: ECDHE-ECDSA-AES256-GCM-SHA384 DHE-DSS-AES128-GCM-SHA256 DHE-RSA-AES128-GCM-SHA256 ECDHE-RSA-AES256-GCM-SHA384
+       web_protection_profile: Inline Standard Protection
+       certificate: aaa1
+       allow_hosts: test.com
+       intermediate_certificate_group: test
+       comment: test111
+       tlog: enable
+       chunk_encoding: enable
+
+    - name: delete 
+      fwebos_server_policy:
+       action: delete 
+       name: test4 
+       vdom: root

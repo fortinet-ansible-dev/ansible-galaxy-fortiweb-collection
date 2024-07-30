@@ -1,0 +1,35 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_custom_protection_rule_condition:
+       action: add 
+       vdom: root
+       table_name: test
+       operator: RE
+       threshold: 0
+       expression: aaa*
+       request_target: REQUEST_FILENAME
+
+    - name: edit
+      fwebos_waf_custom_protection_rule_condition:
+       action: edit
+       vdom: root
+       table_name: test
+       id: 1
+       operator: RE
+       threshold: 0
+       expression: bbb*
+       request_target: REQUEST_FILENAME
+
+
+    - name: delete
+      fwebos_waf_custom_protection_rule_condition:
+       action: delete
+       vdom: root
+       table_name: test
+       id: 1 

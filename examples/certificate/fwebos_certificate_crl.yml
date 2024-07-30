@@ -1,0 +1,33 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create certificate crl 
+      fwebos_certificate_crl:
+       action: add 
+       vdom: root1
+       type: localPC 
+       uploadedFile: crl.txt
+
+    - name: delete certificate crl 
+      fwebos_certificate_crl:
+       action: delete 
+       vdom: root1
+       name: CRL_1
+
+    - name: Create certificate crl 
+      fwebos_certificate_crl:
+       action: add 
+       vdom: root1
+       type: http
+       httpUrl: https://www.test.com
+
+    - name: Create certificate crl 
+      fwebos_certificate_crl:
+       action: add 
+       vdom: root1
+       type: scep
+       scepUrl: https://www.scep.com
