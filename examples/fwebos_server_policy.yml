@@ -66,6 +66,8 @@
        intermediate_certificate_group: test
        comment: test111
        tlog: disable
+       redirect_naked_domain: enable
+       http3_service: enable
        chunk_encoding: enable
 
     - name: edit
@@ -199,3 +201,60 @@
        action: delete 
        name: test4 
        vdom: root
+
+    - name: Create
+      fwebos_server_policy:
+        action: add
+        protocol: HTTP
+        name: P2
+        deployment_mode: server-pool
+        client_real_ip: disable
+        ssl: enable
+        http2: disable
+        certificate_type: disable
+        multi_certificate: disable
+        http_to_https: disable
+        traffic_mirror: disable
+        traffic_mirror_type: client-side
+        monitor_mode: disable
+        syncookie: disable
+        half_open_threshold: 8192
+        case_sensitive: disable
+        proxy_protocol: disable
+        retry_on: disable
+        retry_on_cache_size: 512
+        retry_on_connect_failure: disable
+        retry_times_on_connect_failure: 3
+        retry_on_http_layer: disable
+        retry_times_on_http_layer: 3
+        retry_on_http_response_codes: 404 408 500 501 502 503 504
+        web_cache: disable
+        prefer_current_session: disable
+        tlog: disable
+        redirect_naked_domain: enable
+        tls_v10: enable
+        tls_v11: enable
+        tls_v12: enable
+        tls_v13: enable
+        ssl_cipher: medium
+        ssl_custom_cipher: ECDHE-ECDSA-AES256-GCM-SHA384 ECDHE-RSA-AES256-GCM-SHA384 ECDHE-ECDSA-CHACHA20-POLY1305 ECDHE-RSA-CHACHA20-POLY1305 ECDHE-ECDSA-AES128-GCM-SHA256 ECDHE-RSA-AES128-GCM-SHA256 ECDHE-ECDSA-AES256-SHA384 ECDHE-RSA-AES256-SHA384 ECDHE-ECDSA-AES128-SHA256 ECDHE-RSA-AES128-SHA256 ECDHE-ECDSA-AES256-SHA ECDHE-RSA-AES256-SHA ECDHE-ECDSA-AES128-SHA ECDHE-RSA-AES128-SHA AES256-GCM-SHA384 AES128-GCM-SHA256 AES256-SHA256 AES128-SHA256
+        tls13_custom_cipher: TLS_AES_256_GCM_SHA384
+        ssl_noreg: enable
+        sni: disable
+        sni_strict: disable
+        urlcert: disable
+        urlcert_hlen: 32
+        client_certificate_forwarding: disable
+        client_certificate_forwarding_sub_header: X-Client-DN
+        client_certificate_forwarding_cert_header: X-Client-Cert
+        hsts_header: disable
+        hsts_max_age: 15552000
+        hsts_include_subdomains: disable
+        hsts_preload: disable
+        use_ciphers_group: disable
+        http3_service: HTTP3
+        vserver: vs1
+        server_pool: sp2
+        service: HTTP
+        https_service: HTTPS
+        replacemsg: Predefined

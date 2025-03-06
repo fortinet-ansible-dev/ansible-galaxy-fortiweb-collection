@@ -61,6 +61,7 @@ rep_dict = {
     'hsts_include_subdomains': 'hsts-include-subdomains',
     'half_open_threshold': 'half-open-threshold',
     'retry_on_http_layer': 'retry-on-http-layer',
+    'redirect_naked_domain': 'redirect-naked-domain',
     'traffic_mirror': 'traffic-mirror',
     'client_certificate_forwarding_sub_header': 'client-certificate-forwarding-sub-header',
     'web_cache': 'web-cache',
@@ -73,6 +74,7 @@ rep_dict = {
     'retry_on': 'retry-on',
     'tls_v12': 'tls-v12',
     'https_service': 'https-service',
+    'http3_service': 'http3-service',
     'certificate_type': 'certificate-type',
     'http2_custom_cipher': 'http2-custom-cipher',
     'lets_certificate': 'lets-certificate',
@@ -81,6 +83,7 @@ rep_dict = {
     'web_protection_profile': 'web-protection-profile',
     'allow_hosts': 'allow-hosts',
     'chunk_encoding': 'chunk-encoding',
+    'use-ciphers-group': 'use_ciphers_group',
 }
 
 
@@ -98,7 +101,7 @@ def add_obj(module, connection):
     replace_key(payload1['data'], rep_dict)
 
     code, response = connection.send_request(obj_url, payload1)
-
+    response['sent'] = payload1['data']
     return code, response
 
 
@@ -215,6 +218,7 @@ def main():
         retry_on=dict(type='str'),
         tls_v12=dict(type='str'),
         https_service=dict(type='str'),
+        http3_service=dict(type='str'),
         http2=dict(type='str'),
         certificate_type=dict(type='str'),
         http2_custom_cipher=dict(type='str'),
@@ -227,6 +231,8 @@ def main():
         comment=dict(type='str'),
         tlog=dict(type='str'),
         chunk_encoding=dict(type='str'),
+        redirect_naked_domain=dict(type='str'),
+        use_ciphers_group=dict(type='str'),
         vdom=dict(type='str'),
     )
     argument_spec.update(fwebos_argument_spec)
