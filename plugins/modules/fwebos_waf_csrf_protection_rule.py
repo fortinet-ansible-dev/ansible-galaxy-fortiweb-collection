@@ -20,15 +20,102 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 DOCUMENTATION = """
 ---
-module: fwebos_ntp
+module: fwebos_waf_csrf_protection_rule
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb CSRF Protection Rule
+version_added: "7.0.0"
+authors:
+  - Joseph Chen
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - name of the CSRF protection rule
+        type: string
+    security_action:
+        description:
+            - Select which action FortiWeb takes when it detects a missing or incorrect anti-CSRF parameter.
+        type: string
+        choices:
+            - 'alert'
+            - 'alert_deny'
+            - 'deny_no_log'
+            - 'block-period'
+            - 'client-id-block-period'
+    block_period:
+        description:
+            - Enter the number of seconds that you want to block subsequent requests from the client after the FortiWeb appliance detects a CSRF attack. This setting is available only if 'security_action' is set to 'block-period'. (range: 1-3600)
+        type: integer
+    severity:
+        description:
+            - Select which severity level FortiWeb uses when it logs a CSRF attack.
+        type: string
+        choices:
+            - 'Info'
+            - 'Low'
+            - 'Medium'
+            - 'High'
+    js_request_check:
+        description:
+            - Enabling this option will run another script to modify the page’s native XMLHttpRequest function and add the CSRF parameter tknfv onto it.
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
 """
 
 EXAMPLES = """
+    - name: add a rule
+      fwebos_waf_csrf_protection_rule:
+       action: add
+       severity: Info
+       name: c1
+       security_action: block-period
+       block_period: 777
+       trigger: tp1
+
+    - name: add a simple rule
+      fwebos_waf_csrf_protection_rule:
+       action: add
+       severity: Low
+       name: c2
+
+    - name: edit a rule
+      fwebos_waf_csrf_protection_rule:
+       action: edit
+       severity: Low
+       name: c2
+       security_action: block-period
+       block_period: 1234
+       trigger: tp1
+
+    - name: get rules
+      fwebos_waf_csrf_protection_rule:
+       action: get
+       name: c2
+
+    - name: delete a rule
+      fwebos_waf_csrf_protection_rule:
+       action: delete
+       name: c3
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/csrf-protection'
@@ -53,7 +140,7 @@ def add_obj(module, connection):
     replace_key(payload1['data'], rep_dict)
 
     code, response = connection.send_request(obj_url, payload1)
-    response['sent'] = payload1['data']
+    # # response['sent'] = payload1['data']
     return code, response
 
 def delete_obj(module, connection):
@@ -156,8 +243,15 @@ def main():
 
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True

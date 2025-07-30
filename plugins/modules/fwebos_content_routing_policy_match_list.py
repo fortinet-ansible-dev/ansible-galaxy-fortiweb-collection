@@ -19,15 +19,188 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 
 DOCUMENTATION = """
-module: fwebos_content_routing_policy
+---
+module: fwebos_content_routing_policy_match_list
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb Content Routing Policy Match Details.
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    policy_name:
+        description:
+            - name of content routing policy
+        type: string
+    match_object:
+        description:
+            - Match against the input types in the HTTP Request Header.
+        type: string
+        choices:
+            - 'http-host'
+            - 'http-request'
+            - 'url-parameter'
+            - 'http-referer'
+            - 'http-cookie'
+            - 'http-header'
+            - 'source-ip'
+            - 'x509-certificate-Subject'
+            - 'x509-certificate-Extension'
+            - 'https-sni'
+            - 'geo-ip'
+    match_condition:
+        description:
+            - How the values in match object interact with the match string. This field is used when 'match_object' is 'http-host', 'http-request', 'http-referer', 'source-ip', 'x509-certificate-Subject', 'x509-certificate-Extension', or 'https-sni'.
+        type: string
+        choices:
+            - 'match-begin (The match object ends with the match string)'
+            - 'match-sub (The match object contains the match string)'
+            - 'match-end (The match object ends with the match string)'
+            - 'match-domain (The match object contains the match string between dots)'
+            - 'equal (The match object is equal to the match string)'
+            - 'match-reg (The match object matches the specified regular expression)'
+    match_expression:
+        description:
+            - The content of match string.
+        type: string
+    concatenate:
+        description:
+            - Choose the relationship with the previous rule. The AND relationship has higher precedence than OR in the match sequence.
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    parameter_name_match_condition:
+        description:
+            - Parameter Name match type. Use this field when 'match_object' is 'url-parameter', 'http-cookie', or 'http-header'.
+        type: string
+        choices:
+            - 'match-begin (The match object ends with the match string)'
+            - 'match-sub (The match object contains the match string)'
+            - 'match-end (The match object ends with the match string)'
+            - 'equal (The match object is equal to the match string)'
+            - 'match-reg (The match object matches the specified regular expression)'
+    parameter_name_match_condition_val:
+        description:
+            - Parameter Name match string.
+        type: string
+    parameter_value_match_condition:
+        description:
+            - Parameter Value match type.
+        type: string
+        choices:
+            - 'match-begin (The match object ends with the match string)'
+            - 'match-sub (The match object contains the match string)'
+            - 'match-end (The match object ends with the match string)'
+            - 'equal (The match object is equal to the match string)'
+            - 'match-reg (The match object matches the specified regular expression)'
+    parameter_value_match_condition_val:
+        description:
+            - Parameter Value match string.
+        type: string
+    x509_subject_name:
+        description:
+            - X509 Field Name.
+        type: string
+        choices:
+            - 'E'
+            - 'CN'
+            - 'OU'
+            - 'O'
+            - 'L'
+            - 'ST'
+            - 'C'
 """
 
 EXAMPLES = """
+     - name: Create a url-parameter
+       fwebos_content_routing_policy_match_list:
+        action: add
+        policy_name: crp1
+        match_object: url-parameter
+        parameter_name_match_condition: equal
+        parameter_value_match_condition: equal
+        parameter_name_match_condition_val: YYYY
+        parameter_value_match_condition_val: ZZZZ
+        concatenate: and
+
+     - name: Create a http post
+       fwebos_content_routing_policy_match_list:
+        action: add
+        policy_name: crp1
+        match_object: http-post
+        match_condition: equal
+        match_expression: pattern
+        concatenate: and
+
+     - name: Create a x509-certificate-Subject
+       fwebos_content_routing_policy_match_list:
+        action: add
+        policy_name: crp1
+        match_object: x509-certificate-Subject
+        match_condition: equal
+        match_expression: 888
+        x509_subject_name: CN
+        concatenate: and
+
+     - name: Create a geo-ip
+       fwebos_content_routing_policy_match_list:
+        action: add
+        policy_name: crp1
+        match_object: geo-ip
+        country_list:
+         - Angola
+         - Bahrain
+        concatenate: and
+
+     - name: edit a http post
+       fwebos_content_routing_policy_match_list:
+        action: edit
+        policy_name: crp1
+        id: 1
+        match_expression: new_expression
+
+     - name: edit a url-parameter
+       fwebos_content_routing_policy_match_list:
+        action: edit
+        policy_name: crp1
+        match_object: url-parameter
+        id: 2
+        parameter_name_match_condition: match-reg
+        parameter_value_match_condition: match-reg
+        parameter_name_match_condition_val: xxxx1
+        parameter_value_match_condition_val: yyyy1
+        concatenate: or
+
+     - name: get
+       fwebos_content_routing_policy_match_list:
+        action: get
+        policy_name: crp1
+        id: 1
+
+     - name: delete
+       fwebos_content_routing_policy_match_list:
+        action: delete
+        policy_name: crp1
+        id: 1
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/server/httpcontentrouting.matchlist'
@@ -71,10 +244,9 @@ def add_obj(module, connection):
     name = module.params['policy_name']
     payload1['data'].pop('action')
     replace_key(payload1['data'], rep_dict)
-    # payload1['data']['country-list'] =["Angola", "Brazil"] #Thi is an example of accepted input
     url = obj_url + '?mkey=' + name 
     code, response = connection.send_request(url, payload1)    
-    response['sent'] = payload1['data']
+    # # response['sent'] = payload1['data']
     return code, response
 
 
@@ -86,7 +258,7 @@ def edit_obj(module, payload, connection):
     # payload.pop('name')
     payload1['data'] = payload
     code, response = connection.send_request(url, payload1, 'POST')
-    response['url'] = url
+    # response['url'] = url
     return code, response
 
 
@@ -100,7 +272,7 @@ def get_obj(module, connection):
     if id:
         url += '&sub_mkey=' + id
     code, response = connection.send_request(url, payload, 'GET')
-    # response['url'] = url
+    # # response['url'] = url
     return code, response
 
 
@@ -110,7 +282,7 @@ def delete_obj(module, connection):
     payload = {}
     url = list_url + '?mkey=' + name + '&sub_mkey=' + id
     code, response = connection.send_request(url, payload, 'DELETE')
-    response['url'] = url
+    # response['url'] = url
     return code, response
 
 
@@ -213,8 +385,15 @@ def main():
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

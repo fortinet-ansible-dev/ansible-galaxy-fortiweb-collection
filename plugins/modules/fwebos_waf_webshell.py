@@ -24,15 +24,150 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 
 DOCUMENTATION = """
+---
 module: fwebos_waf_webshell
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb Web Protection Web Shell Detetction
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - name
+        type: string
+    action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    block-period:
+        description:
+            - action block period(1-3600) (range: 1-3600)
+        type: integer
+    severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    fuzzy-similarity-threshold:
+        description:
+            - fuzzy similarity threshold(50, 100) (range: 50-100)
+        type: integer
+    fuzzy-php-status:
+        description:
+            - fuzzy php status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    fuzzy-asp-status:
+        description:
+            - fuzzy asp status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    fuzzy-jsp-status:
+        description:
+            - fuzzy jsp status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    fuzzy-python-status:
+        description:
+            - fuzzy python status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    fuzzy-perl-status:
+        description:
+            - fuzzy perl status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    known-php-status:
+        description:
+            - known php status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    known-php-short-open-tag:
+        description:
+            - If disabled, only <?php will be recognized as PHP tag, otherwise both <? and <?php will be recognized as php tag
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    known-asp-status:
+        description:
+            - known asp status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    known-jsp-status:
+        description:
+            - known jsp status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    known-python-status:
+        description:
+            - known python status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    known-perl-status:
+        description:
+            - known perl status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
 """
 
 EXAMPLES = """
+     - name: Create
+       fwebos_waf_webshell:
+        action: add
+        name: test4
+        vdom: root
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/webshell-detection-policy'
@@ -217,8 +352,15 @@ def main():
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

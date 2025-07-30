@@ -20,15 +20,164 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 DOCUMENTATION = """
 ---
-module: fwebos_admin_profile
+module: fwebos_admin_profiles
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Configure FortiWeb admin profiles
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - profile name
+        type: string
+    mntgrp:
+        description:
+            - Access permission for maintain group policy/profile
+        type: string
+        choices:
+            - 'none'
+            - 'r'
+            - 'rw'
+    admingrp:
+        description:
+            - Access permission for admin group policy/profile
+        type: string
+        choices:
+            - 'none'
+            - 'r'
+            - 'rw'
+    sysgrp:
+        description:
+            - Access permission for system group policy/profile
+        type: string
+        choices:
+            - 'none'
+            - 'r'
+            - 'rw'
+    netgrp:
+        description:
+            - Access permission for network group policy/profile
+        type: string
+        choices:
+            - 'none'
+            - 'r'
+            - 'rw'
+    loggrp:
+        description:
+            - Access permission for log group policy/profile
+        type: string
+        choices:
+            - 'none'
+            - 'r'
+            - 'rw'
+    authusergrp:
+        description:
+            - Access permission for auth user group policy/profile
+        type: string
+        choices:
+            - 'none'
+            - 'r'
+            - 'rw'
+    traroutegrp:
+        description:
+            - Access permission for traffic route group policy/profile
+        type: string
+        choices:
+            - 'none'
+            - 'r'
+            - 'rw'
+    wafgrp:
+        description:
+            - Access permission for waf group policy/profile
+        type: string
+        choices:
+            - 'none'
+            - 'r'
+            - 'rw'
+    wadgrp:
+        description:
+            - Access permission for wad group policy/profile
+        type: string
+        choices:
+            - 'none'
+            - 'r'
+            - 'rw'
+    wvsgrp:
+        description:
+            - Access permission for wvs group policy/profile
+        type: string
+        choices:
+            - 'none'
+            - 'r'
+            - 'rw'
+    mlgrp:
+        description:
+            - Access permission for ml group policy/profile
+        type: string
+        choices:
+            - 'none'
+            - 'r'
+            - 'rw'
 """
 
 EXAMPLES = """
+     - name: Create profile
+       fwebos_admin_profiles:
+        action: add
+        name: test
+        mntgrp: r
+        admingrp: rw
+        sysgrp: none
+        netgrp: none
+        loggrp: none
+        authusergrp: none
+        traroutegrp: none
+        wafgrp: none
+        wadgrp: none
+        wvsgrp: none
+        mlgrp: none
+
+     - name: Edit profile
+       fwebos_admin_profiles:
+        action: edit
+        name: test
+        mntgrp: rw
+        admingrp: r
+        sysgrp: none
+        netgrp: none
+        loggrp: none
+        authusergrp: none
+        traroutegrp: none
+        wafgrp: none
+        wadgrp: none
+        wvsgrp: none
+        mlgrp: none
+
+     - name: delete profile
+       fwebos_admin_profiles:
+        action: delete
+        name: test
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/system/accprofile'

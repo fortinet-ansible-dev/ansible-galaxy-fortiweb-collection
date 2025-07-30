@@ -22,14 +22,72 @@ DOCUMENTATION = """
 ---
 module: fwebos_snmp_sysinfo
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb SNMP system info
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    status:
+        description:
+            - enable/disable
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    engine-id:
+        description:
+            - Local SNMP engineID string (maximum 24 characters).
+        type: string
+    description:
+        description:
+            - description
+        type: string
+    contact-info:
+        description:
+            - contact information
+        type: string
+    location:
+        description:
+            - location
+        type: string
 """
 
 EXAMPLES = """
+     - name: edit snmp sysinfo
+       fwebos_snmp_sysinfo:
+        action: edit
+        status: enable
+        description: test
+        contact_info: test1
+        location: test2
+
+     - name: edit snmp sysinfo
+       fwebos_snmp_sysinfo:
+        action: edit
+        status: disable
+        description: test
+        contact_info: test1
+        location: test2
+
 
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/system/snmp.sysinfo'

@@ -22,13 +22,353 @@ DOCUMENTATION = """
 ---
 module: fwebos_ha
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb HA options
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    mode:
+        description:
+            - mode
+        type: string
+        choices:
+            - 'active-passive'
+            - 'active-active-standard'
+            - 'active-active-high-volume'
+            - 'standalone'
+    group-id:
+        description:
+            - group id, range 0-63 (range: 0-63)
+        type: integer
+    group-name:
+        description:
+            - group name
+        type: string
+    priority:
+        description:
+            - priority value, range 0-9 (range: 0-9)
+        type: integer
+    override:
+        description:
+            - master HA unit overriding
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    network-type:
+        description:
+            - The network on which heartbeat and sync are based
+        type: string
+        choices:
+            - 'flat'
+            - 'udp-tunnel'
+    tunnel-local:
+        description:
+            - Local IPv4 address for HA tunnel
+        type: string
+    tunnel-peer:
+        description:
+            - Peers IPv4 address for HA tunnel
+        type: string
+    boot-time:
+        description:
+            - boot time for Heartbeat, rang 1-100 (s) (range: 1-100)
+        type: integer
+    hb-interval:
+        description:
+            - heartbeat interval, range 1-20 (100ms) (range: 1-20)
+        type: integer
+    hb-lost-threshold:
+        description:
+            - heartbeat threshold for failed, range 1-60 (range: 1-60)
+        type: integer
+    arps:
+        description:
+            - gratuitous ARP or neighbour solicitation, range 1-16 (range: 1-16)
+        type: integer
+    arp-interval:
+        description:
+            - ARP/NS interval, range 1-20 (range: 1-20)
+        type: integer
+    key:
+        description:
+            - 16 hex number for HA
+        type: string
+    lacp-ha-slave:
+        description:
+            - enable/disable
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    ha-mgmt-status:
+        description:
+            - enable/disable manager port
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    session-pickup:
+        description:
+            - enable/disable session sync
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    session-sync-broadcast:
+        description:
+            - enable/disable session sync broadcast
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    session-warm-up:
+        description:
+            - session warm-up time, range 5-120(s) (range: 5-120)
+        type: integer
+    schedule:
+        description:
+            - schedule
+        type: string
+        choices:
+            - 'ip'
+            - 'round-robin'
+            - 'leastconnection'
+    weight-1:
+        description:
+            - weight for No.1 unit in Source IP schedule, range 0-255 (range: 0-255)
+        type: integer
+    weight-2:
+        description:
+            - weight for No.2 unit in Source IP schedule, range 0-255 (range: 0-255)
+        type: integer
+    weight-3:
+        description:
+            - weight for No.3 unit in Source IP schedule, range 0-255 (range: 0-255)
+        type: integer
+    weight-4:
+        description:
+            - weight for No.4 unit in Source IP schedule, range 0-255 (range: 0-255)
+        type: integer
+    weight-5:
+        description:
+            - weight for No.5 unit in Source IP schedule, range 0-255 (range: 0-255)
+        type: integer
+    weight-6:
+        description:
+            - weight for No.6 unit in Source IP schedule, range 0-255 (range: 0-255)
+        type: integer
+    weight-7:
+        description:
+            - weight for No.7 unit in Source IP schedule, range 0-255 (range: 0-255)
+        type: integer
+    weight-8:
+        description:
+            - weight for No.8 unit in Source IP schedule, range 0-255 (range: 0-255)
+        type: integer
+    link-failed-signal:
+        description:
+            - enable/disable link failed signal
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    l7-persistence-sync:
+        description:
+            - enable/disable persistence sync
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    eip-addr:
+        description:
+            - The Elastic IP address
+        type: string
+    eip-aid:
+        description:
+            - The allocation ID of the Elastic IP address(Required for EC2-VPC)
+        type: string
+    ha-eth-type:
+        description:
+            - HA heartbeat packet Ethertype (4-digit hex), range 0x8890-0x889F
+        type: string
+    hc-eth-type:
+        description:
+            - Tuple session HA heartbeat packet Ethertype (4-digit hex), range 0x8890-0x889F
+        type: string
+    l2ep-eth-type:
+        description:
+            - Telnet session HA heartbeat packet Ethertype (4-digit hex), range 0x8890-0x889F
+        type: string
+    server-policy-hlck:
+        description:
+            - HA AA server policy health check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    encryption:
+        description:
+            - enable/disable heartbeat message encryption
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    lb-name:
+        description:
+            - Azure load balancer resource name in the front of the FortiWeb instances
+        type: string
+    lb-ocid:
+        description:
+            - OCI LoadBalancer ID at the front of the FortiWeb instances
+        type: string
+    lb-gcp:
+        description:
+            - GCP LoadBalancer ID at the front of the FortiWeb instances
+        type: string
 """
 
 EXAMPLES = """
+     - name: edit ha
+       vars:
+        ansible_command_timeout: 90
+       fwebos_ha:
+        action: edit
+        mode: active-passive
+        mode_val: 0
+        group_id: 9
+        group_name: tttt
+        priority: 5
+        override: disable
+        override_val: 0
+        network_type: flat
+        network_type_val: 0
+        tunnel_local:
+        tunnel_peer:
+        hbdev: port2
+        hbdev_val: 0
+        hbdev_backup: port3
+        hbdev_backup_val: 0
+        boot_time: 30
+        hb_interval: 3
+        hb_lost_threshold: 3
+        arps: 10
+        arp_interval: 3
+        monitor: port1 port8
+        lacp_ha_slave: enable
+        lacp_ha_slave_val: 1
+        ha_mgmt_status: disable
+        ha_mgmt_status_val: 0
+        ha_mgmt_interface:
+        session_pickup: disable
+        session_pickup_val: 0
+        session_sync_dev:
+        session_sync_broadcast: disable
+        session_sync_broadcast_val: 0
+        session_warm_up: 10
+        schedule: ip
+        schedule_val: 1
+        weight_1: 40
+        weight_2: 40
+        weight_3: 40
+        weight_4: 40
+        weight_5: 40
+        weight_6: 40
+        weight_7: 40
+        weight_8: 40
+        link_failed_signal: disable
+        link_failed_signal_val: 0
+        l7_persistence_sync: disable
+        l7_persistence_sync_val: 0
+        eip_addr: 0.0.0.0
+        eip_aid:
+        ha_eth_type: 8890
+        hc_eth_type: 8892
+        l2ep_eth_type: 8893
+        server_policy_hlck: disable
+        server_policy_hlck_val: 0
+        multi_cluster: disable
+        multi_cluster_val: 0
+        multi_cluster_group: primary
+        multi_cluster_group_val: 0
+        multi_cluster_switch_by: nodes_availability
+        multi_cluster_switch_by_val: 0
+        multi_cluster_move_primary_cluster: disable
+        multi_cluster_move_primary_cluster_val: 0
+        encryption: disable
+        encryption_val: 0
+        cluster_arp: enable
+        cluster_arp_val: 1
+        sdn_connector:
+        sdn_connector_val: 0
+        lb_name:
+        lb_ocid:
+
+     - name: edit ha
+       vars:
+        ansible_command_timeout: 90
+       fwebos_ha:
+        action: edit
+        mode: standalone
+
+     - name: edit ha
+       vars:
+        ansible_command_timeout: 90
+       fwebos_ha:
+        action: edit
+        mode: active-active-standard
+        group_id: 9
+        group_name: tttt
+        priority: 5
+        override: disable
+        network_type: flat
+        tunnel_local:
+        tunnel_peer:
+        hbdev: port2
+        hbdev_backup: port3
+        boot_time: 30
+        hb_interval: 3
+        hb_lost_threshold: 3
+        monitor: port1 port8
+        lacp_ha_slave: enable
+        ha_mgmt_status: disable
+        ha_mgmt_interface:
+        session_pickup: disable
+        session_sync_dev:
+        session_sync_broadcast: disable
+        session_warm_up: 10
+        schedule: ip
+        link_failed_signal: disable
+        l7_persistence_sync: disable
+        eip_addr: 0.0.0.0
+        eip_aid:
+        server_policy_hlck: disable
+        multi_cluster: disable
+        multi_cluster_group: primary
+        multi_cluster_switch_by: nodes_availability
+        multi_cluster_move_primary_cluster: disable
+        encryption: disable
+        cluster_arp: enable
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/system/ha'

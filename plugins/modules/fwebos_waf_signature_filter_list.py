@@ -22,13 +22,114 @@ DOCUMENTATION = """
 ---
 module: fwebos_waf_signature_filter_list
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb Web Protection Signature filter list
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    match_target:
+        description:
+            - match targets
+        type: str
+        choices:
+            - 'HTTP_METHOD'
+            - 'CLIENT_IP'
+            - 'HOST'
+            - 'URI'
+            - 'FULL_URL'
+            - 'PARAMETER'
+            - 'COOKIE'
+            - 'HTTP_HEADER'
+            - 'JSON_ELEMENTS'
+    operator:
+        description:
+            - operator
+        type: str
+        choices:
+            - 'STRING_MATCH'
+            - 'REGEXP_MATCH'
+            - 'EQ'
+            - 'NE'
+            - 'INCLUDE'
+            - 'EXCLUDE'
+    concatenate_type:
+        description:
+            - concatenate relationship with the previous filter rule
+        type: str
+        choices:
+            - 'AND'
+            - 'OR'
+    http_method:
+        description:
+            - HTTP method
+        type: str
+        choices:
+            - 'get'
+            - 'post'
+            - 'head'
+            - 'options'
+            - 'trace'
+            - 'connect'
+            - 'delete'
+            - 'put'
+            - 'patch'
+            - 'others'
 """
 
 EXAMPLES = """
+     - name: delete
+       fwebos_waf_signature_filter_list:
+        action: delete
+        vdom: root
+        table_name: test
+        id: 1
+
+     - name: Create
+       fwebos_waf_signature_filter_list:
+        action: add
+        vdom: root
+        table_name: test
+        match_target: URI
+        operator: REGEXP_MATCH
+        value_check: disable
+        concatenate_type: AND
+        http_method:
+        signature_id: 030000128
+        value: a*
+
+     - name: edit
+       fwebos_waf_signature_filter_list:
+        action: edit
+        vdom: root
+        table_name: test
+        id: 1
+        match_target: URI
+        operator: REGEXP_MATCH
+        value_check: disable
+        concatenate_type: AND
+        http_method:
+        signature_id: 030000128
+        value: aaaa*
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/signature/filter_list'
@@ -160,8 +261,15 @@ def main():
     result = {}
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

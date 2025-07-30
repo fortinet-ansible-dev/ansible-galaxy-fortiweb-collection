@@ -20,15 +20,114 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 DOCUMENTATION = """
 ---
-module: fwebos_ntp
+module: fwebos_waf_csrf_url_rule
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb CSRF URL Rule
+version_added: "7.0.0"
+authors:
+  - Joseph Chen
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - name of the CSRF url rule
+        type: string
+    host_status:
+        description:
+            - Enable to apply this rule only to HTTP requests for specific web hosts. Disable to match the rule based on the URL and any parameter filter only.
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    host:
+        description:
+            - Select a protected host names entry (either a web host name or IP address).
+        type: string
+    request_type:
+        description:
+            - Select whether Full URL contains a literal URL (Simple String), or a regular expression designed to match multiple URLs (Regular Expression).
+        type: string
+        choices:
+            - 'plain'
+            - 'regular'
+    request_url:
+        description:
+            - a literal URL or regular expression.
+        type: string
+    parameter_filter:
+        description:
+            - Select to specify a parameter name and value to match. The parameter can be located in either the URL or the HTTP body of a request.
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    parameter_name:
+        description:
+            - Enter the parameter name to match.
+        type: string
+    parameter_value:
+        description:
+            - Enter either a literal URL or regular expression.
+        type: string
 """
 
 EXAMPLES = """
+    - name: add a rule
+      fwebos_waf_csrf_url_rule:
+       action: add
+       name: c1
+       request_type: plain
+       host_status: enable
+       host: gaogle
+       request_url: /myurl.com
+       parameter_filter: enable
+       parameter_name: p1
+       parameter_value_type: regular
+       parameter_value: a1b2
+
+    - name: edit a rule
+      fwebos_waf_csrf_url_rule:
+       action: edit
+       name: c1
+       id: 1
+       request_type: regular
+       parameter_value_type: regular
+       host_status: enable
+       host: ftnt
+       request_url: wwwcc
+       parameter_filter: enable
+       parameter_name: test
+       parameter_value: a1b2
+
+    - name: get a rule
+      fwebos_waf_csrf_url_rule:
+       action: get
+       name: c1
+       id: 1
+
+    - name: delete a rule
+      fwebos_waf_csrf_url_rule:
+       action: delete
+       name: c1
+       id: 1
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/csrf-protection/csrf-url-list'
@@ -60,7 +159,7 @@ def add_obj(module, connection):
     payload1['data'].pop('action')
 
     code, response = connection.send_request(url, payload1)
-    response['sent'] = payload1['data']
+    # # response['sent'] = payload1['data']
     return code, response
 
 def delete_obj(module, connection):
@@ -162,8 +261,15 @@ def main():
 
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True

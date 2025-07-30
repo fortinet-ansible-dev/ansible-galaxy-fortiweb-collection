@@ -21,12 +21,156 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_xff
+description:
+  - Config FortiWeb X-Forward-For policy
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - name
+        type: string
+    x-forwarded-for-support:
+        description:
+            - x forwarded for support
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    add-source-port:
+        description:
+            - add source port in X-Forwarded-For
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    x-forwarded-port:
+        description:
+            - X-Forwarded-Port
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    tracing-original-ip:
+        description:
+            - tracing original IP
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    original-ip-header:
+        description:
+            - original IP header
+        type: string
+    x-real-ip:
+        description:
+            - X-Real_IP
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    x-forwarded-proto:
+        description:
+            - X-Forwarded-Proto
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    block-based-on-original-ip:
+        description:
+            - block-based-on-original-ip
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    ip-location:
+        description:
+            - ip-location
+        type: string
+        choices:
+            - 'left'
+            - 'right'
+    skip-private-original-ip:
+        description:
+            - skip-private-original-ip
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    skip-special-original-ip:
+        description:
+            - skip-special-original-ip
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    block-based-on-full-scan:
+        description:
+            - block based on full scan modules
+        type: string
+        choices:
+            - 'ip-reputation'
 """
 
 EXAMPLES = """
+     - name: delete xff
+       fwebos_waf_xff:
+        action: delete
+        vdom: root
+        name: test
+
+     - name: Create xff
+       fwebos_waf_xff:
+        action: add
+        vdom: root
+        x_forwarded_for_support: enable
+        add_source_port: disable
+        x_forwarded_port: enable
+        tracing_original_ip: enable
+        x_real_ip: enable
+        x_forwarded_proto: enable
+        block_based_on_original_ip: enable
+        ip_location: left
+        original_ip_header: X-FORWARDED-FOR
+        block_based_on_full_scan: ip-reputation
+        name: test
+
+     - name: edit xff
+       fwebos_waf_xff:
+        action: edit
+        vdom: root
+        x_forwarded_for_support: enable
+        add_source_port: enable
+        x_forwarded_port: enable
+        tracing_original_ip: enable
+        x_real_ip: enable
+        x_forwarded_proto: enable
+        block_based_on_original_ip: enable
+        ip_location: left
+        original_ip_header: X-FORWARDED-FOR
+        block_based_on_full_scan: ip-reputation
+        name: test
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/x-forwarded-for'
@@ -148,8 +292,15 @@ def main():
     result = {}
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

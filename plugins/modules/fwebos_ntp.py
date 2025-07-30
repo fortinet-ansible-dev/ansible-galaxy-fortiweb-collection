@@ -22,13 +22,47 @@ DOCUMENTATION = """
 ---
 module: fwebos_ntp
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb NTP settings
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    daylightSaving:
+        description:
+            - daylightSaving
+        type: integer
 """
 
 EXAMPLES = """
+     - name: edit ntp
+       fwebos_ntp:
+        action: edit
+        timeZone: 4
+        daylightSaving: 0
+        mode: ntpServer
+        ntpServer:
+          server: pool1.ntp.org
+          interval: 80
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/system/maintenance.systemtime'

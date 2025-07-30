@@ -22,14 +22,153 @@ DOCUMENTATION = """
 ---
 module: fwebos_snmp_user_default
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb SNMP v3 user
+version_added: "7.0.0"
+authors:
+  - Link Zheng (@chillancezen)
+  - Jie Xue (@JieX19)
+  - Hongbin Lu (@fgtdev-hblu)
+  - Frank Shen (@frankshen01)
+  - Miguel Angel Munoz (@mamunozgonzalez)
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - unique snmp user name
+        type: string
+    status:
+        description:
+            - set snmp user status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    security-level:
+        description:
+            - set snmp user security level
+        type: string
+        choices:
+            - 'noauthnopriv'
+            - 'authnopriv'
+            - 'authpriv'
+    auth-proto:
+        description:
+            - set snmp user auth algorithm
+        type: string
+        choices:
+            - 'sha1'
+            - 'md5'
+    auth-pwd:
+        description:
+            - set snmp user auth password
+        type: string
+    priv-proto:
+        description:
+            - set snmp user private algorithm
+        type: string
+        choices:
+            - 'aes'
+            - 'des'
+    priv-pwd:
+        description:
+            - set snmp user private password
+        type: string
+    query-status:
+        description:
+            - set snmp query status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    trap-status:
+        description:
+            - set snmp trap status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    trapevent:
+        description:
+            - Trap event allowed to be sent
+        type: string
+        choices:
+            - 'cpu-high'
+            - 'mem-low'
+            - 'log-full'
+            - 'intf-ip'
+            - 'sys-mode-change'
+            - 'policy-start'
+            - 'policy-stop'
+            - 'pserver-failed'
+            - 'sys-ha-cluster-status-change'
+            - 'sys-ha-member-join'
+            - 'sys-ha-member-leave'
+            - 'waf-amethod-attack'
+            - 'waf-signature-detection'
+            - 'waf-url-access-attack'
+            - 'waf-pvalid-attack'
+            - 'waf-hidden-fields'
+            - 'netlink-up-status'
+            - 'netlink-down-status'
+            - 'power-supply-failure'
+            - 'policy-ldap-auth-failure'
+            - 'policy-radius-auth-failure'
 """
 
 EXAMPLES = """
+     - name: Create snmp user
+       fwebos_snmp_user:
+        action: add
+        name: 166
+        security_level: authnopriv
+        security_level_val: 1
+        auth_proto: sha1
+        auth_proto_val: 1
+        auth_pwd: 111166666
+        priv_proto: aes
+        priv_proto_val: 1
+        priv_pwd: ENC XXXX
+        query_status: enable
+        query_status_val: 1
+        query_port: 199
+        trap_status: enable
+        trap_status_val: 1
+        trapport_local: 162
+        trapport_remote: 162
+        sz_hosts: -1
+
+     - name: edit snmp user
+       fwebos_snmp_user:
+        action: edit
+        name: 166
+        trapport_local: 168
+        trapport_remote: 168
+        trapevent: cpu-high mem-low
+        trapevent_val: 0
+
+     - name: delete snmp user
+       fwebos_snmp_user:
+        action: delete
+        name: 166
+
+
 
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/system/snmp.user'

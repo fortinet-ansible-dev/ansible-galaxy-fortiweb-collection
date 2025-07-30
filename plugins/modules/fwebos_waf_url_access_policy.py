@@ -24,15 +24,46 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 
 DOCUMENTATION = """
+---
 module: fwebos_waf_url_access_policy
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb Web Protection URL Access policy
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - name
+        type: string
 """
 
 EXAMPLES = """
+     - name: Create
+       fwebos_waf_url_access_policy:
+        action: add
+        name: test4
+        vdom: root
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/url-access.url-access-policy'
@@ -120,8 +151,15 @@ def main():
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

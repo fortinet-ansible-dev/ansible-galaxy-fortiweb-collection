@@ -20,15 +20,119 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 DOCUMENTATION = """
 ---
-module: fwebos_ntp
+module: fwebos_waf_custom_rule
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb Advanced Protection Custom Policy Rule
+version_added: "7.0.0"
+authors:
+  - Joseph Chen
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - A unique name that can be referenced in other parts of the configuration.
+        type: string
+    security_action:
+        description:
+            - Select which action the FortiWeb appliance will take when it detects a violation of the rule.
+        type: string
+        choices:
+            - 'alert'
+            - 'redirect'
+            - 'deny_no_log'
+            - 'block-period'
+            - 'client-id-block-period'
+    severity:
+        description:
+            - Select which severity level the FortiWeb appliance will use when it logs a violation of the rule.
+        type: string
+        choices:
+            - 'Info'
+            - 'Low'
+            - 'Medium'
+            - 'High'
+    trigger:
+        description:
+            - Select which trigger, if any, that the FortiWeb appliance will use when it logs and/or sends an alert email about a violation of the rule.
+        type: string
+    bot_confirmation:
+        description:
+            - Enable to confirm if the client is indeed a bot.
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    bot_recognition:
+        description:
+            - Select what type of bots the client is.
+        type: string
+        choices:
+            - 'enable'
+            - 'real-browser-enforcement'
+            - 'captcha-enforcement'
+    mobile_app_identification:
+        description:
+            - Available only when Mobile Application Identification is enabled.
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
 """
 
 EXAMPLES = """
+    - name: add a rule
+      fwebos_waf_custom_rule:
+       action: add
+       name: test1
+       security_action: alert
+       severity: Medium
+       block_period: 500
+       bot_confirmation: enable
+       bot_recognition: real-browser-enforcement
+       mobile_app_identification: disabled
+       validation_timeout: 30
+       trigger: tp1
+
+    - name: get a rule
+      fwebos_waf_custom_rule:
+       action: get
+       name: test1
+
+    - name: edit a rule
+      fwebos_waf_custom_rule:
+       action: edit
+       name: test1
+       severity: High
+       security_action: client-id-block-period
+       block_period: 400
+       bot_confirmation: disable
+
+    - name: delete a rule
+      fwebos_waf_custom_rule:
+       action: delete
+       name: test1
+
+    - name: delete a rule
+      fwebos_waf_custom_rule:
+       action: delete
+       name: test1
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/custom-access.rule'
@@ -58,7 +162,7 @@ def add_obj(module, connection):
     # if payload1['data']['security_action'] is not None:
     #     payload1['data']['action'] = payload1['data']['security_action'],
     code, response = connection.send_request(obj_url, payload1)
-    response['sent'] = payload1['data']
+    # # response['sent'] = payload1['data']
     return code, response
 
 def delete_obj(module, connection):
@@ -165,8 +269,15 @@ def main():
 
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True

@@ -19,15 +19,97 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 
 DOCUMENTATION = """
-module: fwebos_waf_ip_members
+---
+module: fwebos_waf_http_header_security_policy_exception_item
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb HTTP Header Security Policy Exception Item
+version_added: "7.0.0"
+authors:
+  - Joseph Chen
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - A unique name that can be referenced in other parts of the configuration.
+        type: string
+    client_ip_status:
+        description:
+            - Click to enable or disable Client IP exception.
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    request_url_type:
+        description:
+            - Select 'plain' (Simple String) to match the URL of requests with a literal URL specified in Request URL. Select 'regular' (Regular Expression) to match the URL of requests with a regular expression specified in Request URL.
+        type: string
+        choices:
+            - 'plain'
+            - 'regular'
+    request_url_pattern:
+        description:
+            - Request URL.
+        type: string
 """
 
 EXAMPLES = """
+    - name: add a New Secure Header Exception Item
+      fwebos_waf_http_header_security_policy_exception_item:
+       action: add
+       name: e1
+       client_ip_status: enable
+       client_ip: 10.2.3.4-10.2.3.55
+       request_url_type: plain
+       request_url_pattern: /www.test.com
+
+    - name: add a New Secure Header Exception Item
+      fwebos_waf_http_header_security_policy_exception_item:
+       action: add
+       name: e1
+       request_url_pattern: /www.334455.com
+
+    - name: edit a New Secure Header Exception Item
+      fwebos_waf_http_header_security_policy_exception_item:
+       action: edit
+       name: e1
+       id: 3
+       client_ip_status: enable
+       client_ip: 10.2.3.4-10.2.3.55
+       request_url_type: regular
+       request_url_pattern: aa11bb
+
+    - name: edit a New Secure Header Exception Item
+      fwebos_waf_http_header_security_policy_exception_item:
+       action: edit
+       name: e1
+       id: 3
+       client_ip_status: enable
+       client_ip: 10.2.3.4-10.2.3.55
+       request_url_type: regular
+       request_url_pattern: aa11bb
+
+    - name: delete a Secure Header Exception Item
+      fwebos_waf_http_header_security_policy_exception_item:
+       action: delete
+       name: e1
+       id: 4
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/http-header-security-exception/list'
@@ -57,7 +139,7 @@ def add_obj(module, connection):
     payload1['data'].pop('action')
 
     code, response = connection.send_request(url, payload1)
-    response['sent'] = payload1['data']
+    # response['sent'] = payload1['data']
 
     return code, response, payload1['data']
 
@@ -151,8 +233,15 @@ def main():
 
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

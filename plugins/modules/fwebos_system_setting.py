@@ -10,6 +10,7 @@ import json
 from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.connection import ConnectionError
 __metaclass__ = type
 
 
@@ -19,17 +20,60 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 
 DOCUMENTATION = """
+---
 module: fwebos_system_setting
 description:
-  - Configure system setting on FortiWeb devices via RESTful APIs
+  - Config System Administrators Settings in FortiWeb
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    hostname:
+        description:
+            - The Host Name
+        type: string
+    idle_timeout:
+        description:
+            - Type the number of minutes that a web UI connection can be idle before the administrator must log in again. (range: 1-480)
+        type: integer
 """
 
 EXAMPLES = """
+    - name: Manage system setting
+      fwebos_system_setting:
+       idle_timeout: 468
+       hostname: testhost1
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
+rep_dict = {
+    "https_server_cert": "httpsServerCertificate"
+}
+
+def replace_key(src_dict, rep_dict):
+    for key in rep_dict:
+        if key in src_dict:
+            new_key = rep_dict[key]
+            src_dict[new_key] = src_dict.pop(key)
 
 def get__sys_setting(module, connection):
     payload = {}
@@ -56,9 +100,9 @@ def needs_update(module, sys_setting):
     if module.params['config_sync'] and module.params['config_sync'] != sys_setting['configSync']:
         sys_setting['configSync'] = module.params['config_sync']
         res = True
-    # if module.params['intermediate_ca_group'] and module.params['intermediate_ca_group'] != sys_setting['default-intermediate-ca-group']:
-    #    sys_setting['default-intermediate-ca-group'] = module.params['intermediate_ca_group']
-    #    res = True
+    if module.params['intermediate_ca_group'] and ('httpsIntermediateCertificate' not in sys_setting.keys() or module.params['intermediate_ca_group'] != sys_setting['httpsIntermediateCertificate']):
+       sys_setting['httpsIntermediateCertificate'] = module.params['intermediate_ca_group']
+       res = True
     if module.params['hostname'] and module.params['hostname'] != sys_setting['hostname']:
         sys_setting['hostname'] = module.params['hostname']
         res = True
@@ -68,9 +112,9 @@ def needs_update(module, sys_setting):
     if module.params['https_port'] and module.params['https_port'] != sys_setting['https']:
         sys_setting['https'] = module.params['https_port']
         res = True
-    # if module.params['https_server_cert'] and module.params['https_server_cert'] != sys_setting['https-server-cert']:
-    #    sys_setting['https-server-cert'] = module.params['https_server_cert']
-    #    res = True
+    if module.params['https_server_cert'] and ('httpsServerCertificate' not in sys_setting.keys() or module.params['https_server_cert'] != sys_setting['httpsServerCertificate']):
+       sys_setting['httpsServerCertificate'] = module.params['https_server_cert']
+       res = True
     if module.params['sys_global_language'] and module.params['sys_global_language'] != sys_setting['language']:
         sys_setting['language'] = module.params['sys_global_language']
         res = True
@@ -110,10 +154,14 @@ def main():
             payload = {}
             payload['data'] = update_data
             result['update_data'] = payload
-            code, response = update_sys_setting(payload, connection)
-            result['changed'] = True
-            result['code'] = code
-            result['res'] = response
+            err = False
+            try:
+                code, response = update_sys_setting(payload, connection)
+            except ConnectionError as e:
+                result['changed'] = True
+                err = True
+            if err == False:  
+                result['changed'] = True
         else:
             result['res'] = 'Do not update'
     module.exit_json(**result)

@@ -19,15 +19,1923 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 
 DOCUMENTATION = """
+---
 module: fwebos_waf_http_protocol_parameter_restriction
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb Web Protection HTTP Constraints
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - name
+        type: string
+    max-http-header-length-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-http-header-length:
+        description:
+            - max length of header, default value is 8192 (range: 0-12288)
+        type: integer
+    max-http-header-length-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-http-header-length-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-http-header-length-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    max-http-header-length-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-http-content-length-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-http-content-length:
+        description:
+            - max length (KB) of content, 0 means this value has not limitation (range: 0-65536)
+        type: integer
+    max-http-content-length-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-http-content-length-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-http-content-length-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    max-http-content-length-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-http-body-length-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-http-body-length:
+        description:
+            - max length (KB) of body, 0 means this value has not limitation (range: 0-65536)
+        type: integer
+    max-http-body-length-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-http-body-length-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-http-body-length-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    max-http-body-length-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-http-request-length-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-http-request-length:
+        description:
+            - max length of http request, default value is 2048[0,65536] (KB) (range: 0-65536)
+        type: integer
+    max-http-request-length-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-http-request-length-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-http-request-length-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    max-http-request-length-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-url-parameter-length-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-url-parameter-length:
+        description:
+            - max length of url parameter, default value is 8192 (range: 0-12288)
+        type: integer
+    max-url-parameter-length-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-url-parameter-length-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-url-parameter-length-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    max-url-parameter-length-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    Illegal-http-version-check:
+        description:
+            - 
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    Illegal-http-version-check-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    Illegal-http-version-check-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    Illegal-http-version-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    Illegal-http-version-check-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-cookie-in-request-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-cookie-in-request:
+        description:
+            - max count of cookie request, default value is 128 [0,1023] (range: 0-1023)
+        type: integer
+    max-cookie-in-request-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-cookie-in-request-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-cookie-in-request-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    max-cookie-in-request-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-header-line-request-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-header-line-request:
+        description:
+            - max count of header line request, default value is 64 [0,128] (range: 0-128)
+        type: integer
+    max-header-line-request-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-header-line-request-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-header-line-request-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    max-header-line-request-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    Illegal-http-request-method-check:
+        description:
+            - 
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    Illegal-http-request-method-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    Illegal-http-request-method-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    Illegal-http-request-method-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    Illegal-http-request-method-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-url-parameter-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-url-parameter:
+        description:
+            - max number of url parameter, default value is 128 [0,1023] (range: 0-1023)
+        type: integer
+    max-url-parameter-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-url-parameter-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-url-parameter-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    max-url-parameter-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    Illegal-host-name-check:
+        description:
+            - 
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    Illegal-host-name-check-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    Illegal-host-name-check-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    Illegal-host-name-check-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    Illegal-host-name-check-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    number-of-ranges-in-range-header-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    number-of-ranges-in-range-header:
+        description:
+            - max ranges in Range Header,default value is 5 [0 ,64] (range: 0-64)
+        type: integer
+    number-of-ranges-in-range-header-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    number-of-ranges-in-range-header-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    number-of-ranges-in-range-header-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    number-of-ranges-in-range-header-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    http2-max-requests-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    http2-max-requests:
+        description:
+            - max number of requests in HTTP2 connection, default value is 1000 [0 ,65535] (range: 0-65535)
+        type: integer
+    http2-max-requests-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    http2-max-requests-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    http2-max-requests-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    http2-max-requests-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    block-malformed-request-check:
+        description:
+            - block malformed request check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    block-malformed-request-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    block-malformed-request-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    block-malformed-request-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    block-malformed-request-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    Illegal-content-length-check:
+        description:
+            - 
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    Illegal-content-length-check-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    Illegal-content-length-check-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    Illegal-content-length-check-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    Illegal-content-length-check-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    Illegal-content-type-check:
+        description:
+            - 
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    Illegal-content-type-check-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    Illegal-content-type-check-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    Illegal-content-type-check-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    Illegal-content-type-check-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    Illegal-response-code-check:
+        description:
+            - 
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    Illegal-response-code-check-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    Illegal-response-code-check-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    Illegal-response-code-check-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    Illegal-response-code-check-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    Post-request-ctype-check:
+        description:
+            - Post Request -- Missing Content Type Check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    Post-request-ctype-check-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    Post-request-ctype-check-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    Post-request-ctype-check-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    Post-request-ctype-check-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-http-header-name-length-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-http-header-name-length:
+        description:
+            - max length of header name, default value is 50 (range: 0-255)
+        type: integer
+    max-http-header-name-length-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-http-header-name-length-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-http-header-name-length-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    max-http-header-name-length-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-http-header-value-length-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-http-header-value-length:
+        description:
+            - max length of header value, default value is 4096 (range: 0-12288)
+        type: integer
+    max-http-header-value-length-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-http-header-value-length-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-http-header-value-length-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    max-http-header-value-length-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    parameter-name-check:
+        description:
+            - Null Character in Parameter Name
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    parameter-name-check-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    parameter-name-check-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    parameter-name-check-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    parameter-name-check-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    parameter-value-check:
+        description:
+            - Null Character in Parameter Value
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    parameter-value-check-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    parameter-value-check-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    parameter-value-check-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    parameter-value-check-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    Illegal-header-name-check:
+        description:
+            - Illgal Byte Code Character in Header Name Check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    Illegal-header-name-check-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    Illegal-header-name-check-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    Illegal-header-name-check-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    Illegal-header-name-check-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    Illegal-header-value-check:
+        description:
+            - Illgal Byte Code Character in Header Value Check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    Illegal-header-value-check-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    Illegal-header-value-check-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    Illegal-header-value-check-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    Illegal-header-value-check-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-http-body-parameter-length-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-http-body-parameter-length:
+        description:
+            - max length of body parameter, default value is 8192 (range: 0-16384)
+        type: integer
+    max-http-body-parameter-length-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-http-body-parameter-length-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-http-body-parameter-length-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    max-http-body-parameter-length-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-http-request-filename-length-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-http-request-filename-length:
+        description:
+            - max length of request filename, default value is 2048 (range: 0-12288)
+        type: integer
+    max-http-request-filename-length-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-http-request-filename-length-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-http-request-filename-length-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    max-http-request-filename-length-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    web-socket-protocol-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    web-socket-protocol-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    web-socket-protocol-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    web-socket-protocol-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-setting-header-table-size-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-setting-header-table-size:
+        description:
+            - max setting header table size, default value is 4096 (range: 0-16777215)
+        type: integer
+    max-setting-header-table-size-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-setting-header-table-size-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-setting-header-table-size-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-setting-current-streams-num-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-setting-current-streams-num:
+        description:
+            - max setting current streams number, default value is 256 (range: 0-100000)
+        type: integer
+    max-setting-current-streams-num-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-setting-current-streams-num-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-setting-current-streams-num-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-setting-initial-window-size-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-setting-initial-window-size:
+        description:
+            - max setting initial window size, default value is 6291456 (range: 0-2147483647)
+        type: integer
+    max-setting-initial-window-size-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-setting-initial-window-size-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-setting-initial-window-size-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-setting-frame-size-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-setting-frame-size:
+        description:
+            - max setting frame size, default value is 16384 (range: 0-16777215)
+        type: integer
+    max-setting-frame-size-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-setting-frame-size-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-setting-frame-size-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-setting-header-list-size-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-setting-header-list-size:
+        description:
+            - max setting header list size, default value is 65536 (range: 0-16777215)
+        type: integer
+    max-setting-header-list-size-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-setting-header-list-size-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-setting-header-list-size-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-url-param-name-len-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-url-param-name-len:
+        description:
+            - max url parameter name length, default value is 4096 (range: 0-8192)
+        type: integer
+    max-url-param-name-len-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-url-param-name-len-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-url-param-name-len-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    max-url-param-name-len-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    max-url-param-value-len-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    max-url-param-value-len:
+        description:
+            - max url parameter value length, default value is 4096 (range: 0-8192)
+        type: integer
+    max-url-param-value-len-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    max-url-param-value-len-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    max-url-param-value-len-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    max-url-param-value-len-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    url-param-name-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    url-param-name-check-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    url-param-name-check-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    url-param-name-check-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    url-param-name-check-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    url-param-value-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    url-param-value-check-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    url-param-value-check-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    url-param-value-check-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    url-param-value-check-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    null-byte-in-url-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    null-byte-in-url-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    null-byte-in-url-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    null-byte-in-url-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    null-byte-in-url-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    illegal-byte-in-url-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    illegal-byte-in-url-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    illegal-byte-in-url-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    illegal-byte-in-url-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    illegal-byte-in-url-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    malformed-url-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    malformed-url-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    malformed-url-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    malformed-url-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    malformed-url-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    redundant-header-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    redundant-header-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    redundant-header-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    redundant-header-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    redundant-header-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    chunk-size-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    chunk-size-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    chunk-size-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    chunk-size-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    chunk-size-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    Internal-resource-limits-check:
+        description:
+            - Internal resource limits check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    Internal-resource-limits-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    Internal-resource-limits-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    Internal-resource-limits-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    Internal-resource-limits-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    rpc-protocol-check:
+        description:
+            - rpc protocol check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    rpc-protocol-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    rpc-protocol-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    rpc-protocol-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    rpc-protocol-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    duplicate-paramname-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    duplicate-paramname-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    duplicate-paramname-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    duplicate-paramname-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+    duplicate-paramname-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    odd-and-even-space-attack-check:
+        description:
+            - check
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    odd-and-even-space-attack-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    odd-and-even-space-attack-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    odd-and-even-space-attack-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    odd-and-even-space-attack-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'low'
+            - 'critical'
+            - 'informational'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
 """
 
 EXAMPLES = """
+     - name: delete
+       fwebos_waf_http_protocol_parameter_restriction:
+        action: delete
+        name: aaa
+        vdom: root
+
+     - name: Create
+       fwebos_waf_http_protocol_parameter_restriction:
+        action: add
+        vdom: root
+        exception_name: test4
+        name: test3
+
+     - name: edit
+       fwebos_waf_http_protocol_parameter_restriction:
+        action: edit
+        vdom: root
+        exception_name: test4
+        name: test4
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/http-protocol-parameter-restriction'
@@ -464,8 +2372,15 @@ def main():
 
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

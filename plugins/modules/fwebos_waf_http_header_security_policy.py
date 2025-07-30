@@ -20,15 +20,53 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 DOCUMENTATION = """
 ---
-module: fwebos_ntp
+module: fwebos_waf_http_header_security_policy
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb HTTP Header Security Policy
+version_added: "7.0.0"
+authors:
+  - Joseph Chen
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - A unique name that can be referenced in other parts of the configuration.
+        type: string
 """
 
 EXAMPLES = """
+    - name: add a policy
+      fwebos_waf_http_header_security_policy:
+       action: add
+       name: HP
+
+    - name: get a policy
+      fwebos_waf_http_header_security_policy:
+       action: get
+       name: aaa
+
+    - name: delete a policy
+      fwebos_waf_http_header_security_policy:
+       action: delete
+       name: aaa
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/http-header-security'
@@ -50,7 +88,7 @@ def add_obj(module, connection):
     payload1['data'].pop('action')
 
     code, response = connection.send_request(obj_url, payload1)
-    response['sent'] = payload1['data']
+    # response['sent'] = payload1['data']
     return code, response
 
 def delete_obj(module, connection):
@@ -116,8 +154,15 @@ def main():
 
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True

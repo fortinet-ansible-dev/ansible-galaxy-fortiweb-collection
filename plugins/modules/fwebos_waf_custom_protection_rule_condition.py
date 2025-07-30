@@ -22,13 +22,72 @@ DOCUMENTATION = """
 ---
 module: fwebos_waf_custom_protection_rule_condition
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb Custom Policy Custom Rule conditions
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    threshold:
+        description:
+            - threshold for match targets, range 0-16777216
+        type: str
+    case_sensitive:
+        description:
+            - case sensitive
+        type: str
+    request_target:
+        description:
+            - match targets in request direction
+        type: str
+        choices:
+            - 'REQUEST_FILENAME'
+            - 'REQUEST_URI'
+            - 'REQUEST_HEADERS_NAMES'
+            - 'REQUEST_HEADERS'
+            - 'REQUEST_COOKIES_NAMES'
+            - 'REQUEST_COOKIES'
+            - 'ARGS_NAMES'
+            - 'ARGS_VALUE'
+            - 'REQUEST_RAW_URI'
+            - 'REQUEST_BODY'
+            - 'CONTENT_LENGTH'
+            - 'HEADER_LENGTH'
+            - 'BODY_LENGTH'
+            - 'COOKIE_NUMBER'
+            - 'ARGS_NUMBER'
+            - 'HTTP_METHOD'
+            - 'REQUEST_RAW_BODY'
 """
 
 EXAMPLES = """
+     - name: Create
+       fwebos_waf_custom_protection_rule_condition:
+        action: add
+        table_name: test4
+        operator: RE
+        expression: test_exp
+        request_target: "REQUEST_RAW_BODY"
+        vdom: root
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/custom-protection-rule/meet-condition'
@@ -155,8 +214,15 @@ def main():
     result = {}
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

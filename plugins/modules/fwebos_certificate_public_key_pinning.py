@@ -22,13 +22,95 @@ DOCUMENTATION = """
 ---
 module: fwebos_certificate_public_key_pinning
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb server objects Public Key Pinning
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - hpkp name
+        type: string
+    pin-sha256:
+        description:
+            - base64 encoded SPKI fingerprint
+        type: string
+    max-age:
+        description:
+            - max age(0 - 31536000 seconds) (range: 0-31536000)
+        type: integer
+    subdomains:
+        description:
+            - include subdomains
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    report-uri:
+        description:
+            - report URI
+        type: string
+    report-only:
+        description:
+            - report only mode
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
 """
 
 EXAMPLES = """
+     - name: Create certificate public key pinning
+       fwebos_certificate_public_key_pinning:
+        action: add
+        vdom: root1
+        name: aaa
+        pin_sha256: 111 aaa
+        max_age: 1296000
+        subdomains: disable
+        subdomains_val: 0
+        report_uri: aaa.com
+        report_only: enable
+        report_only_val: 1
+
+     - name: edit certificate public key pining
+       fwebos_certificate_public_key_pinning:
+        action: edit
+        vdom: root1
+        name: aaa
+        pin_sha256: 111 aaa
+        max_age: 1296011
+        subdomains: disable
+        subdomains_val: 0
+        report_uri: aaa.com
+        report_only: enable
+        report_only_val: 1
+
+     - name: delete certificate public key pinning
+       fwebos_certificate_public_key_pinning:
+        action: delete
+        vdom: root1
+        name: aaa
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/system/certificate.hpkp'
@@ -144,8 +226,15 @@ def main():
     result = {}
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True

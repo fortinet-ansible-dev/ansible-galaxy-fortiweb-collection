@@ -22,13 +22,42 @@ DOCUMENTATION = """
 ---
 module: fwebos_hsm_server_download
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Download HSM Server Certificate
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - name
+        type: string
 """
 
 EXAMPLES = """
+     - name: download hsm server cert
+       fwebos_hsm_server_download:
+        action: get
+        filename: /tmp/hsm_server.pem
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/system/config.hsmdownload'

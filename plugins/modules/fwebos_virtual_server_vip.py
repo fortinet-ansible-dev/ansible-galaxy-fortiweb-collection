@@ -19,15 +19,68 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 
 DOCUMENTATION = """
+---
 module: fwebos_virtual_server_vip
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Assign FortiWeb virtual IP with virtual server
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    status:
+        description:
+            - status:enable/disable
+        type: str
+    use_interface_ip:
+        description:
+            - enable/disable
+        type: str
 """
 
 EXAMPLES = """
+     - name: Create
+       fwebos_virtual_server_vip:
+        action: add
+        table_name: test4
+        vip: test
+        status: disable
+        vdom: root
+
+     - name: edit
+       fwebos_virtual_server_vip:
+        action: edit
+        table_name: test4
+        vip: test
+        status: enable
+        name: 1
+        vdom: root
+
+     - name: delete
+       fwebos_virtual_server_vip:
+        action: delete
+        table_name: test4
+        name: 1
+        vdom: root
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/server-policy/vserver/vip-list'
@@ -149,8 +202,15 @@ def main():
 
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

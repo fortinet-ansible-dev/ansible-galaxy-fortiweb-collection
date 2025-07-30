@@ -22,13 +22,118 @@ DOCUMENTATION = """
 ---
 module: fwebos_admin
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Configure FortiWeb admin
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - admin user name
+        type: string
+    last-name:
+        description:
+            - last name
+        type: string
+    first-name:
+        description:
+            - first name
+        type: string
+    email-address:
+        description:
+            - email address
+        type: string
+    phone-number:
+        description:
+            - phone number
+        type: string
+    mobile-number:
+        description:
+            - mobile number
+        type: string
+    type:
+        description:
+            - admin user auth type
+        type: string
+        choices:
+            - 'local-user'
+            - 'remote-user'
+    password:
+        description:
+            - admin user password
+        type: string
+    wildcard:
+        description:
+            - enable/disable
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    accprofile-override:
+        description:
+            - allow access profile to be overridden from remote auth server
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    force-password-change:
+        description:
+            - enable/disable force password change on next login.
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
 """
 
 EXAMPLES = """
+     - name: Create admin
+       fwebos_admin:
+        action: add
+        name: test1
+        access_profile: admin_no_access
+        trusthostv4: 0.0.0.0/0
+        trusthostv6: ::/0
+        domains: root
+        type: local-user
+        admin_usergrp:
+        force_password_change: disable
+        password: 11111111
+
+     - name: edit admin
+       fwebos_admin:
+        action: edit
+        name: test1
+        access_profile: admin_no_access
+        trusthostv4: 0.0.0.0/0
+        trusthostv6: ::/0
+        domains: root1
+        type: remote-user
+        admin_usergrp: test
+
+     - name: delete admin
+       fwebos_admin:
+        action: delete
+        name: test1
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/system/admin'

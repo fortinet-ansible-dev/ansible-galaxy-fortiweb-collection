@@ -21,18 +21,175 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_snmp_community
-short_description: Configure FortiWeb function by RESTful API
 description:
-  - Manage function on FortiWeb devices including creating, updating, removing function objects,
-    All operations are performed RESTful API.
-version_added: "2.8"
-author: "Ansible by Red Hat (@rcarrillocruz)"
+  - Config FortiWeb SNMP v1/v2c Community
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - community name
+        type: string
+    status:
+        description:
+            - enable/disable
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    query-v1-status:
+        description:
+            - enable/disable snmp v1 query
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    query-v1-port:
+        description:
+            - snmp v1 query port (range: 1-65535)
+        type: integer
+    query-v2c-status:
+        description:
+            - enable/disable snmp v2c query
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    query-v2c-port:
+        description:
+            - snmp v2c query port (range: 1-65535)
+        type: integer
+    trap-v1-status:
+        description:
+            - enable/disable snmp v1 trap
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    trap-v1-lport:
+        description:
+            - snmp v1 trap local port (range: 1-65535)
+        type: integer
+    trap-v1-rport:
+        description:
+            - snmp v1 trap remote port (range: 1-65535)
+        type: integer
+    trap-v2c-status:
+        description:
+            - enable/disable snmp v2c trap
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    trap-v2c-lport:
+        description:
+            - snmp v2c trap local port (range: 1-65535)
+        type: integer
+    trap-v2c-rport:
+        description:
+            - snmp v2c trap remote port (range: 1-65535)
+        type: integer
+    events:
+        description:
+            - SNMP Traps
+        type: string
+        choices:
+            - 'cpu-high'
+            - 'mem-low'
+            - 'log-full'
+            - 'intf-ip'
+            - 'sys-mode-change'
+            - 'policy-start'
+            - 'policy-stop'
+            - 'pserver-failed'
+            - 'sys-ha-cluster-status-change'
+            - 'sys-ha-member-join'
+            - 'sys-ha-member-leave'
+            - 'waf-amethod-attack'
+            - 'waf-signature-detection'
+            - 'waf-url-access-attack'
+            - 'waf-pvalid-attack'
+            - 'waf-hidden-fields'
+            - 'netlink-up-status'
+            - 'netlink-down-status'
+            - 'power-supply-failure'
+            - 'policy-ldap-auth-failure'
+            - 'policy-radius-auth-failure'
 """
 
 EXAMPLES = """
+     - name: Create snmp community
+       fwebos_snmp_community:
+        action: add
+        id: 3
+        name: 166
+        status: enable
+        status_val: 1
+        sz_hosts: -1
+        query_v1_status: enable
+        query_vl_status_val: 1
+        query_vl_port: 163
+        query_v2c_status: enable
+        query_v2c_status_val: 1
+        query_v2c_port: 163
+        trap_v1_status: enable
+        trap_v1_status_val: 1
+        trap_v1_lport: 169
+        trap_v1_rport: 169
+        trap_v2c_status: enable
+        trap_v2c_status_val: 1
+        trap_v2c_lport: 162
+        trap_v2c_rport: 162
+        events: cpu-high mem-low
+        events_val: 0
+
+     - name: edit snmp community
+       fwebos_snmp_community:
+        action: edit
+        id: 3
+        name: 166
+        status: enable
+        status_val: 1
+        sz_hosts: -1
+        query_v1_status: enable
+        query_vl_status_val: 1
+        query_vl_port: 163
+        query_v2c_status: enable
+        query_v2c_status_val: 1
+        query_v2c_port: 163
+        trap_v1_status: enable
+        trap_v1_status_val: 1
+        trap_v1_lport: 189
+        trap_v1_rport: 189
+        trap_v2c_status: enable
+
+     - name: delete snmp community
+       fwebos_snmp_community:
+        action: delete
+        id: 3
+        name: 166
+        trap_v2c_status_val: 1
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/system/snmp.community'

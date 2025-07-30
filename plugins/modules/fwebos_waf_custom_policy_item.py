@@ -20,15 +20,63 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 DOCUMENTATION = """
 ---
-module: fwebos_ntp
+module: fwebos_waf_custom_policy_item
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb Advanced Protection Custom Policy Items
+version_added: "7.0.0"
+authors:
+  - Joseph Chen
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - The name of custom policy.
+        type: string
 """
 
 EXAMPLES = """
+    - name: add a rule
+      fwebos_waf_custom_policy_item:
+       action: add
+       name: cp1
+       rule_name: Vulnerability-Scanning
+
+    - name: edit a rule
+      fwebos_waf_custom_policy_item:
+       action: edit
+       name: cp1
+       id: 1
+       rule_name: "Brute-Force-Login - Alert Only"
+
+    - name: get a rule
+      fwebos_waf_custom_policy_item:
+       action: get
+       name: cp1
+       id: 1
+
+    - name: delete a rule
+      fwebos_waf_custom_policy_item:
+       action: delete
+       name: cp1
+       id: 1
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/custom-access.policy/rule'
@@ -53,7 +101,7 @@ def add_obj(module, connection):
     replace_key(payload1['data'], rep_dict)
     payload1['data'].pop('action')
     code, response = connection.send_request(url, payload1)
-    response['sent'] = payload1['data']
+    # # response['sent'] = payload1['data']
     return code, response
 
 def delete_obj(module, connection):
@@ -134,8 +182,15 @@ def main():
 
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True

@@ -22,13 +22,57 @@ DOCUMENTATION = """
 ---
 module: fwebos_backup_download
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Download FortiWeb config file
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    password:
+        description:
+            - password
+        type: string
 """
 
 EXAMPLES = """
+     - name: download cli configuration
+       fwebos_backup_download:
+        action: get
+        type: cli
+        password: 12345678
+        filename: /tmp/config_cli.zip
+
+     - name: download entire configuration
+       fwebos_backup_download:
+        action: get
+        type: entire
+        ml_backup: true
+        filename: /tmp/config_entire.zip
+
+     - name: download other configuration
+       fwebos_backup_download:
+        action: get
+        type: other
+        filename: /tmp/config_other.zip
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/system/maintenance.backupconfiguration'

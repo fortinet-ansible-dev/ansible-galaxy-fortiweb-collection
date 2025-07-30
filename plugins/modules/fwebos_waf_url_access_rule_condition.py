@@ -19,15 +19,62 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 
 DOCUMENTATION = """
+---
 module: fwebos_waf_url_access_rule_condition
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb Web Protection URL Access rules conditions
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    sip_address_check:
+        description:
+            - sip address check
+        type: str
+    sdomain_type:
+        description:
+            - sdomain type
+        type: str
+        choices:
+            - 'ipv4'
+            - 'ipv6'
+    source_domain_type:
+        description:
+            - source domain type
+        type: str
+        choices:
+            - 'simple-string'
+            - 'regex-expression'
 """
 
 EXAMPLES = """
+     - name: Create
+       fwebos_waf_url_access_rule_condition:
+        action: add
+        table_name: test4
+        url_type: simple-string
+        reg_exp: /999
+        vdom: root
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/url-access.url-access-rule/match-condition'
@@ -201,8 +248,15 @@ def main():
 
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

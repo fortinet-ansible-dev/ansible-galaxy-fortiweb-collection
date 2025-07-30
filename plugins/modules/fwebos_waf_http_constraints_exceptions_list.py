@@ -19,15 +19,221 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 
 DOCUMENTATION = """
+---
 module: fwebos_waf_http_constraints_exceptions_list
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb Web Protection HTTP Constraints exceptions rules
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
 """
 
 EXAMPLES = """
+     - name: delete
+       fwebos_waf_http_constraints_exceptions_list:
+        action: delete
+        table_name: test4
+        name: 1
+        vdom: root
+
+     - name: Create
+       fwebos_waf_http_constraints_exceptions_list:
+        action: add
+        table_name: test4
+        vdom: root
+        max_http_body_parameter_length_val: 0
+        url_param_name_check: disable
+        number_of_ranges_in_range_header_val: 0
+        Post_request_ctype_check: disable
+        Illegal_host_name_check: disable
+        max_http_content_length: disable
+        max_http_body_length_val: 0
+        web_socket_protocol_check_val: 0
+        Illegal_host_name_check_val: 0
+        Illegal_http_request_method_check: disable
+        source_ip_status: enable
+        http2_max_requests: disable
+        max_http_body_parameter_length: disable
+        max_url_parameter_val: 0
+        block_malformed_request_val: 0
+        max_http_request_length: disable
+        number_of_ranges_in_range_header: disable
+        id: 0
+        redundant_header_check: disable
+        max_url_parameter_length_val: 0
+        Illegal_content_type_check_val: 0
+        max_url_param_name_len_val: 0
+        Illegal_content_length_check: disable
+        max_http_header_length: disable
+        Illegal_byte_in_url_check_val: 0
+        Internal_resource_limits_check_val: 0
+        source_ip: 2.2.2.2
+        max_http_request_length_val: 0
+        url_param_name_check_val: 0
+        rpc_protocol_check: disable
+        duplicate_paramname_check_val: 0
+        max_http_body_length: disable
+        web_socket_protocol_check: disable
+        parameter_name_check: disable
+        max_url_parameter_length: disable
+        Illegal_header_name_check: disable
+        url_param_value_check: disable
+        duplicate_paramname_check: disable
+        parameter_name_check_val: 0
+        source_ip_status_val: 0
+        http2_max_requests_val: 0
+        Illegal_content_length_check_val: 0
+        request_type: plain
+        max_url_param_name_len: disable
+        max_url_param_value_len_val: 0
+        max_header_line_request_val: 0
+        odd_and_even_space_attack_check_val: 0
+        parameter_value_check_val: 0
+        max_http_header_value_length: disable
+        max_url_parameter: disable
+        host: 1.1.1.1
+        max_http_header_name_length: disable
+        odd_and_even_space_attack_check: disable
+        max_http_content_length_val: 0
+        request_type_val: 0
+        Illegal_http_request_method_check_val: 0
+        max_cookie_in_request_val: 0
+        rpc_protocol_check_val: 0
+        Illegal_header_value_check: disable
+        parameter_value_check: disable
+        max_header_line_request: disable
+        max_http_header_value_length_val: 0
+        q_type: 0
+        null_byte_in_url_check: disable
+        host_status: enable
+        max_http_header_length_val: 0
+        null_byte_in_url_check_val: 0
+        block_malformed_request: disable
+        Internal_resource_limits_check: disable
+        request_file: /test_string
+        redundant_header_check_val: 0
+        Illegal_header_name_check_val: 0
+        url_param_value_check_val: 0
+        max_http_header_name_length_val: 0
+        Post_request_ctype_check_val: 0
+        host_status_val: 0
+        max_http_request_filename_length: disable
+        Illegal_header_value_check_val: 0
+        max_url_param_value_len: disable
+        max_http_request_filename_length_val: 0
+        Illegal_content_type_check: disable
+        max_cookie_in_request: disable
+        Illegal_byte_in_url_check: disable
+
+     - name: edit
+       fwebos_waf_http_constraints_exceptions_list:
+        action: edit
+        table_name: test4
+        name: 1
+        vdom: root
+        max_http_body_parameter_length_val: 0
+        url_param_name_check: disable
+        number_of_ranges_in_range_header_val: 0
+        Post_request_ctype_check: disable
+        Illegal_host_name_check: disable
+        max_http_content_length: disable
+        max_http_body_length_val: 0
+        web_socket_protocol_check_val: 0
+        Illegal_host_name_check_val: 0
+        Illegal_http_request_method_check: disable
+        source_ip_status: enable
+        http2_max_requests: disable
+        max_http_body_parameter_length: disable
+        max_url_parameter_val: 0
+        block_malformed_request_val: 0
+        max_http_request_length: disable
+        number_of_ranges_in_range_header: disable
+        id: 0
+        redundant_header_check: disable
+        max_url_parameter_length_val: 0
+        Illegal_content_type_check_val: 0
+        max_url_param_name_len_val: 0
+        Illegal_content_length_check: disable
+        max_http_header_length: disable
+        Illegal_byte_in_url_check_val: 0
+        Internal_resource_limits_check_val: 0
+        source_ip: 2.2.2.2
+        max_http_request_length_val: 0
+        url_param_name_check_val: 0
+        rpc_protocol_check: disable
+        duplicate_paramname_check_val: 0
+        max_http_body_length: disable
+        web_socket_protocol_check: disable
+        parameter_name_check: disable
+        max_url_parameter_length: disable
+        Illegal_header_name_check: disable
+        url_param_value_check: disable
+        duplicate_paramname_check: disable
+        parameter_name_check_val: 0
+        source_ip_status_val: 0
+        http2_max_requests_val: 0
+        Illegal_content_length_check_val: 0
+        request_type: plain
+        max_url_param_name_len: disable
+        max_url_param_value_len_val: 0
+        max_header_line_request_val: 0
+        odd_and_even_space_attack_check_val: 0
+        parameter_value_check_val: 0
+        max_http_header_value_length: disable
+        max_url_parameter: disable
+        host: 1.1.1.1
+        max_http_header_name_length: disable
+        odd_and_even_space_attack_check: disable
+        max_http_content_length_val: 0
+        request_type_val: 0
+        Illegal_http_request_method_check_val: 0
+        max_cookie_in_request_val: 0
+        rpc_protocol_check_val: 0
+        Illegal_header_value_check: disable
+        parameter_value_check: disable
+        max_header_line_request: disable
+        max_http_header_value_length_val: 0
+        q_type: 0
+        null_byte_in_url_check: disable
+        host_status: enable
+        max_http_header_length_val: 0
+        null_byte_in_url_check_val: 0
+        block_malformed_request: disable
+        Internal_resource_limits_check: disable
+        request_file: /test_string
+        redundant_header_check_val: 0
+        Illegal_header_name_check_val: 0
+        url_param_value_check_val: 0
+        max_http_header_name_length_val: 0
+        Post_request_ctype_check_val: 0
+        host_status_val: 0
+        max_http_request_filename_length: disable
+        Illegal_header_value_check_val: 0
+        max_url_param_value_len: disable
+        max_http_request_filename_length_val: 0
+        Illegal_content_type_check: disable
+        max_cookie_in_request: disable
+        Illegal_byte_in_url_check: disable
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/http-constraints-exceptions/http_constraints-exception-list'
@@ -303,8 +509,15 @@ def main():
 
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

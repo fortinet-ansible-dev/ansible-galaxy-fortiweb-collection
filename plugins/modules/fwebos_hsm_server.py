@@ -24,13 +24,52 @@ DOCUMENTATION = """
 ---
 module: fwebos_hsm_server
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb HSM Server info
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    sizeof(crtfile:
+        description:
+            - sizeof(crtfile
+        type: string
 """
 
 EXAMPLES = """
+     - name: Add HSM server
+       fwebos_hsm_server:
+        action: add
+        name: test4
+        ip: 172.30.30.13
+        timeout: 20000
+        vdom: root
+        srcfile: hsm7-server.pem
+
+     - name: Delete HSM server
+       fwebos_hsm_server:
+        action: delete
+        vdom: root
+        name: test
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/system/config.hsmregister'
@@ -141,8 +180,15 @@ def main():
     result = {}
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

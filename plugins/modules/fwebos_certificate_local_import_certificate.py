@@ -23,13 +23,90 @@ DOCUMENTATION = """
 ---
 module: fwebos_certificate_local_import_certificate
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Upload local certificates to FortiWeb
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    certificateFile:
+        description:
+            - certificateFile
+        type: string
+    512:
+        description:
+            - 512
+        type: string
+    certificateWithKeyFile:
+        description:
+            - certificateWithKeyFile
+        type: string
+    keyFile:
+        description:
+            - keyFile
+        type: string
+    hsmSlot:
+        description:
+            - hsmSlot
+        type: string
 """
 
 EXAMPLES = """
+     - name: Upload pkcs12 certificate
+       fwebos_certificate_local_import_certificate:
+        action: add
+        vdom: root
+        type: PKCS12Certificate
+        certificateWithKeyFile: ca.p12
+        password: 12345678
+
+     - name:  Delete certificate
+       fwebos_certificate_local_import_certificate:
+        action: delete
+        vdom: root
+        name: ca
+
+     - name: Upload certificate
+       fwebos_certificate_local_import_certificate:
+        action: add
+        vdom: root
+        type: certificate
+        certificateFile: ca.crt
+        keyFile: ca.key
+        hsm: undefined
+        password: 12345678
+
+     - name:  Delete certificate
+       fwebos_certificate_local_import_certificate:
+        action: delete
+        vdom: root
+        name: ca
+
+     - name: Upload local certificate
+       fwebos_certificate_local_import_certificate:
+        action: add
+        vdom: root
+        type: localCertificate
+        certificateFile: cert.cer
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 add_url = '/api/v2.0/system/certificate.local.import_certificate'
@@ -193,8 +270,15 @@ def main():
     result = {}
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

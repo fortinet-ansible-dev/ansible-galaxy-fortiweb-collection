@@ -19,15 +19,729 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 
 DOCUMENTATION = """
+---
 module: fwebos_waf_syntax
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb Web Protection SQL/XSS Syntax Based Detetction
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - name
+        type: string
+    detection-target-sql:
+        description:
+            - detection targets during SQL injection detection
+        type: string
+        choices:
+            - 'ARGS_NAMES'
+            - 'ARGS_VALUE'
+            - 'REQUEST_COOKIES'
+            - 'REQUEST_USER_AGENT'
+            - 'REQUEST_REFERER'
+            - 'OTHER_REQUEST_HEADERS'
+    detection-target-xss:
+        description:
+            - detection targets during XSS injection detection
+        type: string
+        choices:
+            - 'ARGS_NAMES'
+            - 'ARGS_VALUE'
+            - 'REQUEST_COOKIES'
+            - 'REQUEST_USER_AGENT'
+            - 'REQUEST_REFERER'
+            - 'OTHER_REQUEST_HEADERS'
+    sql-detection-template:
+        description:
+            - SQL injection detection template
+        type: string
+        choices:
+            - 'SINGLE_QUOTE'
+            - 'DOUBLE_QUOTE'
+            - 'AS_IS'
+    xss-html-tag-based-status:
+        description:
+            - status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    xss-html-tag-based-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'redirect'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'send_http_response'
+            - 'client-id-block-period'
+    xss-html-tag-based-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    xss-html-tag-based-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    xss-html-tag-based-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'informational'
+            - 'low'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+            - 'critical'
+    xss-html-tag-based-check-level:
+        description:
+            - check level
+        type: string
+        choices:
+            - 'strict'
+            - 'moderate'
+    xss-html-attribute-based-status:
+        description:
+            - status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    xss-html-attribute-based-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'redirect'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'send_http_response'
+            - 'client-id-block-period'
+    xss-html-attribute-based-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    xss-html-attribute-based-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    xss-html-attribute-based-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'informational'
+            - 'low'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+            - 'critical'
+    xss-html-css-based-status:
+        description:
+            - status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    xss-html-css-based-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'redirect'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'send_http_response'
+            - 'client-id-block-period'
+    xss-html-css-based-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    xss-html-css-based-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    xss-html-css-based-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'informational'
+            - 'low'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+            - 'critical'
+    xss-javascript-function-based-status:
+        description:
+            - status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    xss-javascript-function-based-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'redirect'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'send_http_response'
+            - 'client-id-block-period'
+    xss-javascript-function-based-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    xss-javascript-function-based-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    xss-javascript-function-based-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'informational'
+            - 'low'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+            - 'critical'
+    xss-javascript-variable-based-status:
+        description:
+            - status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    xss-javascript-variable-based-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'redirect'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'send_http_response'
+            - 'client-id-block-period'
+    xss-javascript-variable-based-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    xss-javascript-variable-based-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    xss-javascript-variable-based-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'informational'
+            - 'low'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+            - 'critical'
+    sql-stacked-queries-status:
+        description:
+            - status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    sql-stacked-queries-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'redirect'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'send_http_response'
+            - 'client-id-block-period'
+    sql-stacked-queries-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    sql-stacked-queries-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    sql-stacked-queries-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'informational'
+            - 'low'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+            - 'critical'
+    sql-embeded-queries-status:
+        description:
+            - status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    sql-embeded-queries-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'redirect'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'send_http_response'
+            - 'client-id-block-period'
+    sql-embeded-queries-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    sql-embeded-queries-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    sql-embeded-queries-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'informational'
+            - 'low'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+            - 'critical'
+    sql-condition-based-status:
+        description:
+            - status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    sql-condition-based-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'redirect'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'send_http_response'
+            - 'client-id-block-period'
+    sql-condition-based-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    sql-condition-based-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    sql-condition-based-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'informational'
+            - 'low'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+            - 'critical'
+    sql-arithmetic-operation-status:
+        description:
+            - status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    sql-arithmetic-operation-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'redirect'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'send_http_response'
+            - 'client-id-block-period'
+    sql-arithmetic-operation-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    sql-arithmetic-operation-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    sql-arithmetic-operation-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'informational'
+            - 'low'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+            - 'critical'
+    sql-line-comments-status:
+        description:
+            - status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    sql-line-comments-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'redirect'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'send_http_response'
+            - 'client-id-block-period'
+    sql-line-comments-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    sql-line-comments-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    sql-line-comments-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'informational'
+            - 'low'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+            - 'critical'
+    sql-function-based-status:
+        description:
+            - status
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    sql-function-based-action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'redirect'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'send_http_response'
+            - 'client-id-block-period'
+    sql-function-based-block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    sql-function-based-severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    sql-function-based-threat-weight:
+        description:
+            - threat weight
+        type: string
+        choices:
+            - 'informational'
+            - 'low'
+            - 'moderate'
+            - 'substantial'
+            - 'severe'
+            - 'critical'
 """
 
 EXAMPLES = """
+     - name: delete certificate hpkp
+       fwebos_waf_syntax:
+        action: delete
+        name: 123
+
+     - name: Create certificate hpkp
+       fwebos_waf_syntax:
+        action: add
+        sql_arithmetic_operation_block_period: 600
+        sql_stacked_queries_threat_weight: severe
+        sql_embeded_queries_block_period: 600
+        sql_arithmetic_operation_status: enable
+        sql_condition_based_severity: High
+        xss_html_attribute_based_block_period: 600
+        xss_html_tag_based_trigger: ""
+        sql_condition_based_threat_weight_value: 4
+        sql_function_based_severity: High
+        xss_javascript_function_based_block_period: 600
+        xss_html_attribute_based_threat_weight_value: 4
+        xss_html_attribute_based_threat_weight: severe
+        sql_embeded_queries_trigger: ""
+        sql_line_comments_status: enable
+        xss_javascript_variable_based_trigger:
+        sql_line_comments_threat_weight_value: 4
+        xss_html_tag_based_block_period: 600
+        sql_arithmetic_operation_severity: High
+        sql_embeded_queries_status: enable
+        sql_condition_based_threat_weight: severe
+        xss_html_attribute_based_severity: High
+        sql_condition_based_status: enable
+        sql_stacked_queries_trigger: ""
+        xss_html_css_based_status: enable
+        xss_javascript_variable_based_block_period: 600
+        xss_html_attribute_based_action: alert_deny
+        detection_target_sql: ARGS_NAMES ARGS_VALUE REQUEST_COOKIES
+        sql_stacked_queries_threat_weight_value: 4
+        sql_embeded_queries_threat_weight: severe
+        sql_stacked_queries_status: enable
+        sql_function_based_threat_weight: severe
+        xss_javascript_variable_based_threat_weight: severe
+        sz_exception_element_list: 0
+        xss_html_tag_based_threat_weight: severe
+        sql_stacked_queries_action: alert_deny
+        xss_javascript_variable_based_threat_weight_value: 4
+        sql_arithmetic_operation_action: alert_deny
+        sql_condition_based_block_period: 600
+        sql_function_based_status: enable
+        sql_embeded_queries_severity: High
+        sql_embeded_queries_action: alert_deny
+        sql_arithmetic_operation_trigger:
+        xss_html_tag_based_action: alert_deny
+        xss_html_tag_based_status: enable
+        sql_stacked_queries_severity: High
+        sql_arithmetic_operation_threat_weight_value: 4
+        sql_function_based_threat_weight_value: 4
+        xss_html_css_based_trigger: ""
+        xss_html_tag_based_severity: High
+        xss_javascript_function_based_severity: High
+        sql_function_based_trigger: ""
+        sql_line_comments_trigger: ""
+        xss_html_css_based_block_period: 600
+        xss_javascript_variable_based_action: alert_deny
+        xss_javascript_function_based_threat_weight_value: 4
+        xss_javascript_function_based_status: enable
+        detection_target_xss: ARGS_NAMES ARGS_VALUE REQUEST_COOKIES
+        xss_javascript_function_based_threat_weight: severe
+        sql_embeded_queries_threat_weight_value: 4
+        xss_javascript_variable_based_status: enable
+        xss_javascript_function_based_trigger:
+        xss_html_css_based_threat_weight: severe
+        sql_condition_based_action: alert_deny
+        xss_javascript_variable_based_severity: High
+        sql_stacked_queries_block_period: 600
+        sql_line_comments_action: alert_deny
+        xss_html_tag_based_check_level: strict
+        name: test4
+        xss_html_tag_based_threat_weight_value: 4
+        sql_arithmetic_operation_threat_weight: severe
+        xss_html_css_based_severity: High
+        sql_function_based_block_period: 600
+        xss_html_css_based_action: alert_deny
+        sql_line_comments_threat_weight: severe
+        sql_function_based_action: alert_deny
+        xss_javascript_function_based_action: alert_deny
+        sql_line_comments_block_period: 600
+        sql_condition_based_trigger: ""
+        xss_html_attribute_based_status: enable
+        sql_line_comments_severity: High
+        xss_html_css_based_threat_weight_value: 4
+        xss_html_attribute_based_trigger: ""
+        vdom: root
+
+     - name: edit certificate hpkp
+       fwebos_waf_syntax:
+        action: edit
+        sql_arithmetic_operation_block_period: 600
+        sql_stacked_queries_threat_weight: severe
+        sql_embeded_queries_block_period: 600
+        sql_arithmetic_operation_status: enable
+        sql_condition_based_severity: High
+        xss_html_attribute_based_block_period: 600
+        xss_html_tag_based_trigger:
+        sql_condition_based_threat_weight_value: 4
+        sql_function_based_severity: High
+        xss_javascript_function_based_block_period: 600
+        xss_html_attribute_based_threat_weight_value: 4
+        xss_html_attribute_based_threat_weight: severe
+        sql_embeded_queries_trigger:
+        sql_line_comments_status: enable
+        xss_javascript_variable_based_trigger:
+        sql_line_comments_threat_weight_value: 4
+        xss_html_tag_based_block_period: 600
+        sql_arithmetic_operation_severity: High
+        sql_embeded_queries_status: enable
+        sql_condition_based_threat_weight: severe
+        xss_html_attribute_based_severity: High
+        sql_condition_based_status: enable
+        sql_stacked_queries_trigger:
+        xss_html_css_based_status: enable
+        xss_javascript_variable_based_block_period: 600
+        xss_html_attribute_based_action: alert_deny
+        detection_target_sql: ARGS_NAMES ARGS_VALUE REQUEST_COOKIES
+        sql_stacked_queries_threat_weight_value: 4
+        sql_embeded_queries_threat_weight: severe
+        sql_stacked_queries_status: enable
+        sql_function_based_threat_weight: severe
+        xss_javascript_variable_based_threat_weight: severe
+        sz_exception_element_list: 0
+        xss_html_tag_based_threat_weight: severe
+        sql_stacked_queries_action: alert_deny
+        xss_javascript_variable_based_threat_weight_value: 4
+        sql_arithmetic_operation_action: alert_deny
+        sql_condition_based_block_period: 600
+        sql_function_based_status: enable
+        sql_embeded_queries_severity: High
+        sql_embeded_queries_action: alert_deny
+        sql_arithmetic_operation_trigger:
+        xss_html_tag_based_action: alert_deny
+        xss_html_tag_based_status: enable
+        sql_stacked_queries_severity: High
+        sql_arithmetic_operation_threat_weight_value: 4
+        sql_function_based_threat_weight_value: 4
+        xss_html_css_based_trigger:
+        xss_html_tag_based_severity: High
+        xss_javascript_function_based_severity: High
+        sql_function_based_trigger:
+        sql_line_comments_trigger:
+        xss_html_css_based_block_period: 600
+        xss_javascript_variable_based_action: alert_deny
+        xss_javascript_function_based_threat_weight_value: 4
+        xss_javascript_function_based_status: enable
+        detection_target_xss: ARGS_NAMES ARGS_VALUE REQUEST_COOKIES
+        xss_javascript_function_based_threat_weight: severe
+        sql_embeded_queries_threat_weight_value: 4
+        xss_javascript_variable_based_status: enable
+        xss_javascript_function_based_trigger:
+        xss_html_css_based_threat_weight: severe
+        sql_condition_based_action: alert_deny
+        xss_javascript_variable_based_severity: High
+        sql_stacked_queries_block_period: 600
+        sql_line_comments_action: alert_deny
+        xss_html_tag_based_check_level: strict
+        name: test4
+        xss_html_tag_based_threat_weight_value: 4
+        sql_arithmetic_operation_threat_weight: severe
+        xss_html_css_based_severity: High
+        sql_function_based_block_period: 600
+        xss_html_css_based_action: alert_deny
+        sql_line_comments_threat_weight: severe
+        sql_function_based_action: alert_deny
+        xss_javascript_function_based_action: alert_deny
+        sql_line_comments_block_period: 600
+        sql_condition_based_trigger:
+        xss_html_attribute_based_status: enable
+        sql_line_comments_severity: High
+        xss_html_css_based_threat_weight_value: 4
+        xss_html_attribute_based_trigger:
+        vdom: root
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/syntax-based-attack-detection'
@@ -295,8 +1009,15 @@ def main():
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

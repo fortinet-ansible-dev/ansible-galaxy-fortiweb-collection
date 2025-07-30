@@ -23,13 +23,58 @@ DOCUMENTATION = """
 ---
 module: fwebos_certificate_intermediate_ca
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb server objects Intermediate CA
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    uploadedFile:
+        description:
+            - uploadedFile
+        type: string
 """
 
 EXAMPLES = """
+     - name: Upload intermediate ca
+       fwebos_certificate_intermediate_ca:
+        action: add
+        vdom: root1
+        type: localPC
+        uploadedFile: ca.crt
+
+     - name: delete intermediate ca
+       fwebos_certificate_intermediate_ca:
+        action: delete
+        vdom: root1
+        name: Inter_Cert_1
+
+     - name: Create intermediate ca
+       fwebos_certificate_intermediate_ca:
+        action: add
+        vdom: root1
+        type: scep
+        url: https://www.aaa.com
+        identifier: test
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/system/certificate.intermediateca'
@@ -163,8 +208,15 @@ def main():
     result = {}
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

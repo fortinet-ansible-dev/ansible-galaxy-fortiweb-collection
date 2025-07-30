@@ -19,15 +19,142 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 
 DOCUMENTATION = """
+---
 module: fwebos_server_pool_rule
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb server objects Server Pool member
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    http2_ssl_custom_cipher:
+        description:
+            - SSL custom cipher-suite
+        type: str
 """
 
 EXAMPLES = """
+     - name: delete
+       fwebos_server_pool_rule:
+        action: delete
+        table_name: test4
+        name: 1
+        vdom: root
+
+     - name: Create
+       fwebos_server_pool_rule:
+        action: add
+        table_name: test4
+        vdom: root
+        http2_ssl_custom_cipher: ECDHE-ECDSA-AES256-GCM-SHA384 DHE-DSS-AES128-GCM-SHA256 DHE-RSA-AES128-GCM-SHA256 ECDHE-RSA-AES256-GCM-SHA384
+        weight: 1
+        ip: 2.2.2.2
+        hsts_max_age: 15552000
+        tls13_custom_cipher: TLS_AES_256_GCM_SHA384
+        server_type: physical
+        proxy_protocol_version: v1
+        sni_strict: disable
+        recover: 0
+        port: 80
+        ssl_cipher: medium
+        conn_limit: 0
+        client_certificate_forwarding_cert_header: X-Client-Cert
+        multi_certificate: disable
+        hsts_header: disable
+        tls_v12: enable
+        tls_v13: disable
+        tls_v10: enable
+        tls_v11: enable
+        proxy_protocol: disable
+        client_certificate_proxy: disable
+        server_side_sni: disable
+        ssl_custom_cipher: ECDHE-ECDSA-AES256-GCM-SHA384 ECDHE-RSA-AES256-GCM-SHA384 ECDHE-ECDSA-CHACHA20-POLY1305 ECDHE-RSA-CHACHA20-POLY1305 ECDHE-ECDSA-AES128-GCM-SHA256 ECDHE-RSA-AES128-GCM-SHA256 ECDHE-ECDSA-AES256-SHA384 ECDHE-RSA-AES256-SHA384 ECDHE-ECDSA-AES128-SHA256 ECDHE-RSA-AES128-SHA256 ECDHE-ECDSA-AES256-SHA ECDHE-RSA-AES256-SHA ECDHE-ECDSA-AES128-SHA ECDHE-RSA-AES128-SHA AES256-GCM-SHA384 AES128-GCM-SHA256 AES256-SHA256 AES128-SHA256
+        session_id_reuse: disable
+        status: enable
+        urlcert: disable
+        hsts_include_subdomains: disable
+        client_certificate_forwarding_sub_header: X-Client-DN
+        warm_rate: 10
+        server_certificate_verify_action: alert
+        sni: disable
+        warm_up: 0
+        ssl: disable
+        ssl_noreg: enable
+        health_check_inherit: enable
+        session_ticket_reuse: disable
+        backup_server: disable
+        client_certificate_forwarding: disable
+        http2: disable
+        hsts_preload: disable
+        certificate_type: disable
+
+     - name: edit
+       fwebos_server_pool_rule:
+        action: edit
+        table_name: test4
+        name: 1
+        vdom: root
+        http2_ssl_custom_cipher: ECDHE-ECDSA-AES256-GCM-SHA384 DHE-DSS-AES128-GCM-SHA256 DHE-RSA-AES128-GCM-SHA256 ECDHE-RSA-AES256-GCM-SHA384
+        weight: 1
+        ip: 2.2.2.9
+        hsts_max_age: 15552000
+        tls13_custom_cipher: TLS_AES_256_GCM_SHA384
+        server_type: physical
+        proxy_protocol_version: v1
+        sni_strict: disable
+        recover: 0
+        port: 80
+        ssl_cipher: medium
+        conn_limit: 0
+        client_certificate_forwarding_cert_header: X-Client-Cert
+        multi_certificate: disable
+        hsts_header: disable
+        tls_v12: enable
+        tls_v13: disable
+        tls_v10: enable
+        tls_v11: enable
+        proxy_protocol: disable
+        client_certificate_proxy: disable
+        server_side_sni: disable
+        ssl_custom_cipher: ECDHE-ECDSA-AES256-GCM-SHA384 ECDHE-RSA-AES256-GCM-SHA384 ECDHE-ECDSA-CHACHA20-POLY1305 ECDHE-RSA-CHACHA20-POLY1305 ECDHE-ECDSA-AES128-GCM-SHA256 ECDHE-RSA-AES128-GCM-SHA256 ECDHE-ECDSA-AES256-SHA384 ECDHE-RSA-AES256-SHA384 ECDHE-ECDSA-AES128-SHA256 ECDHE-RSA-AES128-SHA256 ECDHE-ECDSA-AES256-SHA ECDHE-RSA-AES256-SHA ECDHE-ECDSA-AES128-SHA ECDHE-RSA-AES128-SHA AES256-GCM-SHA384 AES128-GCM-SHA256 AES256-SHA256 AES128-SHA256
+        session_id_reuse: disable
+        status: enable
+        urlcert: disable
+        hsts_include_subdomains: disable
+        client_certificate_forwarding_sub_header: X-Client-DN
+        warm_rate: 10
+        server_certificate_verify_action: alert
+        sni: disable
+        warm_up: 0
+        ssl: disable
+        ssl_noreg: enable
+        health_check_inherit: enable
+        session_ticket_reuse: disable
+        backup_server: disable
+        client_certificate_forwarding: disable
+        http2: disable
+        hsts_preload: disable
+        certificate_type: disable
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/server-policy/server-pool/pserver-list'
@@ -225,8 +352,15 @@ def main():
 
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

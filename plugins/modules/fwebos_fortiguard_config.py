@@ -22,14 +22,55 @@ DOCUMENTATION = """
 ---
 module: fwebos_fortiguard_config
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb System FortiGuard info
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    oversvr:
+        description:
+            - oversvr
+        type: string
 """
 
 EXAMPLES = """
+     - name: Edit fortigurad config
+       fwebos_fortiguard_config:
+        action: edit
+        override: True
+        scheduled: True
+        isUpdating: False
+        updateControl: []
+        address: 1.1.1.1
+        scheduleType: every
+        everySelect: 2
+        dailySelect: 0
+        weeklyDaySelect: 0
+        weeklyHourSelect: 0
+        dbVersionType: 2
+        bufferSize: 5500
+        useFSD: 1
+        _id: only
+
 
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/system/config.fortiguard'

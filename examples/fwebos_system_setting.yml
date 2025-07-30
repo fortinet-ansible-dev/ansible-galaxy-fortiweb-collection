@@ -6,5 +6,8 @@
   tasks:
     - name: Manage system setting
       fwebos_system_setting:
-       idle_timeout: 468
-       hostname: testhost1
+       idle_timeout: 440
+       hostname: fwbhost1
+       https_server_cert: qa
+       intermediate_ca_group: G2
+       https_server_cert: defaulthttpscert

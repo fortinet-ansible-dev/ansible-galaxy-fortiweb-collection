@@ -21,12 +21,147 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_server_pool
+description:
+  - Config FortiWeb server objects Server Pool
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - name
+        type: string
+    type:
+        description:
+            - server pool type
+        type: string
+        choices:
+            - 'reverse-proxy'
+            - 'offline-protection'
+            - 'transparent-servers-for-tp'
+            - 'transparent-servers-for-ti'
+            - 'transparent-servers-for-wccp'
+    protocol:
+        description:
+            - protocol
+        type: string
+        choices:
+            - 'HTTP'
+            - 'FTP'
+            - 'ADFSPIP'
+            - 'TCPPROXY'
+    server-balance:
+        description:
+            - switch server balance
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    lb-algo:
+        description:
+            - load balance algo
+        type: string
+        choices:
+            - 'round-robin'
+            - 'weighted-round-robin'
+            - 'least-connections'
+            - 'uri-hash'
+            - 'full-uri-hash'
+            - 'host-hash'
+            - 'host-domain-hash'
+            - 'src-ip-hash'
+    comment:
+        description:
+            - comment
+        type: string
+    http-reuse:
+        description:
+            - reuse fd connect to server
+        type: string
+        choices:
+            - 'never'
+            - 'safe'
+            - 'aggressive'
+            - 'always'
+    reuse-conn-total-time:
+        description:
+            - max times value(unit: second) (range: 1-1000)
+        type: integer
+    reuse-conn-idle-time:
+        description:
+            - max times value(unit: second) (range: 1-1000)
+        type: integer
+    reuse-conn-max-request:
+        description:
+            - max requset/response times (range: 1-1000)
+        type: integer
+    reuse-conn-max-count:
+        description:
+            - max connection number (range: 1-1000)
+        type: integer
+    adfs-server-name:
+        description:
+            - adfs server name, only for ADFSPIP
+        type: string
 """
 
 EXAMPLES = """
+     - name: delete server pool
+       fwebos_server_pool:
+        action: delete
+        vdom: root
+        name: test
+
+     - name: Create server pool
+       fwebos_server_pool:
+        action: add
+        vdom: root
+        name: test
+        type: reverse-proxy
+        server_balance: enable
+        lb_algo: round-robin
+        comment: test111
+        health: HLTHCK_ICMP
+        persistence: test
+        reuse_conn_total_time: 100
+        reuse_conn_max_request: 100
+        reuse_conn_max_count: 100
+
+     - name: edit server pool
+       fwebos_server_pool:
+        action: edit
+        vdom: root
+        name: test
+        type: reverse-proxy
+        server_balance: enable
+        lb_algo: round-robin
+        comment: test111
+        health: HLTHCK_ICMP
+        persistence: test
+        reuse_conn_total_time: 100
+        reuse_conn_idle_time: 20
+        reuse_conn_max_request: 100
+        reuse_conn_max_count: 100
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/server-policy/server-pool'
@@ -145,8 +280,15 @@ def main():
     result = {}
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

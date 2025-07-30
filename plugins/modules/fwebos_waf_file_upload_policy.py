@@ -19,15 +19,153 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 
 DOCUMENTATION = """
+---
 module: fwebos_waf_file_upload_policy
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb Input Validation File Security
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - name
+        type: string
+    action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'block-period'
+            - 'client-id-block-period'
+    block-period:
+        description:
+            - block period(1-3600) (range: 1-3600)
+        type: integer
+    severity:
+        description:
+            - severity:High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    av-scan:
+        description:
+            - AV scan upload file
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    fortisandbox-check:
+        description:
+            - Upload suspicious file to FortiSandbox
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    hold-session-while-scanning-file:
+        description:
+            - Hold session while scanning file
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    icap-server-check:
+        description:
+            - Upload suspicious file to icap server
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    exchange-mail-detection:
+        description:
+            - AV detection for Exchange email
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    owa-protocol:
+        description:
+            - Exchange email for OWA protocol
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    activesync-protocol:
+        description:
+            - Exchange email for ActiveSync protocol
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    mapi-protocol:
+        description:
+            - Exchange email for mapi protocol
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
 """
 
 EXAMPLES = """
+     - name: delete
+       fwebos_waf_file_upload_policy:
+        action: delete
+        name: aaa
+        vdom: root
+
+     - name: Create
+       fwebos_waf_file_upload_policy:
+        action: add
+        vdom: root
+        block_period: 600
+        severity: Medium
+        av_scan: disable
+        icap_server_check: disable
+        name: test4
+        fortisandbox_check: disable
+        exchange_mail_detection: disable
+        file_action: alert
+        hold_session_while_scanning_file: disable
+
+     - name: edit
+       fwebos_waf_file_upload_policy:
+        action: edit
+        vdom: root
+        block_period: 600
+        severity: Medium
+        av_scan: disable
+        icap_server_check: disable
+        name: test4
+        fortisandbox_check: disable
+        exchange_mail_detection: disable
+        file_action: alert
+        hold_session_while_scanning_file: disable
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/file-upload-restriction-policy'
@@ -149,8 +287,15 @@ def main():
 
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

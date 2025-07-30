@@ -20,15 +20,68 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 DOCUMENTATION = """
 ---
-module: fwebos_ntp
+module: fwebos_waf_custom_policy
 description:
-  - Configure FortiWeb devices via RESTful APIs
+  - Config FortiWeb Advanced Protection Custom Policy
+version_added: "7.0.0"
+authors:
+  - Joseph Chen
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - A unique name that can be referenced in other parts of the configuration.
+        type: string
+    threat_weight:
+        description:
+            - Enable to apply this rule only to HTTP requests for specific web hosts. Disable to match the rule based on the URL and any parameter filter only.
+        type: string
+        choices:
+            - 'informational'
+            - 'low'
+            - 'moderate'
+            - 'severe'
 """
 
 EXAMPLES = """
+    - name: add a rule
+      fwebos_waf_custom_policy:
+       action: add
+       name: test1
+       threat_weight: moderate
+
+    - name: edit a rule
+      fwebos_waf_custom_policy:
+       action: edit
+       name: test1
+       threat_weight: low
+
+    - name: get a rule
+      fwebos_waf_custom_policy:
+       action: get
+       name: test1
+
+    - name: delete a rule
+      fwebos_waf_custom_policy:
+       action: delete
+       name: test1
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/custom-access.policy'
@@ -53,7 +106,7 @@ def add_obj(module, connection):
     if payload1['data']['threat-weight'] is None:
         payload1['data']['threat-weight'] = "moderate",
     code, response = connection.send_request(obj_url, payload1)
-    response['sent'] = payload1['data']
+    # # response['sent'] = payload1['data']
     return code, response
 
 def delete_obj(module, connection):
@@ -129,8 +182,15 @@ def main():
 
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True

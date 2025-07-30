@@ -21,12 +21,158 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_cookie_security
+description:
+  - Config FortiWeb Web Protection Cookie Security
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    name:
+        description:
+            - name
+        type: string
+    security-mode:
+        description:
+            - security mode
+        type: string
+        choices:
+            - 'no'
+            - 'encrypted'
+            - 'signed'
+    action:
+        description:
+            - action
+        type: string
+        choices:
+            - 'alert'
+            - 'deny_no_log'
+            - 'alert_deny'
+            - 'remove_cookie'
+            - 'block-period'
+            - 'client-id-block-period'
+    block-period:
+        description:
+            - action block period(1-3600) (range: 1-3600)
+        type: integer
+    severity:
+        description:
+            - High, Medium, Low or Informative
+        type: string
+        choices:
+            - 'High'
+            - 'Medium'
+            - 'Low'
+            - 'Info'
+    cookie-replay-protection-type:
+        description:
+            - cookie replay protection type
+        type: string
+        choices:
+            - 'no'
+            - 'IP'
+    max-age:
+        description:
+            - max-age(0-65535) (range: 0-65535)
+        type: integer
+    secure-cookie:
+        description:
+            - secure cookie
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    http-only:
+        description:
+            - http only
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    allow-suspicious-cookies:
+        description:
+            - allow suspicious cookies
+        type: string
+        choices:
+            - 'Never'
+            - 'Always'
+            - 'Custom'
+    samesite:
+        description:
+            - samesite: enable/disable
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    samesite-value:
+        description:
+            - samesite value
+        type: string
+        choices:
+            - 'Strict'
+            - 'Lax'
+            - 'None'
 """
 
 EXAMPLES = """
+     - name: delete
+       fwebos_waf_cookie_security:
+        action: delete
+        vdom: root
+        name: test
+
+     - name: Create
+       fwebos_waf_cookie_security:
+        action: add
+        vdom: root
+        security_mode: encrypted
+        cookie_replay_protection_type: IP
+        allow_suspicious_cookies: Custom
+        allow_time_model: 2022-10-28T17:11:54.000Z
+        security_action: alert
+        severity: Medium
+        block_period: 600
+        max_age: 0
+        http_only: disable
+        name: test
+        trigger: test
+        allow_time: 2022/10/28
+
+     - name: edit
+       fwebos_waf_cookie_security:
+        action: edit
+        vdom: root
+        security_mode: encrypted
+        cookie_replay_protection_type: IP
+        allow_suspicious_cookies: Custom
+        allow_time_model: 2022-10-28T17:11:54.000Z
+        security_action: alert
+        severity: Medium
+        block_period: 600
+        max_age: 0
+        http_only: disable
+        name: test
+        trigger: test
+        allow_time: 2022/10/27
+
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/waf/cookie-security'
@@ -148,8 +294,15 @@ def main():
     result = {}
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

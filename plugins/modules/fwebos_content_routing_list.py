@@ -19,15 +19,85 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 
 
 DOCUMENTATION = """
-module: fwebos_content_routing_policy
+---
+module: fwebos_content_routing_list
 description:
-  - Configure FortiWeb's HTTP Content Routing Policy objects.
+  - Config FortiWeb Content Routing Policy List
+version_added: "7.0.0"
+authors:
+  - Jie Li
+  - Brad Zhang
+requirements:
+    - ansible>=2.11
+options:
+    status:
+        description:
+            - enable or disable to routing policy.
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    profile_inherit:
+        description:
+            - If disabled, choose the web protection profile to be applied to this contect routing policy. If enabled, the web protection profile from the server policy will be automatically applid.
+        type: string
+        choices:
+            - 'enable'
+            - 'disable'
+    is_default:
+        description:
+            - choose to use default option
+        type: string
+        choices:
+            - 'yes'
+            - 'no'
 """
 
 EXAMPLES = """
+     - name: Create a routing list
+       fwebos_content_routing_list:
+        action: add
+        name: P1
+        content_routing_policy_name: myhp
+        is_default: "no"
+        profile_inherit: enable
+        status: enable
+
+     - name: edit
+       fwebos_content_routing_list:
+        action: edit
+        name: P1
+        id: 4
+        profile_inherit: disable
+        web_protection_profile: "Inline Extended Protection"
+        is_default: "yes"
+
+     - name: delete an entry
+       fwebos_content_routing_list:
+        action: delete
+        name: P1
+        id: 2
+
+     - name: delete all entry under the policy
+       fwebos_content_routing_list:
+        action: delete
+        name: P1
+
 """
 
 RETURN = """
+changed:
+  description: Whether the status of FortiWeb is changed. The value is either 'true' or 'false'
+  returned: always
+  type: bool
+invocation:
+  description: The parameters in ansible tasks.
+  returned: always
+  type: JSON
+res:
+  description: The return from related Rest API.
+  returned: always
+  type: JSON
 """
 
 obj_url = '/api/v2.0/cmdb/server-policy/policy/http-content-routing-list'
@@ -158,8 +228,15 @@ def main():
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
 
-    if is_vdom_enable(connection) and param_pass:
-        connection.change_auth_for_vdom(module.params['vdom'])
+    try:
+        if is_vdom_enable(connection) and param_pass:
+            connection.change_auth_for_vdom(module.params['vdom'])
+    except Exception as e:
+        error_msg = f"Checking VDOM failed. {e}"
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = error_msg   
+        module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err
