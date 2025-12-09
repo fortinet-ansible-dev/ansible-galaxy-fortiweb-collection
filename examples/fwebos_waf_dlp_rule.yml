@@ -1,0 +1,67 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a dlp sensor
+      fwebos_waf_dlp_sensor:
+       action: add 
+       name: sensor1
+       match_type: any
+
+    - name: add a rule of http payload type 
+      fwebos_waf_dlp_rule:
+       action: add 
+       name: dlp3
+       security_action: block-period
+       severity: High
+       host_status: enable
+       url_type: plain
+       direction: request
+       type: http-payload
+       block_period: 500
+       host: myhost
+       url: /folder2/*
+       sensor: sensor1
+
+    - name: add a rule of file type
+      fwebos_waf_dlp_rule:
+       action: add 
+       name: dlp4
+       security_action: alert
+       severity: Low
+       host_status: enable
+       direction: request
+       type: files
+       sensor: sensor1     
+       email_attachments: enable
+       owa_protocol: enable
+       activesync_protocol: disable
+       mapi_protocol: disable
+
+    - name: get a rule of file type
+      fwebos_waf_dlp_rule:
+       action: get 
+       name: dlp4
+
+    - name: edit a rule of file type
+      fwebos_waf_dlp_rule:
+       action: edit 
+       name: dlp4
+       security_action: alert
+       severity: Info
+       activesync_protocol: enable
+       mapi_protocol: enable
+
+    - name: delete a rule
+      fwebos_waf_dlp_rule:
+       action: delete 
+       name: dlp4
+
+    - name: delete a rule again
+      fwebos_waf_dlp_rule:
+       action: delete 
+       name: dlp4
+

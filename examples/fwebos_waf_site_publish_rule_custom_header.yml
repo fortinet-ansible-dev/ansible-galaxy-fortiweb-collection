@@ -1,0 +1,69 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a site_publish rule
+      fwebos_waf_site_publish_rule:
+        action: add
+        name: spr1
+        published_site: testsite.com
+        published_site_type: plain
+        status: enable
+        cookieless: disable
+        cookieless_cache: 3600
+        client_auth_method: html-form-auth
+        auth_server_pool: asp1
+        ntlm_server: 
+        auth_delegation: no-delegation
+        form_based_delegation: 
+        sso_support: enable
+        sso_domain: domin1
+        prefix_support: enable
+        prefix_domain: prefix1
+        path: /path1/path2/*
+        alert_type: fail
+        logoff_path_type: plain
+        Published_Server_Logoff_Path: /abc/efg
+        redirect_url: 
+        cookie_timeout: 222
+        csrf_enhancement: enable
+        append_custom_header: enable
+        pass_failed_auth: enable
+        cache_tgs_ticket: enable
+
+
+    - name: add a published site's custom_header
+      fwebos_waf_site_publish_rule_custom_header:
+       action: add 
+       name: spr1
+       custom_header_name: ch1
+       custom_header_value_format: cv1
+
+    - name: edit a published site's custom_header
+      fwebos_waf_site_publish_rule_custom_header:
+       action: edit 
+       name: spr1
+       id: 1
+       custom_header_name: ch11
+       custom_header_value_format: cv11
+
+    - name: get a published site's custom_header
+      fwebos_waf_site_publish_rule_custom_header:
+       action: get 
+       name: spr1
+       id: 1
+
+    - name: get a published site's all custom_headers
+      fwebos_waf_site_publish_rule_custom_header:
+       action: get 
+       name: spr1
+       id: 1
+
+    - name: delete a published site's custom_header
+      fwebos_waf_site_publish_rule_custom_header:
+       action: delete 
+       name: spr1
+       id: 1

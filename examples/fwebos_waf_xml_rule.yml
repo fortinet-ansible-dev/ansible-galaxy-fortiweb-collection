@@ -8,7 +8,7 @@
     - name: delete 
       fwebos_waf_xml_rule:
        action: delete 
-       name: 12313
+       name: test1
        vdom: root
           
     - name: Create
@@ -41,7 +41,7 @@
        validate_soap_headers_val: 0
        block_period: 600
        xml_limit_cdata_len: 4096
-       name: test4
+       name: test1
        host_status: disable
        allow_additional_soap_headers_val: 0
        request_file: /test_string
@@ -71,7 +71,7 @@
        trigger: 
        validate_soap_body: disable
        x_include_check: disable
-       xml_limit_attr_num: 32
+       xml_limit_attr_num: 64
        data_format: xml
        request_type: plain
        ws_security: 
@@ -81,9 +81,9 @@
        validate_soapaction: disable
        schema_location_check: disable
        validate_soap_headers_val: 0
-       block_period: 600
-       xml_limit_cdata_len: 4096
-       name: test4
+       block_period: 500
+       xml_limit_cdata_len: 3096
+       name: test1
        host_status: disable
        allow_additional_soap_headers_val: 0
        request_file: /test_string

@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 # from ansible_collections.fortinet.fortiadc.plugins.module_utils.network.fwebos.fwebos import get_err_msg
 # from ansible_collections.fortinet.fortiadc.plugins.module_utils.network.fwebos.fwebos import list_to_str
 # from ansible_collections.fortinet.fortiadc.plugins.module_utils.network.fwebos.fwebos import list_need_update
@@ -26,10 +26,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_virtual_ip
+short_description: Config FortiWeb Network Virtual IP
 description:
   - Config FortiWeb Network Virtual IP
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -70,6 +71,8 @@ res:
 
 obj_url = '/api/v2.0/cmdb/system/vip'
 
+
+rep_dict = {}
 
 def add_obj(module, connection):
     name = module.params['name']
@@ -166,7 +169,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -185,7 +189,14 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+      module.exit_json(**result)
+
+    if action == 'add':
         code, data = get_obj(module, connection)
         if 'The entry is not found.' in str(data):
             code, response, out = add_obj(module, connection)

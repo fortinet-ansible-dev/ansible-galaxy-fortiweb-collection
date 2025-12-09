@@ -7,10 +7,11 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.urls import prepare_multipart
+from pathlib import Path
 __metaclass__ = type
 
 
@@ -22,10 +23,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_certificate_intermediate_ca
+short_description: Config FortiWeb server objects Intermediate CA
 description:
   - Config FortiWeb server objects Intermediate CA
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -93,11 +95,18 @@ def replace_key(src_dict, rep_dict):
 
 def add_obj(module, connection):
     if(module.params['type'] == 'localPC'):
+        if module.params['uploadedFile'] is not None:
+          file_path = Path(module.params['uploadedFile'])
+          if file_path.exists() is False:
+            response = "Cannot find local file "+module.params['uploadedFile']
+            code = 0
+            return code, response
         return add_obj_certificate(module, connection)
 
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     payload1['data'].pop('vdom')
     replace_key(payload1['data'], rep_dict)
 
@@ -169,7 +178,8 @@ def needs_update(module, data):
     res = False
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     replace_key(payload1['data'], rep_dict)
 
     res = combine_dict(payload1['data'], data)
@@ -185,6 +195,12 @@ def param_check(module, connection):
     if is_vdom_enable(connection) and module.params['vdom'] is None:
         err_msg = 'vdom enable, vdom need to set'
         res = False
+
+    if action == 'add' and 'uploadedFile' in module.params.keys() and module.params['uploadedFile'] is not None:
+        file_path = Path(module.params['uploadedFile'])
+        if file_path.exists() is False:
+            res = False
+            err_msg= "Cannot find the local file " + module.params['uploadedFile']   
 
     return res, err_msg
 
@@ -203,7 +219,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -218,13 +235,45 @@ def main():
         result['err_msg'] = error_msg   
         module.exit_json(**result)
 
+    if action == 'edit':
+        result['err_msg'] = 'error action: ' + action
+        result['failed'] = True
+        module.exit_json(**result)
+
+    if not param_pass:
+        result['err_msg'] = param_err
+        result['failed'] = True
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+
+    if module.check_mode:
+      # handle special cases because the API returns are not
+      if action == 'delete' and isinstance(data['results'], list): 
+          for entry in data['results']:
+              if entry['_id'] == module.params['name']:
+                    before = {}
+                    after = {}
+                    after['deleted'] = module.params['name']
+                    changed = True
+                    result['diff'] = {
+                                'before': before,
+                                'after': after    }
+                    result['changed'] = changed
+                    break
+      module.exit_json(**result)
+
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
     elif action == 'add':
         code, response = add_obj(module, connection)
         result['res'] = response
-        result['changed'] = True
+        if code == 0:
+            result['changed'] = False
+        else:
+            result['changed'] = True
     elif action == 'get':
         code, response = get_obj(module, connection)
         result['res'] = response
@@ -233,10 +282,15 @@ def main():
         if 'errcode' in str(data):
             result['changed'] = False
             result['res'] = data
-        else:
-            code, response = delete_obj(module, connection)
-            result['res'] = response
-            result['changed'] = True
+        elif isinstance(data['results'], list):
+            for entry in data['results']:
+                if entry['_id'] == module.params['name']:
+                    code, response = delete_obj(module, connection)
+                    result['res'] = response
+                    result['changed'] = True
+                    if module._diff:
+                        result['diff']['after'] = "Deleted " + module.params['name']
+
     else:
         result['err_msg'] = 'error action: ' + action
         result['failed'] = True
@@ -244,7 +298,7 @@ def main():
     if 'errcode' in str(result):
         result['changed'] = False
         result['failed'] = True
-        if result['res']['results']['errcode'] == -3 or result['res']['results']['errcode'] == -5:
+        if 'results' in result['res'].keys() and (result['res']['results']['errcode'] == -3 or result['res']['results']['errcode']) == -5:
             result['failed'] = False
 
     module.exit_json(**result)

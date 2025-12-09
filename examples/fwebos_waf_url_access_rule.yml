@@ -10,3 +10,17 @@
        action: add
        name: test4
        vdom: root
+
+
+    - name: edit
+      fwebos_waf_url_access_rule:
+       action: edit
+       name: test4
+       severity: High
+       vdom: root
+
+    - name: delete
+      fwebos_waf_url_access_rule:
+       action: delete
+       name: test4
+       vdom: root

@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 import ast
@@ -22,10 +22,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_json_generic
+short_description: FortiWeb All REST API Requests Sender/Receiver
 description:
   - FortiWeb All REST API Requests Sender/Receiver
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -98,6 +99,8 @@ def replace_key(src_dict, rep_dict):
             new_key = rep_dict[key]
             src_dict[new_key] = src_dict.pop(key)
 
+rep_dict = {}
+
 def add_obj(module, connection):
     json = ast.literal_eval(module.params['json_generic'])
     code = 0
@@ -134,6 +137,10 @@ def main():
         result['err_msg'] = error_msg   
         module.exit_json(**result)
 
+    if not param_pass:
+        result['err_msg'] = param_err
+        result['failed'] = True
+        module.exit_json(**result)
 
     code, response = add_obj(module, connection)
     result['res'] = response

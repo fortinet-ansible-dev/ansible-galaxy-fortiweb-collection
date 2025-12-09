@@ -1,0 +1,61 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a json protection schema with same name again
+      fwebos_waf_json_schema:
+        action: add 
+        name: js1
+        json_schema_version: auto-identify
+        jsonfile: json_scheme1.txt
+
+    - name: add a json protection rule
+      fwebos_waf_json_protection_rule:
+        action: add 
+        name: jspr1
+        severity: High
+        host_status: enable
+        host: myhost2
+        request_type: plain
+        request_url: /folder1/f2
+        security_action: alert
+        block_period: 600
+        severity: Low
+        trigger: tp1
+        schema_type: single-schema
+        schema_file: js1
+        json_limits: disable
+
+    - name: get a json protection rule
+      fwebos_waf_json_protection_rule:
+        action: get 
+        name: jspr1
+
+    - name: edit a json protection rule
+      fwebos_waf_json_protection_rule:
+        action: edit 
+        name: jspr1
+        severity: Low
+        json_limits: enable
+        json_data_size: 1034
+        key_size: 69
+        key_number: 300
+        value_size: 128
+        value_number: 256
+        value_number_in_array: 256
+        object_depth: 32
+        schema_type: schema-group
+        schema_group: jsg1
+
+    - name: delete a json protection rule
+      fwebos_waf_json_protection_rule:
+        action: delete 
+        name: jspr1
+
+    - name: delete a json protection rule again
+      fwebos_waf_json_protection_rule:
+        action: delete 
+        name: jspr1

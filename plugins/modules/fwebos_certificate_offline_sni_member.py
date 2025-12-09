@@ -7,9 +7,10 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
+from pathlib import Path
 __metaclass__ = type
 
 
@@ -21,10 +22,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_certificate_offline_sni_member
+short_description: Config FortiWeb server objects SNI Offline SNI member
 description:
   - Config FortiWeb server objects SNI Offline SNI member
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -95,7 +97,8 @@ def add_obj(module, connection):
     table_name = module.params['table_name']
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     payload1['data'].pop('vdom')
     payload1['data'].pop('table_name')
     replace_key(payload1['data'], rep_dict)
@@ -129,8 +132,10 @@ def get_obj(module, connection):
     name = module.params['name']
     payload = {}
     url = obj_url
+    if table_name:
+        url += '?mkey=' + table_name
     if name:
-        url += '?mkey=' + table_name + '&sub_mkey=' + name
+        url += '&sub_mkey=' + name
     code, response = connection.send_request(url, payload, 'GET')
 
     return code, response
@@ -161,7 +166,8 @@ def needs_update(module, data):
     res = False
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     replace_key(payload1['data'], rep_dict)
 
     res = combine_dict(payload1['data'], data)
@@ -177,6 +183,15 @@ def param_check(module, connection):
     if (action == 'add' or action == 'edit' or action == 'delete') and module.params['table_name'] is None:
         err_msg = 'table_name need to set'
         res = False
+
+    if action == 'add':
+        check_list = ['local_cert']
+        for item in check_list:
+            if item in module.params.keys() and module.params[item] is not None:
+                file_path = Path(module.params[item])
+                if file_path.exists() is False:
+                    res = False
+                    err_msg= "Cannot find the local file " + module.params[item] 
 
     return res, err_msg
 
@@ -195,7 +210,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -213,7 +229,14 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+      module.exit_json(**result)
+
+    if action == 'add':
         code, response = add_obj(module, connection)
         result['res'] = response
         result['changed'] = True

@@ -1,0 +1,22 @@
+---
+- name:
+  hosts: all
+  vars:
+    fortiweb_system_setting_idle_timeout: 200
+    fortiweb_system_setting_hostname: "{{ inventory_hostname }}"
+    fortiweb_system_setting_http_port: 80
+    fortiweb_system_setting_https_port: 443
+    fortiweb_system_setting_sys_global_language: English
+  connection: httpapi
+  collections:
+  - fortinet.fortiweb
+  gather_facts: false
+
+  
+  tasks:
+    - name: Edit system setting
+      fwebos_system_setting:
+        idle_timeout: "{{ fortiweb_system_setting_idle_timeout }}"
+        hostname: "{{ fortiweb_system_setting_hostname }}"
+        http_port: "{{ fortiweb_system_setting_http_port }}"
+        sys_global_language: "{{ fortiweb_system_setting_sys_global_language }}"

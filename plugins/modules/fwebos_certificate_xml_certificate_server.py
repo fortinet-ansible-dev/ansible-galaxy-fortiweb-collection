@@ -8,10 +8,11 @@
 from __future__ import (absolute_import, division, print_function)
 import json
 import base64
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.urls import prepare_multipart
+from pathlib import Path
 __metaclass__ = type
 
 
@@ -23,10 +24,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_certificate_xml_certificate_server
+short_description: Config FortiWeb server objects XML Certificate Server Certificate
 description:
   - Config FortiWeb server objects XML Certificate Server Certificate
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -150,7 +152,8 @@ def needs_update(module, data):
     res = False
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     replace_key(payload1['data'], rep_dict)
 
     res = combine_dict(payload1['data'], data)
@@ -166,6 +169,15 @@ def param_check(module, connection):
     if is_vdom_enable(connection) and module.params['vdom'] is None:
         err_msg = 'vdom enable, vdom need to set'
         res = False
+
+    if action == 'add':
+        check_list = ['certificatefile', 'keyfile']
+        for item in check_list:
+            if item in module.params.keys() and module.params[item] is not None:
+                file_path = Path(module.params[item])
+                if file_path.exists() is False:
+                    res = False
+                    err_msg= "Cannot find the local file " + module.params[item] 
 
     return res, err_msg
 
@@ -183,7 +195,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -201,7 +214,19 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    if module.check_mode:
+      action = module.params['action']
+      if action == 'edit':
+        result['err_msg'] = 'error action: ' + action
+        result['failed'] = True
+        module.exit_json(**result)
+      code, data = get_obj(module, connection)
+      result = check_mode_process(module, data, rep_dict)
+      module.exit_json(**result)
+
+    if action == 'add':
         code, response = add_obj(module, connection)
         result['res'] = response
         result['changed'] = True

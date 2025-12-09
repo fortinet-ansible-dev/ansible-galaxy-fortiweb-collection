@@ -1,0 +1,48 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create a content routing policy
+      fwebos_content_routing_policy:
+       action: add
+       name: crp1
+       comment: abcdefg
+       server_pool: server_pool1
+
+    - name: Create
+      fwebos_content_routing_list:
+       action: add
+       name: P1
+       content_routing_policy_name: crp1
+       is_default: "no"
+       profile_inherit: enable
+       status: enable
+
+    - name: edit
+      fwebos_content_routing_list:
+       action: edit
+       name: P1
+       id: 4
+       profile_inherit: disable
+       web_protection_profile: "Inline Extended Protection"
+      #  is_default: "no"
+
+    - name: get
+      fwebos_content_routing_list:
+       action: get
+       name: P1
+       id: 4
+
+    - name: delete an entry
+      fwebos_content_routing_list:
+       action: delete
+       name: P1
+       id: 2
+
+    - name: delete all entry
+      fwebos_content_routing_list:
+       action: delete
+       name: P1

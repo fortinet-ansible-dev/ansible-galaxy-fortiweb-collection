@@ -1,0 +1,28 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a dlp sensor
+      fwebos_waf_dlp_sensor:
+       action: add 
+       name: sensor3
+       match_type: any
+
+    - name: get a dlp sensor
+      fwebos_waf_dlp_sensor:
+       action: get 
+       name: sensor3
+
+    - name: edit a dlp sensor
+      fwebos_waf_dlp_sensor:
+       action: edit 
+       name: sensor3
+       match_type: all
+
+    - name: delete a dlp sensor
+      fwebos_waf_dlp_sensor:
+       action: delete 
+       name: sensor3

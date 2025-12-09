@@ -16,8 +16,8 @@
        action: add
        vdom: root
        password: 
-       name: test4
-       server: test4
+       name: test
+       server: test
        label: 1231
 
     - name: edit

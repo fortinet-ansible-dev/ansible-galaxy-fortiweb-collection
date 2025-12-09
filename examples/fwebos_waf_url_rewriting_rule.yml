@@ -1,0 +1,105 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a URL rewriting policy
+      fwebos_waf_url_rewriting_rule:
+        action: add 
+        name: test1
+        action_type: http-response-header-rewrite
+        host_status: disable
+        url_status: disable
+        referer_status: disable
+        location_replace:
+        location_status: disable
+        http_method_status: disable
+        http_method: get
+        status_code_status: disable
+        status_code: 404
+        request_replace_existing_headers: disable
+        response_replace_existing_headers: disable
+        request_remove_duplicate_headers: enable
+        response_remove_duplicate_headers: enable
+        request_remove_duplicate_cookies: disable
+        request_replace_existing_cookies: disable
+        response_removal_list: 
+         - { "response-removal-header-name": "to-remove5"}
+         - { "response-removal-header-name": "to-remove4"}
+        response_insert_list:
+         - { "response-header-name": "to-insert", "response-header-value": "inserted" }
+        flag_operation: 0
+
+    - name: get a URL rewriting policy
+      fwebos_waf_url_rewriting_rule:
+        action: get 
+        name: test1
+
+    - name: add a URL rewriting policy
+      fwebos_waf_url_rewriting_rule:
+        action: add 
+        name: test2
+        action_type: http-header-rewrite
+        host_status: enable
+        host_use_pserver: enable
+        host: FORTIWEB_PSERVER
+        url_status: enable
+        url: www.url1.com
+        referer_status: enable
+        referer_use_pserver: enable
+        referer: http://FORTIWEB_PSERVER/
+        location_replace:
+        location_status: disable
+        http_method_status: enable
+        http_method: get
+        status_code_status: enable
+        status_code: 404
+        request_replace_existing_headers: enable
+        response_replace_existing_headers: disable
+        request_remove_duplicate_headers: enable
+        response_remove_duplicate_headers: enable
+        request_remove_duplicate_cookies: enable
+        request_replace_existing_cookies: enable
+
+
+    - name: edit a URL rewriting policy
+      fwebos_waf_url_rewriting_rule:
+        action: edit 
+        name: test1
+        action_type: http-response-header-rewrite
+        request_remove_duplicate_headers: enable
+        response_remove_duplicate_headers: enable
+        response_removal_list: 
+         - { "response-removal-header-name": "r1"}
+         - { "response-removal-header-name": "r2"}
+         - { "response-removal-header-name": "r3"}
+         - { "response-removal-header-name": "r4"}         
+        response_insert_list:
+         - { "response-header-name": "i1", "response-header-value": "iv1" }
+         - { "response-header-name": "i2", "response-header-value": "iv2" }
+         - { "response-header-name": "i3", "response-header-value": "iv3" }               
+
+    # - name: edit a URL rewriting policy
+    #   fwebos_waf_url_rewriting_rule:
+    #     action: edit 
+    #     name: test2
+    #     action_type: http-response-header-rewrite
+    #     response_removal_list: 
+    #      - { "response-removal-header-name": "r11"}
+    #      - { "response-removal-header-name": "r21"}
+    #      - { "response-removal-header-name": "r31"}
+    #      - { "response-removal-header-name": "r41"}
+
+    - name: edit a URL rewriting policy
+      fwebos_waf_url_rewriting_rule:
+        action: edit 
+        name: test2
+        action_type: http-request-body-rewrite
+        body_replace: replacement301
+
+    - name: delete a URL rewriting policy
+      fwebos_waf_url_rewriting_rule:
+        action: delete 
+        name: test1

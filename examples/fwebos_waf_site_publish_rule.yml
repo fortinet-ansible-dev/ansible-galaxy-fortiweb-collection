@@ -1,0 +1,58 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a site_publish rule
+      fwebos_waf_site_publish_rule:
+        action: add
+        name: spr_test
+        published_site: testsite.com
+        published_site_type: plain
+        status: enable
+        cookieless: disable
+        cookieless_cache: 3600
+        client_auth_method: html-form-auth
+        auth_server_pool: asp1
+        auth_delegation: no-delegation
+        form_based_delegation: 
+        sso_support: enable
+        sso_domain: domin1
+        prefix_support: enable
+        prefix_domain: prefix1
+        path: /path1/path2/*
+        alert_type: fail
+        logoff_path_type: plain
+        Published_Server_Logoff_Path: /abc/efg
+        cookie_timeout: 222
+        csrf_enhancement: enable
+        append_custom_header: enable
+        pass_failed_auth: enable
+        cache_tgs_ticket: enable
+
+    - name: get a site_publish rule
+      fwebos_waf_site_publish_rule:
+        action: get
+        name: spr_test
+
+
+    - name: edit a site_publish rule
+      fwebos_waf_site_publish_rule:
+        action: edit
+        name: spr_test
+        published_site: testsite1.com
+        published_site_type: plain
+        status: enable
+        client_auth_method: http-auth
+
+    - name: delete a site_publish rule
+      fwebos_waf_site_publish_rule:
+        action: delete
+        name: spr_test
+
+    - name: delete a site_publish rule again
+      fwebos_waf_site_publish_rule:
+        action: delete
+        name: spr_test

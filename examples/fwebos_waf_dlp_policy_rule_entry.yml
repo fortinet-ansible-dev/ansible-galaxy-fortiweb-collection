@@ -1,0 +1,49 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a policy
+      fwebos_waf_dlp_policy:
+       action: add 
+       name: aaa
+
+    - name: add a rule under this newly added policy
+      fwebos_waf_dlp_policy_rule_entry:
+       action: add 
+       name: aaa
+       rule: dlp3
+
+    - name: get a rule under
+      fwebos_waf_dlp_policy_rule_entry:
+       action: get 
+       name: aaa
+       id: 1
+
+    - name: edit a policy's rule
+      fwebos_waf_dlp_policy_rule_entry:
+       action: edit 
+       name: aaa
+       id: 1
+       rule: dlp3
+
+    - name: delete a policy's rule
+      fwebos_waf_dlp_policy_rule_entry:
+       action: delete 
+       name: aaa
+       id: 1
+
+    - name: edit a policy's rule with non-existent ID
+      fwebos_waf_dlp_policy_rule_entry:
+       action: edit 
+       name: aaa
+       id: 1
+       rule: dlp3
+
+    - name: delete a policy's rule with non-existent ID
+      fwebos_waf_dlp_policy_rule_entry:
+       action: delete 
+       name: aaa
+       id: 1

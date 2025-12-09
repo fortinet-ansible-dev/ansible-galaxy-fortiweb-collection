@@ -20,7 +20,7 @@
        severity: Medium
        block_period: 600
        name: test
-       trigger: test
+      #  trigger: test
 
     - name: edit
       fwebos_waf_custom_protection_rule:
@@ -31,4 +31,4 @@
        severity: High
        block_period: 600
        name: test
-       trigger: test
+      #  trigger: test

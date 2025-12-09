@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_site_publish_service_principal_name_pool
+short_description: Config FortiWeb Site Publish Policy's Service Principal Name Pool
 description:
   - Config FortiWeb Site Publish Policy's Service Principal Name Pool
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -85,8 +86,10 @@ def add_obj(module, connection):
     url = obj_url
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
-    payload1['data'].pop('vdom')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
+    if 'vdom' in payload1['data'].keys():
+        payload1['data'].pop('vdom')
     replace_key(payload1['data'], rep_dict)
 
     code, response = connection.send_request(url, payload1)
@@ -145,7 +148,8 @@ def needs_update(module, data):
     payload1 = {}
     payload1['data'] = module.params
     replace_key(payload1['data'], rep_dict)
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
 
     res = combine_dict(payload1['data'], data)
     return res, data
@@ -173,7 +177,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -193,7 +198,14 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+        module.exit_json(**result)
+
+    if action == 'add':
         code, response, out_data = add_obj(module, connection)
         result['res'] = response
         result['changed'] = True

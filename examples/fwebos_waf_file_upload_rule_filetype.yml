@@ -14,3 +14,14 @@
        text_files:
                - EXE
        vdom: root
+
+    - name: get
+      fwebos_waf_file_upload_rule_filetype:
+       action: get
+       table_name: test4
+
+    - name: get
+      fwebos_waf_file_upload_rule_filetype:
+       action: get
+       table_name: test4
+       id: 1

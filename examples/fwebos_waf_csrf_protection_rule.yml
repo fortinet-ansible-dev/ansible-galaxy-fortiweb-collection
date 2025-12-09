@@ -1,0 +1,41 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a rule
+      fwebos_waf_csrf_protection_rule:
+       action: add 
+       severity: Info
+       name: c1
+       security_action: block-period
+       block_period: 777
+      #  trigger: tp1
+
+    - name: add a simple rule
+      fwebos_waf_csrf_protection_rule:
+       action: add 
+       severity: Low
+       name: c2
+
+    - name: edit a rule
+      fwebos_waf_csrf_protection_rule:
+       action: edit 
+       severity: Low
+       name: c2
+       security_action: block-period
+       block_period: 1234
+      #  trigger: tp1
+
+    - name: get rules
+      fwebos_waf_csrf_protection_rule:
+       action: get 
+       name: c2
+
+    - name: delete a rule
+      fwebos_waf_csrf_protection_rule:
+       action: delete 
+       name: c3
+

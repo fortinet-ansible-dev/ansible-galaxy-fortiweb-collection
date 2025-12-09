@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_geo_block_country
+short_description: Edit Country list in GEO IP Policy
 description:
   - Edit Country list in GEO IP Policy
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -63,6 +64,8 @@ res:
 obj_url = '/api/v2.0/waf/geoip.setCountrys'
 get_obj_url = '/api/v2.0/cmdb/waf/geo-block-list/country-list'
 
+
+rep_dict = {}
 
 def add_obj(module, connection):
 
@@ -128,7 +131,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -144,6 +148,16 @@ def main():
         result['failed'] = True
         result['err_msg'] = error_msg   
         module.exit_json(**result)
+
+    if not param_pass:
+        result['err_msg'] = param_err
+        result['failed'] = True
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, None)
+    if module.check_mode:
+      module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

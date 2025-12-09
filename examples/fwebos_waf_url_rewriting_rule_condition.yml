@@ -1,0 +1,42 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a URL rewriting rule condition
+      fwebos_waf_url_rewriting_rule_condition:
+       action: add 
+       name: aa2
+       object: http-location
+       reverse_match: "no"
+       reg_exp: zzzzz
+       protocol_filter: disable
+       
+    - name: get a URL rewriting rule condition
+      fwebos_waf_url_rewriting_rule_condition:
+       action: get 
+       name: aa2
+       id: 1
+
+    - name: edit a URL rewriting rule condition
+      fwebos_waf_url_rewriting_rule_condition:
+       action: edit 
+       name: aa2
+       id: 1
+       object: http-host
+       protocol_filter: enable
+       http_protocol: https
+       reverse_match: "yes"
+       reg_exp: yyyyy
+       reg_exp: abcd
+
+    - name: delete a URL rewriting rule condition
+      fwebos_waf_url_rewriting_rule_condition:
+       action: delete 
+       name: aa2
+       id: 1
+
+
+

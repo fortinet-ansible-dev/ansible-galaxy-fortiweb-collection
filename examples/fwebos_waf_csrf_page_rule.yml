@@ -1,0 +1,59 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a protection rule first
+      fwebos_waf_csrf_protection_rule:
+       action: add 
+       severity: Info
+       name: c1
+       security_action: block-period
+       block_period: 777
+
+    - name: add a rule
+      fwebos_waf_csrf_page_rule:
+       action: add 
+       name: c1
+       request_type: plain
+       parameter_value_type: regular
+       host_status: enable
+       host: gaogle
+       request_url: /abc.com
+       parameter_filter: enable
+       parameter_name: p1
+       parameter_value: a1b2
+
+    - name: edit a rule
+      fwebos_waf_csrf_page_rule:
+       action: edit 
+       name: c1
+       id: 1
+       request_type: regular
+       parameter_value_type: regular
+       host_status: enable
+       host: ftnt
+       request_url: zzzxxx
+       parameter_filter: enable
+       parameter_name: test
+       parameter_value: a1b2
+
+    - name: get a rule
+      fwebos_waf_csrf_page_rule:
+       action: get 
+       name: c1
+       id: 1
+
+    - name: delete a rule
+      fwebos_waf_csrf_page_rule:
+       action: delete 
+       name: c1
+       id: 1
+
+    - name: delete a rule again
+      fwebos_waf_csrf_page_rule:
+       action: delete 
+       name: c1
+       id: 1

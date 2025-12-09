@@ -37,7 +37,12 @@
        wvsgrp: none
        mlgrp: none
 
-    - name: delete profile 
+    # - name: delete profile 
+    #   fwebos_admin_profiles:
+    #    action: delete 
+    #    name: test
+
+    - name: get profile 
       fwebos_admin_profiles:
-       action: delete 
+       action: get 
        name: test

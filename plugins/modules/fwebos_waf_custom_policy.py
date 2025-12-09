@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_custom_policy
+short_description: Config FortiWeb Advanced Protection Custom Policy
 description:
   - Config FortiWeb Advanced Protection Custom Policy
 version_added: "7.0.0"
-authors:
+author:
   - Joseph Chen
 requirements:
     - ansible>=2.11
@@ -102,7 +103,8 @@ def add_obj(module, connection):
     payload1 = {}
     payload1['data'] = module.params
     replace_key(payload1['data'], rep_dict)
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     if payload1['data']['threat-weight'] is None:
         payload1['data']['threat-weight'] = "moderate",
     code, response = connection.send_request(obj_url, payload1)
@@ -175,7 +177,8 @@ def main():
     )
     argument_spec.update(fwebos_argument_spec)
 
-    module = AnsibleModule(argument_spec=argument_spec)
+    module = AnsibleModule(argument_spec=argument_spec,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -191,10 +194,17 @@ def main():
         result['failed'] = True
         result['err_msg'] = error_msg   
         module.exit_json(**result)
+
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+      module.exit_json(**result)
+    if action == 'add':
         code, response = add_obj(module, connection)
         result['res'] = response
         result['changed'] = True

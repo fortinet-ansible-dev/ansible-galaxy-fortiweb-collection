@@ -5,7 +5,13 @@
   connection: httpapi
   gather_facts: false
   tasks:
-    - name: Create
+    - name: Create server
+      fwebos_virtual_server:
+       action: add
+       name: test4
+       vdom: root
+
+    - name: Create vip
       fwebos_virtual_server_vip:
        action: add
        table_name: test4
@@ -22,9 +28,15 @@
        name: 1 
        vdom: root
 
-    - name: delete
+    - name: delete vip
       fwebos_virtual_server_vip:
        action: delete 
        table_name: test4
        name: 1 
+       vdom: root
+
+    - name: delete server
+      fwebos_virtual_server:
+       action: delete
+       name: test4
        vdom: root

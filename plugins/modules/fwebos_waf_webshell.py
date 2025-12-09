@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 # from ansible_collections.fortinet.fortiadc.plugins.module_utils.network.fwebos.fwebos import get_err_msg
 # from ansible_collections.fortinet.fortiadc.plugins.module_utils.network.fwebos.fwebos import list_to_str
 # from ansible_collections.fortinet.fortiadc.plugins.module_utils.network.fwebos.fwebos import list_need_update
@@ -26,10 +26,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_webshell
+short_description: Config FortiWeb Web Protection Web Shell Detetction
 description:
   - Config FortiWeb Web Protection Web Shell Detetction
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -51,7 +52,7 @@ options:
             - 'client-id-block-period'
     block-period:
         description:
-            - action block period(1-3600) (range: 1-3600)
+            - action block period(1-3600) 
         type: integer
     severity:
         description:
@@ -64,7 +65,7 @@ options:
             - 'Info'
     fuzzy-similarity-threshold:
         description:
-            - fuzzy similarity threshold(50, 100) (range: 50-100)
+            - fuzzy similarity threshold(50, 100) 
         type: integer
     fuzzy-php-status:
         description:
@@ -172,6 +173,22 @@ res:
 
 obj_url = '/api/v2.0/cmdb/waf/webshell-detection-policy'
 
+rep_dict = {
+            'block_period':'block-period',
+            'webshell_action': 'action',
+            'fuzzy_similarity_threshold':'fuzzy-similarity-threshold',
+            'fuzzy_php_status': 'fuzzy-php-status',
+            'fuzzy_asp_status': 'fuzzy-asp-status',
+            'fuzzy_jsp_status': 'fuzzy-jsp-status',
+            'fuzzy_python_status': 'fuzzy-python-status',
+            'fuzzy_perl_status': 'fuzzy-perl-status',
+            'known_php_status': 'known-php-status',
+            'known_php_short_open_tag': 'known-php-short-open-tag',
+            'known_asp_status': 'known-asp-status',
+            'known_jsp_status': 'known-jsp-status',
+            'known_python_status': 'known-python-status',
+            'known_perl_status': 'known-perl-status',
+}
 
 def add_obj(module, connection):
     name = module.params['name']
@@ -325,10 +342,10 @@ def main():
         action=dict(type='str', required=True),
         name=dict(type='str'),
         webshell_action=dict(type='str', default='alert_deny'),
-        block_period=dict(type='str', default='60'),
+        block_period=dict(type='int', default=60),
         severity=dict(type='str', default='Medium'),
         trigger=dict(type='str', default=''),
-        fuzzy_similarity_threshold=dict(type='str', default='80'),
+        fuzzy_similarity_threshold=dict(type='int', default=80),
         fuzzy_php_status=dict(type='str', default='enable'),
         fuzzy_asp_status=dict(type='str', default='enable'),
         fuzzy_jsp_status=dict(type='str', default='enable'),
@@ -346,7 +363,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -365,7 +383,14 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+      module.exit_json(**result)
+
+    if action == 'add':
         code, response, out = add_obj(module, connection)
         # result['out'] = json.dumps(out),
         result['res'] = response

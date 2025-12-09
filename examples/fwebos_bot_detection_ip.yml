@@ -1,0 +1,51 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+
+    - name: add a bot detection policy
+      fwebos_bot_detection:
+        action: add 
+        policy_id: 6814698978843458079
+        allow_ip:
+          - 11.2.3.4
+          - 192.168.253.1
+
+    - name: add a bot detection policy ip
+      fwebos_bot_detection_ip:
+        action: add 
+        policy_id: 1
+        ip: 10.11.3.4
+
+    - name: get all bot detection policy ip
+      fwebos_bot_detection_ip:
+        action: get 
+        policy_id: 1
+
+    - name: get a bot detection policy ip
+      fwebos_bot_detection_ip:
+        action: get 
+        policy_id: 1
+        id: 100
+
+    - name: edit a bot detection policy ip
+      fwebos_bot_detection_ip:
+        action: edit 
+        policy_id: 1
+        id: 1
+        ip: 192.13.3.41
+
+    - name: delete a bot detection policy
+      fwebos_bot_detection_ip:
+        action: delete 
+        policy_id: 1
+        id: 1
+
+    - name: delete a non-existant bot detection policy IP
+      fwebos_bot_detection_ip:
+        action: delete 
+        policy_id: 1
+        id: 100

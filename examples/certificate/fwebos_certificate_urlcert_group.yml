@@ -10,9 +10,32 @@
        action: delete 
        name: test 
        vdom: root1
+      check_mode: true
           
     - name: Create urlcert certificate group 
       fwebos_certificate_urlcert_group:
        action: add 
        name: test
        vdom: root1
+      check_mode: true
+
+    - name: Create urlcert certificate group 
+      fwebos_certificate_urlcert_group:
+       action: add 
+       name: test
+       vdom: root1
+
+    - name: delete urlcert certificate group 
+      fwebos_certificate_urlcert_group:
+       action: delete 
+       name: test 
+       vdom: root1
+      check_mode: true
+
+    - name: delete urlcert certificate group 
+      fwebos_certificate_urlcert_group:
+       action: delete 
+       name: test 
+       vdom: root1
+
+

@@ -1,0 +1,43 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a bot detection policy exception
+      fwebos_bot_detection_exception:
+        action: add 
+        policy_id: 1
+        host_status: enable
+        url_type: plain
+        host: a_host
+        url_pattern: /url_1/url_2/
+
+    - name: edit a bot detection policy exception
+      fwebos_bot_detection_exception:
+        action: edit 
+        policy_id: 1
+        id: 1
+        host_status: enable
+        url_type: regular
+        host: a_host_1
+        url_pattern: /url_1/url_2/abc/
+      
+    - name: get a bot detection policy exception
+      fwebos_bot_detection_exception:
+        action: get 
+        policy_id: 1
+        id: 1
+
+    - name: delete a bot detection policy exception
+      fwebos_bot_detection_exception:
+        action: delete 
+        policy_id: 1
+        id: 1
+
+    - name: delete a bot detection policy exception again
+      fwebos_bot_detection_exception:
+        action: delete 
+        policy_id: 1
+        id: 1

@@ -1,0 +1,113 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create a policy
+      fwebos_content_routing_policy:
+       action: add
+       name: crp1
+       comment: abcdefg
+       server_pool: server_pool1
+
+    - name: get a policy list
+      fwebos_content_routing_policy_match_list:
+       action: get
+       policy_name: crp1
+
+    - name: Create a url-parameter
+      fwebos_content_routing_policy_match_list:
+       action: add
+       policy_name: crp1
+       match_object: url-parameter
+       parameter_name_match_condition: equal
+       parameter_value_match_condition: equal
+       parameter_name_match_condition_val: YYYY
+       parameter_value_match_condition_val: ZZZZ
+       concatenate: and
+
+    - name: Create a http post
+      fwebos_content_routing_policy_match_list:
+       action: add
+       policy_name: crp1
+       match_object: http-post
+       match_condition: equal
+       match_expression: pattern
+       concatenate: and
+
+    - name: Create a x509-certificate-Subject
+      fwebos_content_routing_policy_match_list:
+       action: add
+       policy_name: crp1
+       match_object: x509-certificate-Subject
+       match_condition: equal
+       match_expression: 888
+       x509_subject_name: CN
+       concatenate: and
+
+    - name: Create a geo-ip
+      fwebos_content_routing_policy_match_list:
+       action: add
+       policy_name: crp1
+       match_object: geo-ip
+       country_list:
+        - Angola
+        - Bahrain
+       concatenate: and
+
+    - name: edit
+      fwebos_content_routing_policy_match_list:
+       action: edit
+       policy_name: crp1 
+       id: 1
+       match_expression: /find/abcd 
+
+    - name: edit a url-parameter
+      fwebos_content_routing_policy_match_list:
+       action: edit
+       policy_name: crp1
+       match_object: url-parameter
+       id: 1
+       parameter_name_match_condition: match-reg
+       parameter_value_match_condition: match-reg
+       parameter_name_match_condition_val: xxxx1
+       parameter_value_match_condition_val: yyyy1
+       concatenate: or
+
+    - name: edit
+      fwebos_content_routing_policy_match_list:
+       action: edit
+       policy_name: crp1 
+       id: 1
+       match_object: url-parameter
+       parameter_name_match_condition: equal
+       parameter_value_match_condition: equal
+       parameter_name_match_condition_val: ccc
+       parameter_value_match_condition_val: ddd
+       concatenate: and
+
+    - name: get
+      fwebos_content_routing_policy_match_list:
+       action: get
+       policy_name: crp1    
+       id: 1
+
+    - name: get
+      fwebos_content_routing_policy_match_list:
+       action: get
+       policy_name: crp1    
+       id: 1
+
+    - name: delete
+      fwebos_content_routing_policy_match_list:
+       action: delete
+       policy_name: crp1    
+       id: 1
+
+    - name: delete duplicated
+      fwebos_content_routing_policy_match_list:
+       action: delete
+       policy_name: crp1    
+       id: 1

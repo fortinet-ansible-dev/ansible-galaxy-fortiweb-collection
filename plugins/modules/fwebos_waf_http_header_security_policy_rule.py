@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_http_header_security_policy_rule
+short_description: Config FortiWeb HTTP Header Security Policy Rules
 description:
   - Config FortiWeb HTTP Header Security Policy Rules
 version_added: "7.0.0"
-authors:
+author:
   - Joseph Chen
 requirements:
     - ansible>=2.11
@@ -85,12 +86,12 @@ options:
             - Used to direct the browers to stop loading pages when reflected XSS attackes are detected.
         type: string
         choices:
-            - 'deny  (when 'secure_header_type' is 'x-frame-options')'
-            - 'sameorigin  (when 'secure_header_type' is 'x-frame-options')'
-            - 'allow-from (when 'secure_header_type' is 'x-frame-options')'
-            - 'nosniff (when 'secure_header_type' is 'x-content-type-options')'
-            - 'sanitizing-mode (when 'secure_header_type' is 'x-xss-protection')'
-            - 'block-mode (when 'secure_header_type' is 'x-xss-protection')'
+            - 'deny'  
+            - 'sameorigin' 
+            - 'allow-from' 
+            - 'nosniff' 
+            - 'sanitizing-mode'
+            - 'block-mode'
     header_value:
         description:
             - Used to reduce XSS risk and data injection attacks on browers.
@@ -199,7 +200,8 @@ def add_obj(module, connection):
 
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     payload1['data']['name'] = secure_header_type #API uses 'name' to store what means to be secure_header_type. 
     replace_key(payload1['data'], rep_dict)
 
@@ -256,7 +258,8 @@ def needs_update(module, data):
     payload1 = {}
     payload1['data'] = module.params
     replace_key(payload1['data'], rep_dict)
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
 
     res = combine_dict(payload1['data'], data)
     return res, data
@@ -320,7 +323,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -340,7 +344,14 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+      module.exit_json(**result)
+
+    if action == 'add':
         code, response, out_data = add_obj(module, connection)
         result['res'] = response
         result['changed'] = True
@@ -355,7 +366,7 @@ def main():
             res, new_data = needs_update(module, data['results'])
             if res:
                 code, response = edit_obj(module, new_data, connection)
-                result['new_data'] = new_data
+                # result['new_data'] = new_data
                 result['res'] = response
                 result['changed'] = True
     elif action == 'delete':

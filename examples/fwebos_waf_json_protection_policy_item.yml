@@ -1,0 +1,37 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a json protection policy
+      fwebos_waf_json_protection_policy:
+        action: add 
+        name: nsjpp1
+        enable_attack_signatures: enable
+
+    - name: add a json protection policy item
+      fwebos_waf_json_protection_policy_item:
+        action: add 
+        name: nsjpp1
+        input_rule: jspr2
+
+    - name: edit a json protection policy item
+      fwebos_waf_json_protection_policy_item:
+        action: edit
+        name: nsjpp1
+        id: 1
+        input_rule: jspr1
+
+    - name: get a json protection policy item
+      fwebos_waf_json_protection_policy_item:
+        action: get
+        name: nsjpp1
+        id: 1
+
+    - name: delete a json protection policy item
+      fwebos_waf_json_protection_policy_item:
+        action: delete 
+        name: nsjpp1
+        id: 1

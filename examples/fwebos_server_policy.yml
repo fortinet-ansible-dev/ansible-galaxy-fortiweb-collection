@@ -61,7 +61,7 @@
        certificate_type: disable
        http2_custom_cipher: ECDHE-ECDSA-AES256-GCM-SHA384 DHE-DSS-AES128-GCM-SHA256 DHE-RSA-AES128-GCM-SHA256 ECDHE-RSA-AES256-GCM-SHA384
        web_protection_profile: Inline Standard Protection
-       certificate_group: test
+      #  certificate_group: test
        allow_hosts: test.com
        intermediate_certificate_group: test
        comment: test111

@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.urls import prepare_multipart
@@ -22,10 +22,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_json_schema
+short_description: Config FortiWeb JSON Schema
 description:
   - Config FortiWeb JSON Schema
 version_added: "7.0.0"
-authors:
+author:
   - Joseph Chen
 requirements:
     - ansible>=2.11
@@ -205,7 +206,7 @@ def main():
     )
     argument_spec.update(fwebos_argument_spec)
 
-    module = AnsibleModule(argument_spec=argument_spec)
+    module = AnsibleModule(argument_spec=argument_spec,supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -221,10 +222,25 @@ def main():
         result['failed'] = True
         result['err_msg'] = error_msg   
         module.exit_json(**result)
+
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    if action == 'edit':
+        result['err_msg'] = 'error action: ' + action
+        result['failed'] = True
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+
+    if module.check_mode:
+      action = module.params['action']
+      module.exit_json(**result)
+      
+    if action == 'add':
         code, response = add_obj(module, connection)
         result['res'] = response
         result['changed'] = True

@@ -10,3 +10,18 @@
        action: add
        name: test4
        vdom: root
+
+    - name: edit
+      fwebos_waf_webshell:
+       action: edit
+       name: test4
+       vdom: root
+       severity: Low
+       webshell_action: block-period
+       block_period: 800
+
+    - name: delete
+      fwebos_waf_webshell:
+       action: delete
+       name: test4
+       vdom: root

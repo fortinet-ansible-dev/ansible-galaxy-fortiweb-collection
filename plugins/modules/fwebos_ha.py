@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_ha
+short_description: Config FortiWeb HA options
 description:
   - Config FortiWeb HA options
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -41,7 +42,7 @@ options:
             - 'standalone'
     group-id:
         description:
-            - group id, range 0-63 (range: 0-63)
+            - group id, range 0-63 
         type: integer
     group-name:
         description:
@@ -49,7 +50,7 @@ options:
         type: string
     priority:
         description:
-            - priority value, range 0-9 (range: 0-9)
+            - priority value, range 0-9 
         type: integer
     override:
         description:
@@ -75,23 +76,23 @@ options:
         type: string
     boot-time:
         description:
-            - boot time for Heartbeat, rang 1-100 (s) (range: 1-100)
+            - boot time for Heartbeat, rang 1-100 (s)
         type: integer
     hb-interval:
         description:
-            - heartbeat interval, range 1-20 (100ms) (range: 1-20)
+            - heartbeat interval, range 1-20 (100ms)
         type: integer
     hb-lost-threshold:
         description:
-            - heartbeat threshold for failed, range 1-60 (range: 1-60)
+            - heartbeat threshold for failed, range 1-60
         type: integer
     arps:
         description:
-            - gratuitous ARP or neighbour solicitation, range 1-16 (range: 1-16)
+            - gratuitous ARP or neighbour solicitation, range 1-16
         type: integer
     arp-interval:
         description:
-            - ARP/NS interval, range 1-20 (range: 1-20)
+            - ARP/NS interval, range 1-20
         type: integer
     key:
         description:
@@ -127,7 +128,7 @@ options:
             - 'disable'
     session-warm-up:
         description:
-            - session warm-up time, range 5-120(s) (range: 5-120)
+            - session warm-up time, range 5-120(s)
         type: integer
     schedule:
         description:
@@ -139,35 +140,35 @@ options:
             - 'leastconnection'
     weight-1:
         description:
-            - weight for No.1 unit in Source IP schedule, range 0-255 (range: 0-255)
+            - weight for No.1 unit in Source IP schedule, range 0-255
         type: integer
     weight-2:
         description:
-            - weight for No.2 unit in Source IP schedule, range 0-255 (range: 0-255)
+            - weight for No.2 unit in Source IP schedule, range 0-255
         type: integer
     weight-3:
         description:
-            - weight for No.3 unit in Source IP schedule, range 0-255 (range: 0-255)
+            - weight for No.3 unit in Source IP schedule, range 0-255
         type: integer
     weight-4:
         description:
-            - weight for No.4 unit in Source IP schedule, range 0-255 (range: 0-255)
+            - weight for No.4 unit in Source IP schedule, range 0-255 
         type: integer
     weight-5:
         description:
-            - weight for No.5 unit in Source IP schedule, range 0-255 (range: 0-255)
+            - weight for No.5 unit in Source IP schedule, range 0-255 
         type: integer
     weight-6:
         description:
-            - weight for No.6 unit in Source IP schedule, range 0-255 (range: 0-255)
+            - weight for No.6 unit in Source IP schedule, range 0-255 
         type: integer
     weight-7:
         description:
-            - weight for No.7 unit in Source IP schedule, range 0-255 (range: 0-255)
+            - weight for No.7 unit in Source IP schedule, range 0-255 
         type: integer
     weight-8:
         description:
-            - weight for No.8 unit in Source IP schedule, range 0-255 (range: 0-255)
+            - weight for No.8 unit in Source IP schedule, range 0-255 
         type: integer
     link-failed-signal:
         description:
@@ -470,7 +471,8 @@ def needs_update(module, data):
     res = False
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     replace_key(payload1['data'], rep_dict)
 
     res = combine_dict(payload1['data'], data)
@@ -490,20 +492,15 @@ def main():
     argument_spec = dict(
         action=dict(type='str', required=True),
         mode=dict(type='str'),
-        mode_val=dict(type='str'),
         group_id=dict(type='int'),
         group_name=dict(type='str'),
         priority=dict(type='int'),
         override=dict(type='str'),
-        override_val=dict(type='str'),
         network_type=dict(type='str'),
-        network_type_val=dict(type='str'),
         tunnel_local=dict(type='str'),
         tunnel_peer=dict(type='str'),
         hbdev=dict(type='str'),
-        hbdev_val=dict(type='str'),
         hbdev_backup=dict(type='str'),
-        hbdev_backup_val=dict(type='str'),
         boot_time=dict(type='int'),
         hb_interval=dict(type='int'),
         hb_lost_threshold=dict(type='int'),
@@ -511,18 +508,13 @@ def main():
         arp_interval=dict(type='int'),
         monitor=dict(type='str'),
         lacp_ha_slave=dict(type='str'),
-        lacp_ha_slave_val=dict(type='str'),
         ha_mgmt_status=dict(type='str'),
-        ha_mgmt_status_val=dict(type='str'),
         ha_mgmt_interface=dict(type='str'),
         session_pickup=dict(type='str'),
-        session_pickup_val=dict(type='str'),
         session_sync_dev=dict(type='str'),
         session_sync_broadcast=dict(type='str'),
-        session_sync_broadcast_val=dict(type='str'),
         session_warm_up=dict(type='int'),
         schedule=dict(type='str'),
-        schedule_val=dict(type='str'),
         weight_1=dict(type='int'),
         weight_2=dict(type='int'),
         weight_3=dict(type='int'),
@@ -532,30 +524,20 @@ def main():
         weight_7=dict(type='int'),
         weight_8=dict(type='int'),
         link_failed_signal=dict(type='str'),
-        link_failed_signal_val=dict(type='str'),
         l7_persistence_sync=dict(type='str'),
-        l7_persistence_sync_val=dict(type='str'),
         eip_addr=dict(type='str'),
         eip_aid=dict(type='str'),
         ha_eth_type=dict(type='str'),
         hc_eth_type=dict(type='str'),
         l2ep_eth_type=dict(type='str'),
         server_policy_hlck=dict(type='str'),
-        server_policy_hlck_val=dict(type='str'),
         multi_cluster=dict(type='str'),
-        multi_cluster_val=dict(type='str'),
         multi_cluster_group=dict(type='str'),
-        multi_cluster_group_val=dict(type='str'),
         multi_cluster_switch_by=dict(type='str'),
-        multi_cluster_switch_by_val=dict(type='str'),
         multi_cluster_move_primary_cluster=dict(type='str'),
-        multi_cluster_move_primary_cluster_val=dict(type='str'),
         encryption=dict(type='str'),
-        encryption_val=dict(type='str'),
         cluster_arp=dict(type='str'),
-        cluster_arp_val=dict(type='str'),
         sdn_connector=dict(type='str'),
-        sdn_connector_val=dict(type='str'),
         lb_name=dict(type='str'),
         lb_ocid=dict(type='str'),
     )
@@ -563,11 +545,29 @@ def main():
 
     required_if = [('mode')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
+
+    if action == 'add':
+        result['err_msg'] = 'error action: ' + action
+        result['failed'] = True
+        module.exit_json(**result)
+    if action == 'delete':
+        result['err_msg'] = 'error action: ' + action
+        result['failed'] = True
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+
+    if module.check_mode:
+        module.exit_json(**result)
+
+
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
@@ -578,29 +578,25 @@ def main():
         code, data = get_obj(module, connection)
         if 'results' in data.keys() and data['results'] and type(data['results']) is not int:
             res, new_data = needs_update(module, data['results'])
+            if res:
+                new_data1 = {}
+                new_data1['data'] = new_data
+                code, response = edit_obj(module, new_data1, connection)
+                result['res'] = response
+                result['changed'] = True
         else:
             result['failed'] = True
             res = False
             result['err_msg'] = 'Entry not found'
-        if res:
-            new_data1 = {}
-            new_data1['data'] = new_data
-            code, response = edit_obj(module, new_data1, connection)
-            result['res'] = response
-            result['changed'] = True
     else:
         result['err_msg'] = 'error action: ' + action
         result['failed'] = True
 
-    # if 'res' in result.keys() and type(result['res']) is dict\
-    #        and type(result['res']['results']) is int and result['res']['results'] < 0:
-        # result['err_msg'] = get_err_msg(connection, result['res']['payload'])
-    #    result['changed'] = False
-    #    result['failed'] = True
     if 'errcode' in str(result):
         result['changed'] = False
         result['failed'] = True
     module.exit_json(**result)
+
 
 
 if __name__ == '__main__':

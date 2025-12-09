@@ -1,0 +1,29 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_content_routing_policy:
+       action: add
+       name: crp1
+       comment: abcdefg
+       server_pool: server_pool1
+
+    - name: edit
+      fwebos_content_routing_policy:
+       action: edit
+       name: crp1
+       comment: 12123
+
+    - name: Get
+      fwebos_content_routing_policy:
+       action: get
+       name: crp1
+
+    - name: delete
+      fwebos_content_routing_policy:
+       action: delete
+       name: crp1

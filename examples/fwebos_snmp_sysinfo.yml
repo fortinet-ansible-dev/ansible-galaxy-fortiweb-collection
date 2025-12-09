@@ -9,7 +9,7 @@
       fwebos_snmp_sysinfo:
        action: edit 
        status: enable
-       description: test 
+       description: test 1 
        contact_info: test1
        location: test2
 
@@ -17,6 +17,6 @@
       fwebos_snmp_sysinfo:
        action: edit 
        status: disable
-       description: test 
-       contact_info: test1
+       description: test 2
+       contact_info: tester1
        location: test2

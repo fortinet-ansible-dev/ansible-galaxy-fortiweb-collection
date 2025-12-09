@@ -1,0 +1,51 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+
+    - name: add a dlp sensor
+      fwebos_waf_dlp_sensor:
+       action: add 
+       name: sensor1
+       match_type: any
+
+    - name: add a dlp sensor
+      fwebos_waf_dlp_sensor_entry:
+       action: add 
+       name: sensor1
+       status: enable
+       dictionary: fg-EICAR-TEST-FILE
+
+    - name: edit a dlp sensor
+      fwebos_waf_dlp_sensor_entry:
+       action: edit 
+       name: sensor1
+       id: 1
+       status: disable
+       count: 6
+
+    - name: get a dlp sensor's first entry
+      fwebos_waf_dlp_sensor_entry:
+       action: get 
+       name: sensor1
+       id: 1
+
+    - name: get a dlp sensor's all entry
+      fwebos_waf_dlp_sensor_entry:
+       action: get 
+       name: sensor1
+
+    - name: delete a non-existant dlp sensor entry
+      fwebos_waf_dlp_sensor_entry:
+       action: delete 
+       name: sensor1
+       id: 21
+
+    - name: delete a dlp sensor
+      fwebos_waf_dlp_sensor:
+       action: delete 
+       name: sensor1
+       match_type: any

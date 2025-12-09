@@ -5,18 +5,24 @@
   connection: httpapi
   gather_facts: false
   tasks:
-    - name: Create certificate crl 
+    # - name: Create certificate crl 
+    #   fwebos_certificate_crl:
+    #    action: add 
+    #    vdom: root1
+    #    type: localPC 
+    #    uploadedFile: crl.txt
+
+    - name: get certificate crl 
       fwebos_certificate_crl:
-       action: add 
+       action: get 
        vdom: root1
-       type: localPC 
-       uploadedFile: crl.txt
+       name: CRL_5
 
     - name: delete certificate crl 
       fwebos_certificate_crl:
        action: delete 
        vdom: root1
-       name: CRL_1
+       name: CRL_5
 
     - name: Create certificate crl 
       fwebos_certificate_crl:

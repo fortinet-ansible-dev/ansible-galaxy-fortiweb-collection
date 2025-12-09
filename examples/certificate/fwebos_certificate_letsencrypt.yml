@@ -4,16 +4,31 @@
   vars:
   connection: httpapi
   gather_facts: false
-  tasks:
-    - name: delete certificate letsencrypt 
+  tasks:         
+    - name: Create certificate letsencrypt in checkmode
       fwebos_certificate_letsencrypt:
-       action: delete 
+       action: add 
        vdom: root1
-       name: test123 
-          
+       name: test123
+       domain: test123.com
+      check_mode: true
+
     - name: Create certificate letsencrypt
       fwebos_certificate_letsencrypt:
        action: add 
        vdom: root1
        name: test123
        domain: test123.com
+
+    - name: delete certificate letsencrypt in checkmode
+      fwebos_certificate_letsencrypt:
+       action: delete 
+       vdom: root1
+       name: test123 
+      check_mode: true
+
+    - name: delete certificate letsencrypt 
+      fwebos_certificate_letsencrypt:
+       action: delete 
+       vdom: root1
+       name: test123 

@@ -5,6 +5,12 @@
   connection: httpapi
   gather_facts: false
   tasks:
+    - name: Get member
+      fwebos_certificate_ca_group_member:
+       action: get 
+       table_name: test 
+       id: 1
+
     - name: Create member
       fwebos_certificate_ca_group_member:
        action: add 

@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_xml_policy_rule_list
+short_description: Assign FortiWeb API Protection XML Protection rule to a policy
 description:
   - Assign FortiWeb API Protection XML Protection rule to a policy
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -59,10 +60,13 @@ res:
 
 obj_url = '/api/v2.0/cmdb/waf/xml-validation.policy/input-rule-list'
 
+rep_dict = {
+    "input_rule": 'input-rule'
+}
+
 
 def add_obj(module, connection):
 
-    table_name = module.params['table_name']
     name = module.params['name']
     input_rule = module.params['input_rule']
 
@@ -73,7 +77,7 @@ def add_obj(module, connection):
         },
     }
 
-    url = obj_url + '?mkey=' + table_name
+    url = obj_url + '?mkey=' + name
 
     code, response = connection.send_request(url, payload)
 
@@ -81,31 +85,31 @@ def add_obj(module, connection):
 
 
 def edit_obj(module, payload, connection):
-    table_name = module.params['table_name']
     name = module.params['name']
-    url = obj_url + '?mkey=' + table_name + '&sub_mkey=' + name
+    id = module.params['id']
+    url = obj_url + '?mkey=' + name + '&sub_mkey=' + id
     code, response = connection.send_request(url, payload, 'PUT')
 
     return code, response
 
 
 def get_obj(module, connection):
-    table_name = module.params['table_name']
+    id = module.params['id']
     name = module.params['name']
     payload = {}
-    url = obj_url + '?mkey=' + table_name
-    if name:
-        url += '&sub_mkey=' + name
+    url = obj_url + '?mkey=' + name
+    if id:
+        url += '&sub_mkey=' + id
     code, response = connection.send_request(url, payload, 'GET')
 
     return code, response
 
 
 def delete_obj(module, connection):
-    table_name = module.params['table_name']
     name = module.params['name']
+    id = module.params['id']
     payload = {}
-    url = obj_url + '?mkey=' + table_name + '&sub_mkey=' + name
+    url = obj_url + '?mkey=' + name + '&sub_mkey=' + id
     code, response = connection.send_request(url, payload, 'DELETE')
 
     return code, response
@@ -127,8 +131,8 @@ def param_check(module, connection):
     action = module.params['action']
     err_msg = ''
 
-    if (action == 'add' or action == 'edit' or action == 'delete') and module.params['table_name'] is None:
-        err_msg = 'table_name need to set'
+    if (action == 'add' or action == 'edit' or action == 'delete') and module.params['name'] is None:
+        err_msg = 'name need to set'
         res = False
     # if (action == 'add' or action == 'edit' or action == 'delete') and module.params['name'] != str(connection.get_option('remote_user')):
     #    err_msg = 'name need to set'
@@ -140,7 +144,7 @@ def param_check(module, connection):
 def main():
     argument_spec = dict(
         action=dict(type='str', required=True),
-        table_name=dict(type='str'),
+        id=dict(type='str'),
         name=dict(type='str'),
         input_rule=dict(type='str'),
 
@@ -151,7 +155,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -171,7 +176,14 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+      module.exit_json(**result)
+
+    if action == 'add':
         code, response, out = add_obj(module, connection)
         result['out'] = out
         result['res'] = response
@@ -207,7 +219,7 @@ def main():
         result['changed'] = False
         result['failed'] = True
         result['err_msg'] = 'Please check error code'
-        if result['res']['results']['errcode'] == -3 or result['res']['results']['errcode'] == -5:
+        if result['res']['results']['errcode'] == -3 or result['res']['results']['errcode'] == -5 or result['res']['results']['errcode'] == -7536:
             result['failed'] = False
 
     module.exit_json(**result)

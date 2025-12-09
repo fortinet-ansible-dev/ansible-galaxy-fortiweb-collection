@@ -1,0 +1,122 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    # - name: Test create server pool
+    #   fwebos_json_generic:
+    #    vdom: root
+    #    json_generic:
+    #     method: POST
+    #     path: /api/v2.0/cmdb/server-policy/server-pool
+    #     jsonbody: {           
+    #       comment: "999",
+    #       hlck-sip: "3.3.3.0/24",
+    #       hlck-sip6: "::/0",
+    #       lb-algo: "round-robin",
+    #       name: "sp3",
+    #       server-balance: "disable",
+    #       type: "reverse-proxy"
+    #     }
+
+
+    # - name: Test get server pool
+    #   fwebos_json_generic:
+    #    vdom: root
+    #    json_generic:
+    #     method: GET
+    #     path: /api/v2.0/cmdb/server-policy/server-pool?mkey=sp3
+    #     jsonbody: {           
+    #     }
+
+    # - name: Test bot
+    #   fwebos_json_generic:
+    #    vdom: root
+    #    json_generic:
+    #     method: POST
+    #     path: /api/v2.0/waf/botmanagement.setKnownBots?id=1&mkey=Bot1
+    #     jsonbody: {           
+    #       data: ["Cyberdog", "Neutrino Bot", "Pylot", "W32.Goolbot.E"]
+    #     }
+
+
+    # - name: Test API learning bot
+    #   fwebos_json_generic:
+    #    vdom: root
+    #    json_generic:
+    #     method: POST
+    #     path: /api/v2.0/machine_learning/api_learning_policy.create_policy_rule
+    #     jsonbody: {  
+    #         "policy_id": "6814698978843458079",
+    #         # "ip_list_type_model": 2,
+    #         "rule_domain": [
+    #           "dddd1"
+    #         ],
+    #         "rule_ip": [
+    #           "1.1.1.1"
+    #         ]      
+    #     }
+
+    # - name: Test bot
+    #   fwebos_json_generic:
+    #    vdom: root
+    #    json_generic:
+    #     method: POST
+    #     path: /api/v2.0/machine_learning/policy.botdetection
+    #     # jsonbody: {"allow_ip":["6.6.6.6","1.2.3.4-1.2.3.40","7.7.7.7"],"policy_id":"6814698978843458079"}
+    #     jsonbody: {  
+    #         "policy_id": "6814698978843458079",
+    #         # "ip_list_type_model": 2,
+    #         "rule_domain": [
+    #           "dddd1"
+    #         ],
+    #         "rule_ip": [
+    #           "1.1.1.1"
+    #         ]      
+    #     }
+
+    - name: Test get server pool
+      fwebos_json_generic:
+       vdom: root
+       json_generic:
+        method: PUT
+        path: /api/v2.0/cmdb/waf/x-forwarded-for?mkey=test1
+        jsonbody: {    
+          "add-source-port": "disable",
+          "add-source-port_val": "0",
+          "block-based-on-full-scan": "ip-reputation",
+          "block-based-on-full-scan_val": "1",
+          "block-based-on-original-ip": "enable",
+          "block-based-on-original-ip_val": "1",
+          "can_clone": 1,
+          "can_view": 0,
+          "delete-headers": "disable",
+          "delete-headers_val": "0",
+          "ip-location": "left",
+          "ip-location-add": "left",
+          "ip-location-add_val": "0",
+          "ip-location_val": "0",
+          "merge-headers": "disable",
+          "merge-headers_val": "0",
+          "name": "test1",
+          "original-ip-header": "X-FORWARDED-FOR",
+          "q_ref": 0,
+          "q_type": 1,
+          "skip-private-original-ip": "enable",
+          "skip-private-original-ip_val": "1",
+          "skip-special-original-ip": "enable",
+          "skip-special-original-ip_val": "1",
+          "sz_ip-list": 0,
+          "tracing-original-ip": "enable",
+          "tracing-original-ip_val": "1",
+          "x-forwarded-for-support": "enable",
+          "x-forwarded-for-support_val": "1",
+          "x-forwarded-port": "enable",
+          "x-forwarded-port_val": "1",
+          "x-forwarded-proto": "enable",
+          "x-forwarded-proto_val": "1",
+          "x-real-ip": "enable",
+          "x-real-ip_val": "1"     
+        }

@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_certificate_intermediate_ca_group_member
+short_description: Config FortiWeb server objects Intermediate CA group member
 description:
   - Config FortiWeb server objects Intermediate CA group member
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -81,7 +82,8 @@ def add_obj(module, connection):
     table_name = module.params['table_name']
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     payload1['data'].pop('vdom')
     payload1['data'].pop('table_name')
     payload1['data'].pop('id')
@@ -117,8 +119,10 @@ def get_obj(module, connection):
     name = module.params['id']
     payload = {}
     url = obj_url
-    if name:
-        url += '?mkey=' + table_name + '&sub_mkey=' + name
+    if table_name:
+        url += '?mkey=' + table_name
+        if name:
+            url += '&sub_mkey=' + name
     code, response = connection.send_request(url, payload, 'GET')
 
     return code, response
@@ -149,7 +153,8 @@ def needs_update(module, data):
     res = False
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     replace_key(payload1['data'], rep_dict)
 
     res = combine_dict(payload1['data'], data)
@@ -181,7 +186,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -195,6 +201,11 @@ def main():
         result['failed'] = True
         result['err_msg'] = error_msg   
         module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+      module.exit_json(**result)
 
     if not param_pass:
         result['err_msg'] = param_err

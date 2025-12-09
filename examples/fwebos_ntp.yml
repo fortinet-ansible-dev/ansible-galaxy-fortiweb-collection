@@ -8,9 +8,9 @@
     - name: edit ntp 
       fwebos_ntp:
        action: edit 
-       timeZone: 4
+       timeZone: 3
        daylightSaving: 0
        mode: ntpServer
        ntpServer:
          server: pool1.ntp.org
-         interval: 80
+         interval: 70

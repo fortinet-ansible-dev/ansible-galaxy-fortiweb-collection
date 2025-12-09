@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_bot_detection
+short_description: Config FortiWeb Bot Detection Policy
 description:
   - Config FortiWeb Bot Detection Policy
 version_added: "7.0.0"
-authors:
+author:
   - Joseph Chen
 requirements:
     - ansible>=2.11
@@ -58,15 +59,15 @@ options:
             - 'Cookie'
     sampling_count:
         description:
-            - Sample Count. (range: 1-1000)
+            - Sample Count. 
         type: integer
     sampling_count_per_client:
         description:
-            - Sample Count per Client per Hour. (range: 1-60)
+            - Sample Count per Client per Hour. 
         type: integer
     sampling_time_per_vector:
         description:
-            - Sampling Time per Vector. (range: 1-10)
+            - Sampling Time per Vector. 
         type: integer
     selected_model:
         description:
@@ -77,7 +78,7 @@ options:
             - 'Moderate'
     anomaly_count:
         description:
-            - Anomaly Count. (range: 1-65535)
+            - Anomaly Count. 
         type: integer
     bot_confirmation:
         description:
@@ -94,7 +95,7 @@ options:
             - 'Real-Browser-Enforement'
             - 'Disable'
             - 'Captcha-Enforcement'
-    security:
+    severity:
         description:
             - Select security level.
         type: string
@@ -115,17 +116,8 @@ options:
             - 'client-id-block-period'
     block_period:
         description:
-            - Block Period. (range: 1-3600)
+            - Block Period. 
         type: integer
-    security:
-        description:
-            - Select security level.
-        type: string
-        choices:
-            - 'Info'
-            - 'Low'
-            - 'Medium'
-            - 'High'
     trigger:
         description:
             - Select the trigger policy, if any, that FortiWeb carries out when it logs and/or sends an alert email about a violation.
@@ -260,6 +252,7 @@ def edit_obj(module, payload, connection):
 
 def get_obj(module, connection):
     payload = {}
+    url = obj_url
     id = module.params['id']
     if id:
         url = obj_url + '?mkey=' + id
@@ -315,22 +308,22 @@ def main():
         id=dict(type='str'),
         advanced_mode=dict(type='str'),
         client_identification_method=dict(type='str'),
-        sampling_count=dict(type='str'),
-        sampling_count_per_client=dict(type='str'),
+        sampling_count=dict(type='int'),
+        sampling_count_per_client=dict(type='int'),
         sampling_time_per_vector=dict(type='str'),
         training_accuracy=dict(type='str'),
         cross_validation=dict(type='str'),
         testing_accuracy=dict(type='str'),
-        anomaly_count=dict(type='str'),
+        anomaly_count=dict(type='int'),
         bot_confirmation=dict(type='str'),
         verification_method=dict(type='str'),
-        validation_timeout=dict(type='str'),
-        max_attempt_times=dict(type='str'),
+        validation_timeout=dict(type='int'),
+        max_attempt_times=dict(type='int'),
         recaptcha_server=dict(type='str'),
         mobile_verification_method=dict(type='str'),
         auto_refresh=dict(type='str'),
         refresh_factor=dict(type='str'),
-        minimum_vector_number=dict(type='str'),
+        minimum_vector_number=dict(type='int'),
         security_action=dict(type='str'),
         block_period=dict(type='str'),
         severity=dict(type='str'),
@@ -359,7 +352,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -379,10 +373,22 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode == True:
+        module.exit_json(**result)
+
+    if not param_pass:
+        result['err_msg'] = param_err
+        result['failed'] = True
     elif action == 'add':
         code, response, out_data = add_obj(module, connection)
         result['res'] = response
         result['changed'] = True
+        if 'errcode' in response.keys():
+            result['changed'] = False
     elif action == 'get':
         code, response = get_obj(module, connection)
         result['res'] = response

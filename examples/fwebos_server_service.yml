@@ -8,6 +8,24 @@
     - name: Create
       fwebos_server_service:
        action: add
-       name: test4
+       name: test1
        port: 331
        vdom: root
+
+    - name: get
+      fwebos_server_service:
+       action: get
+       name: test1
+
+    - name: edit
+      fwebos_server_service:
+       action: edit
+       name: test1
+       port: 303
+       vdom: root
+
+    - name: delete
+      fwebos_server_service:
+       action: delete
+       name: test1
+

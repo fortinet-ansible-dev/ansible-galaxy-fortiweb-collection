@@ -25,7 +25,7 @@
        max_age: 0
        http_only: disable
        name: test
-       trigger: test
+      #  trigger: test
        allow_time: 2022/10/28
 
     - name: edit

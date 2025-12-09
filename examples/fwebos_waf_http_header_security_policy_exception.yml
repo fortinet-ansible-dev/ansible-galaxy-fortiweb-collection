@@ -1,0 +1,30 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a policy
+      fwebos_waf_http_header_security_policy_exception:
+       action: add 
+       name: e1
+
+    - name: get a policy
+      fwebos_waf_http_header_security_policy_exception:
+       action: get 
+       name: e1
+
+    - name: delete a policy
+      fwebos_waf_http_header_security_policy_exception:
+       action: delete 
+       name: e1
+
+    - name: delete a policy again
+      fwebos_waf_http_header_security_policy_exception:
+       action: delete 
+       name: e1
+
+    - name: get policies
+      fwebos_waf_http_header_security_policy_exception:
+       action: get 

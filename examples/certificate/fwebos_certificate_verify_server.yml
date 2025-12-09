@@ -11,7 +11,14 @@
        vdom: root1
        name: test
        ca: test1
-       crl: 
+      check_mode: true
+
+    - name: Create certificate server verify 
+      fwebos_certificate_verify_server:
+       action: add 
+       vdom: root1
+       name: test
+       ca: test1
 
     - name: edit certificate server verify 
       fwebos_certificate_verify_server:
@@ -19,11 +26,26 @@
        vdom: root1
        name: test
        ca: test1
-       crl: test 
+       crl: test
+      check_mode: true 
+
+    - name: edit certificate server verify 
+      fwebos_certificate_verify_server:
+       action: edit 
+       vdom: root1
+       name: test
+       ca: test1
+       crl: test
 
     - name: delete certificate server verify 
       fwebos_certificate_verify_server:
        action: delete 
        vdom: root1
        name: test
+      check_mode: true
      
+    - name: delete certificate server verify 
+      fwebos_certificate_verify_server:
+       action: delete 
+       vdom: root1
+       name: test

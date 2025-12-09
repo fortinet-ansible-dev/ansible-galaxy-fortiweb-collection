@@ -1,0 +1,28 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a rule
+      fwebos_waf_custom_policy:
+       action: add 
+       name: test1
+       threat_weight: moderate
+
+    - name: edit a rule
+      fwebos_waf_custom_policy:
+       action: edit 
+       name: test1
+       threat_weight: low
+
+    - name: get a rule
+      fwebos_waf_custom_policy:
+       action: get 
+       name: test1
+
+    - name: delete a rule
+      fwebos_waf_custom_policy:
+       action: delete 
+       name: test1

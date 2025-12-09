@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_ml_based_api_protection_policy
+short_description: Config FortiWeb ML Based API Protection Policy
 description:
   - Config FortiWeb ML Based API Protection Policy
 version_added: "7.0.0"
-authors:
+author:
   - Joseph Chen
 requirements:
     - ansible>=2.11
@@ -198,6 +199,7 @@ def edit_obj(module, payload, connection):
 def get_obj(module, connection):
     payload = {}
     id = module.params['id']
+    url = obj_url 
     if id:
         url = obj_url + '?mkey=' + id
     code, response = connection.send_request(url, payload, 'GET')
@@ -303,7 +305,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -323,7 +326,14 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+      module.exit_json(**result)
+
+    if action == 'add':
         code, response, out_data = add_obj(module, connection)
         result['res'] = response
         result['changed'] = True

@@ -1,0 +1,37 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a custom policy first
+      fwebos_waf_custom_policy:
+       action: add 
+       name: cp1
+       threat_weight: moderate
+
+    - name: add a rule
+      fwebos_waf_custom_policy_item:
+       action: add 
+       name: cp1
+       rule_name: Vulnerability-Scanning
+
+    - name: edit a rule
+      fwebos_waf_custom_policy_item:
+       action: edit 
+       name: cp1
+       id: 1
+       rule_name: "Brute-Force-Login - Alert Only"
+
+    - name: get a rule
+      fwebos_waf_custom_policy_item:
+       action: get 
+       name: cp1
+       id: 1
+
+    - name: delete a rule
+      fwebos_waf_custom_policy_item:
+       action: delete 
+       name: cp1
+       id: 1

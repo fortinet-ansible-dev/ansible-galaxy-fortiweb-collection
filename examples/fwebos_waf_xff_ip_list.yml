@@ -12,6 +12,13 @@
        table_name: test 
        ip: 1.1.1.1
 
+    - name: get ip list
+      fwebos_waf_xff_ip_list:
+       action: get 
+       vdom: root
+       table_name: test 
+       id: 1
+
     - name: edit ip list
       fwebos_waf_xff_ip_list:
        action: edit 

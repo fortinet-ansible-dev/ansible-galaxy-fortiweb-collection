@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_json_protection_rule
+short_description: Config FortiWeb JSON Protection Rule
 description:
   - Config FortiWeb JSON Protection Rule
 version_added: "7.0.0"
-authors:
+author:
   - Joseph Chen
 requirements:
     - ansible>=2.11
@@ -64,27 +65,27 @@ options:
             - 'disable'
     json_data_size:
         description:
-            - Total Size of JSON Data. (range: 1-10240)
+            - Total Size of JSON Data. 
         type: integer
     key_size:
         description:
-            - Key Size. (range: 1-10240)
+            - Key Size. 
         type: integer
     key_number:
         description:
-            - Total Key Number. (range: 1-2147483647)
+            - Total Key Number. 
         type: integer
     value_size:
         description:
-            - Enter the value size of each key. (range: 1-10240)
+            - Enter the value size of each key. 
         type: integer
     value_number_in_array:
         description:
-            - Enter the total value number of each JSON file. (range: 1-10240)
+            - Enter the total value number of each JSON file. 
         type: integer
     object_depth:
         description:
-            - Enter the number of the nested objects. (range: 1-2147483647)
+            - Enter the number of the nested objects. 
         type: integer
     schema_type:
         description:
@@ -115,7 +116,7 @@ options:
             - 'client-id-block-period'
     block_period:
         description:
-            - Enter the amount of time (in seconds) that you want to block subsequent requests from a client after FortiWeb detects a rule violation. (range: 1-3600)
+            - Enter the amount of time (in seconds) that you want to block subsequent requests from a client after FortiWeb detects a rule violation. 
         type: integer
     severity:
         description:
@@ -226,7 +227,8 @@ def add_obj(module, connection):
     url = obj_url
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     payload1['data'].pop('vdom')
     replace_key(payload1['data'], rep_dict)
 
@@ -302,7 +304,8 @@ def needs_update(module, data):
     payload1 = {}
     payload1['data'] = module.params
     replace_key(payload1['data'], rep_dict)
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
 
     res = combine_dict(payload1['data'], data)
     return res, data
@@ -359,7 +362,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -379,7 +383,14 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+      module.exit_json(**result)
+
+    if action == 'add':
         code, response, out_data = add_obj(module, connection)
         result['res'] = response
         result['changed'] = True

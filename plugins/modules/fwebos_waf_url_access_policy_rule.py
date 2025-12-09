@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_url_access_policy_rule
+short_description: Assign URL policy rule to a policy
 description:
   - Assign URL policy rule to a policy
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -60,6 +61,10 @@ res:
 obj_url = '/api/v2.0/cmdb/waf/url-access.url-access-policy/rule'
 
 
+rep_dict = {
+    'url_access_rule_name':'url-access-rule-name'
+}
+
 def add_obj(module, connection):
 
     table_name = module.params['table_name']
@@ -81,7 +86,7 @@ def add_obj(module, connection):
 
 def edit_obj(module, payload, connection):
     table_name = module.params['table_name']
-    name = module.params['name']
+    name = module.params['id']
     url = obj_url + '?mkey=' + table_name + '&sub_mkey=' + name
     code, response = connection.send_request(url, payload, 'PUT')
 
@@ -90,7 +95,7 @@ def edit_obj(module, payload, connection):
 
 def get_obj(module, connection):
     table_name = module.params['table_name']
-    name = module.params['name']
+    name = module.params['id']
     payload = {}
     url = obj_url + '?mkey=' + table_name
     if name:
@@ -102,7 +107,7 @@ def get_obj(module, connection):
 
 def delete_obj(module, connection):
     table_name = module.params['table_name']
-    name = module.params['name']
+    name = module.params['id']
     payload = {}
     url = obj_url + '?mkey=' + table_name + '&sub_mkey=' + name
     code, response = connection.send_request(url, payload, 'DELETE')
@@ -120,10 +125,14 @@ def param_check(module, connection):
     action = module.params['action']
     err_msg = ''
 
+    if action != 'add' and action != 'get' and action != 'delete':
+        err_msg = 'unsupported action: ' + action 
+        res = False
+
     if (action == 'add' or action == 'delete') and module.params['table_name'] is None:
         err_msg = 'table_name need to set'
         res = False
-    # if (action == 'add' or action == 'edit' or action == 'delete') and module.params['name'] != str(connection.get_option('remote_user')):
+    # if (action == 'add' or action == 'edit' or action == 'delete') and module.params['id'] != str(connection.get_option('remote_user')):
     #    err_msg = 'name need to set'
     #    res = False
 
@@ -134,7 +143,7 @@ def main():
     argument_spec = dict(
         action=dict(type='str', required=True),
         table_name=dict(type='str'),
-        name=dict(type='str'),
+        id=dict(type='str'),
         url_access_rule_name=dict(type='str'),
 
         vdom=dict(type='str'),
@@ -142,9 +151,8 @@ def main():
     )
     argument_spec.update(fwebos_argument_spec)
 
-    required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -164,7 +172,14 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, None)
+    if module.check_mode:
+      module.exit_json(**result)
+
+    if action == 'add':
         code, response, out = add_obj(module, connection)
         result['out'] = out
         result['res'] = response

@@ -1,0 +1,81 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a site_publish policy
+      fwebos_waf_site_publish_policy:
+        action: add 
+        name: pp1
+        account_block_period: 600  
+        account_lockout: enable 
+        security_action: alert_deny
+        credential_stuffing_online_query: enable
+        credential_stuffing_protection: enable   
+        limit_users: enable
+        max_login_failures: 5  
+        maximum_users: 1  
+        session_idle_timeout: 30  
+        severity: Medium 
+        within: 3   
+
+    - name: add a site_publish rule
+      fwebos_waf_site_publish_rule:
+        action: add
+        name: spr1
+        published_site: testsite.com
+        published_site_type: plain
+        status: enable
+        cookieless: disable
+        cookieless_cache: 3600
+        client_auth_method: html-form-auth
+        auth_server_pool: asp1
+        ntlm_server: 
+        auth_delegation: no-delegation
+        form_based_delegation: 
+        sso_support: enable
+        sso_domain: domin1
+        prefix_support: enable
+        prefix_domain: prefix1
+        path: /path1/path2/*
+        alert_type: fail
+        logoff_path_type: plain
+        Published_Server_Logoff_Path: /abc/efg
+        redirect_url: 
+        cookie_timeout: 222
+        csrf_enhancement: enable
+        append_custom_header: enable
+        pass_failed_auth: enable
+        cache_tgs_ticket: enable
+
+    - name: add a published site's policy's rule entry
+      fwebos_waf_site_publish_policy_rule:
+       action: add 
+       name: pp1
+       rule_name: spr1
+
+    - name: edit a published site's policy's rule entry
+      fwebos_waf_site_publish_policy_rule:
+       action: edit 
+       name: pp1
+       rule_name: spr2
+       id: 1
+
+    - name: get a published site's policy's rule entry
+      fwebos_waf_site_publish_policy_rule:
+       action: get 
+       name: pp1
+       id: 1
+
+    - name: get a published site's all custom_headers
+      fwebos_waf_site_publish_policy_rule:
+       action: get 
+       name: pp1
+
+    - name: delete a published site's policy's rule entry
+      fwebos_waf_site_publish_policy_rule:
+       action: delete 
+       name: pp1
+       id: 1

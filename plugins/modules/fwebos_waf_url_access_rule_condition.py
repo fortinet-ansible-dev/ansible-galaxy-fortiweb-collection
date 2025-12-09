@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_url_access_rule_condition
+short_description: Config FortiWeb Web Protection URL Access rules conditions
 description:
   - Config FortiWeb Web Protection URL Access rules conditions
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -79,11 +80,22 @@ res:
 
 obj_url = '/api/v2.0/cmdb/waf/url-access.url-access-rule/match-condition'
 
+rep_dict = {
+    'url_type': 'type',
+    'reg_exp': 'reg-exp',
+    'reverse_match': 'reverse-match',
+    'sip_address_check': 'sip-address-check',
+    'sip_address_type': 'sip-address-type',
+    'sip_address_value': 'sip-address-value',
+    'sdomain_type': 'sdomain-type',
+    'sip_address_domain': 'sip-address-domain',
+    'source_domain_type': 'source-domain-type',
+    'source_domain': 'source-domain',
+}
 
 def add_obj(module, connection):
 
     table_name = module.params['table_name']
-    name = module.params['name']
     url_type = module.params['url_type']
     reg_exp = module.params['reg_exp']
     reverse_match = module.params['reverse_match']
@@ -120,7 +132,7 @@ def add_obj(module, connection):
 
 def edit_obj(module, payload, connection):
     table_name = module.params['table_name']
-    name = module.params['name']
+    name = module.params['id']
     url = obj_url + '?mkey=' + table_name + '&sub_mkey=' + name
     code, response = connection.send_request(url, payload, 'PUT')
 
@@ -129,7 +141,7 @@ def edit_obj(module, payload, connection):
 
 def get_obj(module, connection):
     table_name = module.params['table_name']
-    name = module.params['name']
+    name = module.params['id']
     payload = {}
     url = obj_url + '?mkey=' + table_name
     if name:
@@ -141,7 +153,7 @@ def get_obj(module, connection):
 
 def delete_obj(module, connection):
     table_name = module.params['table_name']
-    name = module.params['name']
+    name = module.params['id']
     payload = {}
     url = obj_url + '?mkey=' + table_name + '&sub_mkey=' + name
     code, response = connection.send_request(url, payload, 'DELETE')
@@ -215,7 +227,10 @@ def param_check(module, connection):
         if module.params['sip_address_type'] == 'source-domin' and (module.params['source_domain_type'] is None or module.params['source_domain'] is None):
             err_msg = 'sdomain_type(source-domain/regex-expression) and source-domain need to set the ip range when sip_address_type is source-domin'
             res = False
-
+    if (action == 'delete' or action == 'edit'):
+        if module.params['id'] is None:
+            err_msg = 'id cannot be empty for action '+ action
+            res = False
     return res, err_msg
 
 
@@ -223,7 +238,7 @@ def main():
     argument_spec = dict(
         action=dict(type='str', required=True),
         table_name=dict(type='str'),
-        name=dict(type='str'),
+        id=dict(type='str'),
         url_type=dict(type='str'),
         reg_exp=dict(type='str'),
         reverse_match=dict(type='str'),
@@ -238,10 +253,8 @@ def main():
 
     )
     argument_spec.update(fwebos_argument_spec)
-
-    required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -261,7 +274,14 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+      module.exit_json(**result)
+
+    if action == 'add':
         code, response, out_data = add_obj(module, connection)
         result['res'] = response
         result['changed'] = True
@@ -270,19 +290,22 @@ def main():
         result['res'] = response
     elif action == 'edit':
         code, data = get_obj(module, connection)
-        if 'errcode' in str(data):
+        if 'errcode' in str(data) or len(data['results']) == 0:
             result['changed'] = False
             result['res'] = data
         else:
             res, new_data = needs_update(module, data['results'])
             if res:
-                result['new'] = new_data
+                # result['new'] = new_data
                 code, response = edit_obj(module, new_data, connection)
                 result['res'] = response
                 result['changed'] = True
     elif action == 'delete':
         code, data = get_obj(module, connection)
-        if 'results' in data.keys() and data['results'] and type(data['results']) is not int:
+        if 'errcode' in str(data):
+            result['err_msg'] = 'Entry not found'
+            result['res'] = data
+        elif 'results' in data.keys() and data['results'] and type(data['results']) is not int:
             code, response = delete_obj(module, connection)
             result['res'] = response
             result['changed'] = True

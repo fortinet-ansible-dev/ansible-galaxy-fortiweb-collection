@@ -1,0 +1,49 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a Service Principal Name Pool
+      fwebos_waf_site_publish_service_principal_name_pool:
+        action: add 
+        name: server_name_pool1
+
+    - name: add a Service Principal Name Pool's member
+      fwebos_waf_site_publish_service_principal_name_pool_member:
+        action: add 
+        name: server_name_pool1
+        server: 10.10.2.3
+        service_principal_name: HTTP/USER-U4ZOJFPLH1.dc1.com@DC1.COM.
+
+    - name: edit a Service Principal Name Pool's member
+      fwebos_waf_site_publish_service_principal_name_pool_member:
+        action: edit 
+        name: server_name_pool1
+        id: 1
+        server: 10.10.2.5
+        service_principal_name: HTTP/USER2-U4ZOJFPLH1.dc2.com@DC2.COM.        
+
+    - name: get all Service Principal Name Pool's members
+      fwebos_waf_site_publish_service_principal_name_pool_member:
+        action: get 
+        name: server_name_pool1
+
+    - name: get a Service Principal Name Pool's members
+      fwebos_waf_site_publish_service_principal_name_pool_member:
+        action: get 
+        name: server_name_pool1
+        id: 1
+
+    - name: delete a Service Principal Name Pool's members
+      fwebos_waf_site_publish_service_principal_name_pool_member:
+        action: delete 
+        name: server_name_pool1
+        id: 1    
+
+    - name: delete a Service Principal Name Pool's members again
+      fwebos_waf_site_publish_service_principal_name_pool_member:
+        action: delete 
+        name: server_name_pool1
+        id: 1    

@@ -5,24 +5,30 @@
   connection: httpapi
   gather_facts: false
   tasks:
-    - name: Create member
-      fwebos_certificate_xml_client_group_member:
+    - name: Create xml client certificate group 
+      fwebos_certificate_xml_client_group:
        action: add 
-       vdom: root1 
-       table_name: test 
-       name: ca
-
-    - name: edit member
-      fwebos_certificate_xml_client_group_member:
-       action: edit 
+       name: test
        vdom: root1
-       table_name: test 
-       name: ca
-       id: 1
 
-    - name: delete member
-      fwebos_certificate_xml_client_group_member:
-       action: delete 
-       vdom: root1
-       table_name: test 
-       id: 1 
+    # - name: Create member
+    #   fwebos_certificate_xml_client_group_member:
+    #    action: add 
+    #    vdom: root1 
+    #    table_name: test2 
+    #    name: ca
+
+    # - name: edit member
+    #   fwebos_certificate_xml_client_group_member:
+    #    action: edit 
+    #    vdom: root1
+    #    table_name: test 
+    #    name: ca
+    #    id: 1
+
+    # - name: delete member
+    #   fwebos_certificate_xml_client_group_member:
+    #    action: delete 
+    #    vdom: root1
+    #    table_name: test 
+    #    id: 1 

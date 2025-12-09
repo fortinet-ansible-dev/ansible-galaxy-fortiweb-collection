@@ -5,19 +5,19 @@
   connection: httpapi
   gather_facts: false
   tasks:
-    - name: Upload pkcs12 certificate 
-      fwebos_certificate_local_import_certificate:
-       action: add
-       vdom: root
-       type: PKCS12Certificate
-       certificateWithKeyFile: ca.p12
-       password: 12345678
+    # - name: Upload pkcs12 certificate 
+    #   fwebos_certificate_local_import_certificate:
+    #    action: add
+    #    vdom: root
+    #    type: PKCS12Certificate
+    #    certificateWithKeyFile: ca.p12
+    #    password: 12345678
 
-    - name:  Delete certificate 
-      fwebos_certificate_local_import_certificate:
-       action: delete
-       vdom: root
-       name: ca 
+    # - name:  Delete certificate 
+    #   fwebos_certificate_local_import_certificate:
+    #    action: delete
+    #    vdom: root
+    #    name: ca 
 
     - name: Upload certificate 
       fwebos_certificate_local_import_certificate:
@@ -28,12 +28,30 @@
        keyFile: ca.key
        hsm: undefined
        password: 12345678
+      check_mode: true
+
+    - name: Upload certificate 
+      fwebos_certificate_local_import_certificate:
+       action: add
+       vdom: root
+       type: certificate
+       certificateFile: ca.crt
+       keyFile: ca.key
+       hsm: undefined
+       password: 12345678      
 
     - name:  Delete certificate 
       fwebos_certificate_local_import_certificate:
        action: delete
        vdom: root
        name: ca 
+
+    - name:  Delete certificate 
+      fwebos_certificate_local_import_certificate:
+       action: delete
+       vdom: root
+       name: ca 
+      check_mode: true
 
     - name: Upload local certificate 
       fwebos_certificate_local_import_certificate:

@@ -14,6 +14,16 @@
        strictly_need_cert: enable
        ca: test1
        crl: 
+      check_mode: true
+
+      fwebos_certificate_verify:
+       action: add 
+       vdom: root1
+       name: test
+       publish_dn: disable
+       strictly_need_cert: enable
+       ca: test1
+       crl: 
 
     - name: edit certificate verify 
       fwebos_certificate_verify:
@@ -24,10 +34,28 @@
        strictly_need_cert: disable 
        ca: test1
        crl: 
+      check_mode: true
 
+    - name: edit certificate verify 
+      fwebos_certificate_verify:
+       action: edit 
+       vdom: root1
+       name: test
+       publish_dn: disable
+       strictly_need_cert: disable 
+       ca: test1
+       crl: 
+      
     - name: delete certificate verify 
       fwebos_certificate_verify:
        action: delete 
        vdom: root1
        name: test 
+      check_mode: true
  
+    - name: delete certificate verify 
+      fwebos_certificate_verify:
+       action: delete 
+       vdom: root1
+       name: test 
+

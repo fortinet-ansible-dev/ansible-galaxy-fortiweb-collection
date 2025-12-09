@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_cookie_security_exception
+short_description: Config FortiWeb Web Protection Cookie Security exceptions
 description:
   - Config FortiWeb Web Protection Cookie Security exceptions
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -61,6 +62,11 @@ res:
 
 obj_url = '/api/v2.0/cmdb/waf/cookie-security/cookie-security-exception-list'
 
+rep_dict = {
+    'cookie_name': 'cookie-name',
+    'cookie_domain': 'cookie-domain',
+    'cookie_path': 'cookie-path',
+}
 
 def add_obj(module, connection):
 
@@ -165,7 +171,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -185,7 +192,14 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+        module.exit_json(**result)
+
+    if action == 'add':
         code, response, out_data = add_obj(module, connection)
         result['res'] = response
         result['changed'] = True
@@ -220,7 +234,7 @@ def main():
         result['changed'] = False
         result['failed'] = True
         result['err_msg'] = 'Please check error code'
-        if result['res']['results']['errcode'] == -3 or result['res']['results']['errcode'] == -5:
+        if result['res']['results']['errcode'] == -3 or result['res']['results']['errcode'] == -5 or result['res']['results']['errcode'] == -7664:
             result['failed'] = False
 
     module.exit_json(**result)

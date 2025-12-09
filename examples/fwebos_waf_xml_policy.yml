@@ -11,3 +11,20 @@
        name: test4
        enable_signature_detection: disable
        vdom: root
+
+    - name: edit
+      fwebos_waf_xml_policy:
+       action: edit
+       name: test4
+       enable_signature_detection: enable
+       vdom: root
+
+    - name: get
+      fwebos_waf_xml_policy:
+       action: get
+       name: test4
+
+    - name: delete
+      fwebos_waf_xml_policy:
+       action: delete
+       name: test4

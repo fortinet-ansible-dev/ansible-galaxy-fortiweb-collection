@@ -1,0 +1,35 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a ML Based API protection policy
+      fwebos_ml_based_api_protection_policy:
+        action: add 
+        policy_id: 15296982069610136571
+        rule_domain:
+          - ddccd
+          - aadddc
+        rule_ip:
+          - 1.2.3.4
+          - 10.2.41.34
+
+    - name: get a ML Based API protection policy
+      fwebos_ml_based_api_protection_policy:
+        action: get 
+        id: 1
+
+    - name: edit a ML Based API protection policy
+      fwebos_ml_based_api_protection_policy:
+        action: edit 
+        id: 1
+        action_mlapi: block-period
+        block_period_mlapi: 567
+        severity_mlapi: High
+    
+    - name: delete a ML Based API protection policy
+      fwebos_ml_based_api_protection_policy:
+        action: delete
+        id: 1

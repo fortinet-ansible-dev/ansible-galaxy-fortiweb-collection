@@ -1,0 +1,36 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a waiting room policy
+      fwebos_waf_waiting_room_policy:
+        action: add 
+        name: nw2
+        path_type: plain
+        custom_page: Predefined
+        path: /pathA/pathB
+        total_active_users: 4000
+        new_users_per_min: 12
+        session_duration: 14
+        description: new page
+
+    - name: edit a waiting room policy
+      fwebos_waf_waiting_room_policy:
+        action: edit 
+        name: nw2
+        path_type: plain
+        custom_page: Predefined
+        path: /pathA/pathB/pathC
+        total_active_users: 4444
+        new_users_per_min: 182
+        session_duration: 20
+        description: Old page
+
+    - name: get a waiting room policy
+      fwebos_waf_waiting_room_policy:
+        action: get 
+        name: nw2
+ 

@@ -1,0 +1,27 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a policy
+      fwebos_waf_dlp_policy:
+       action: add 
+       name: aaa
+
+    - name: get a policy
+      fwebos_waf_dlp_policy:
+       action: get 
+       name: aaa
+
+    - name: delete a policy
+      fwebos_waf_dlp_policy:
+       action: delete 
+       name: aaa
+
+    - name: delete a policy again
+      fwebos_waf_dlp_policy:
+       action: delete 
+       name: aaa
+

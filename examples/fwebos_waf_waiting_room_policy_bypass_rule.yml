@@ -1,0 +1,31 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a waiting room policy bypass rule
+      fwebos_waf_waiting_room_policy_bypass_rule:
+        action: add 
+        name: nw2
+        value: "6.6.6.6"
+
+    - name: get a waiting room policy bypass rule
+      fwebos_waf_waiting_room_policy_bypass_rule:
+        action: get 
+        name: nw2
+        id: 1
+      
+    - name: edit a waiting room policy bypass rule
+      fwebos_waf_waiting_room_policy_bypass_rule:
+        action: edit 
+        name: nw2
+        id: 1
+        value: 3.3.3.3
+
+    - name: delete a waiting room policy bypass rule
+      fwebos_waf_waiting_room_policy_bypass_rule:
+        action: delete 
+        name: nw2
+        id: 1

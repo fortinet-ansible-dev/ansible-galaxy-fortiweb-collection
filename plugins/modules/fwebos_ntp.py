@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_ntp
+short_description: Config FortiWeb NTP settings
 description:
   - Config FortiWeb NTP settings
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -110,7 +111,8 @@ def needs_update(module, data):
     res = False
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     replace_key(payload1['data'], rep_dict)
 
     res = combine_dict(payload1['data'], data)
@@ -129,7 +131,7 @@ def param_check(module, connection):
 def main():
     argument_spec = dict(
         action=dict(type='str', required=True),
-        timeZone=dict(type='str'),
+        timeZone=dict(type='int'),
         daylightSaving=dict(type='int'),
         systemTime=dict(type='str'),
         time=dict(type='str'),
@@ -141,11 +143,26 @@ def main():
     )
     argument_spec.update(fwebos_argument_spec)
 
-    module = AnsibleModule(argument_spec=argument_spec)
+    module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
+
+    if action == 'add':
+        result['err_msg'] = 'error action: ' + action
+        result['failed'] = True
+        module.exit_json(**result)
+    if action == 'delete':
+        result['err_msg'] = 'error action: ' + action
+        result['failed'] = True
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+        module.exit_json(**result)
+
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True

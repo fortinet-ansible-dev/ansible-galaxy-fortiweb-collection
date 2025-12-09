@@ -5,12 +5,22 @@
   connection: httpapi
   gather_facts: false
   tasks:
+
+    - name: Get ca 
+      fwebos_certificate_ca:
+       action: get 
+
     - name: Upload ca 
       fwebos_certificate_ca:
        action: add 
        vdom: root1
        type: localPC 
-       srcfile: ca.crt 
+       srcfile: intermediate.crt 
+
+    - name: Get ca 
+      fwebos_certificate_ca:
+       action: get 
+       name: CA_Cert_1
 
     - name: Delete ca 
       fwebos_certificate_ca:

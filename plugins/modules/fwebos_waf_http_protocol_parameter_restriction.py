@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_http_protocol_parameter_restriction
+short_description: Config FortiWeb Web Protection HTTP Constraints
 description:
   - Config FortiWeb Web Protection HTTP Constraints
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -43,7 +44,7 @@ options:
             - 'disable'
     max-http-header-length:
         description:
-            - max length of header, default value is 8192 (range: 0-12288)
+            - max length of header, default value is 8192 
         type: integer
     max-http-header-length-action:
         description:
@@ -57,7 +58,7 @@ options:
             - 'client-id-block-period'
     max-http-header-length-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-http-header-length-threat-weight:
         description:
@@ -88,7 +89,7 @@ options:
             - 'disable'
     max-http-content-length:
         description:
-            - max length (KB) of content, 0 means this value has not limitation (range: 0-65536)
+            - max length (KB) of content, 0 means this value has not limitation 
         type: integer
     max-http-content-length-action:
         description:
@@ -102,7 +103,7 @@ options:
             - 'client-id-block-period'
     max-http-content-length-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-http-content-length-threat-weight:
         description:
@@ -133,7 +134,7 @@ options:
             - 'disable'
     max-http-body-length:
         description:
-            - max length (KB) of body, 0 means this value has not limitation (range: 0-65536)
+            - max length (KB) of body, 0 means this value has not limitation 
         type: integer
     max-http-body-length-action:
         description:
@@ -147,7 +148,7 @@ options:
             - 'client-id-block-period'
     max-http-body-length-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-http-body-length-threat-weight:
         description:
@@ -178,7 +179,7 @@ options:
             - 'disable'
     max-http-request-length:
         description:
-            - max length of http request, default value is 2048[0,65536] (KB) (range: 0-65536)
+            - max length of http request, default value is 2048[0,65536] (KB) 
         type: integer
     max-http-request-length-action:
         description:
@@ -192,7 +193,7 @@ options:
             - 'client-id-block-period'
     max-http-request-length-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-http-request-length-threat-weight:
         description:
@@ -223,7 +224,7 @@ options:
             - 'disable'
     max-url-parameter-length:
         description:
-            - max length of url parameter, default value is 8192 (range: 0-12288)
+            - max length of url parameter, default value is 8192 
         type: integer
     max-url-parameter-length-action:
         description:
@@ -237,7 +238,7 @@ options:
             - 'client-id-block-period'
     max-url-parameter-length-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-url-parameter-length-threat-weight:
         description:
@@ -261,7 +262,7 @@ options:
             - 'Info'
     Illegal-http-version-check:
         description:
-            - 
+            - switch of Illegal HTTP Version Check
         type: string
         choices:
             - 'enable'
@@ -278,7 +279,7 @@ options:
             - 'client-id-block-period'
     Illegal-http-version-check-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     Illegal-http-version-threat-weight:
         description:
@@ -293,7 +294,7 @@ options:
             - 'severe'
     Illegal-http-version-check-severity:
         description:
-            - severity:High, Medium, Low or Informative
+            - severity of Illegal-http-version-check
         type: string
         choices:
             - 'High'
@@ -309,7 +310,7 @@ options:
             - 'disable'
     max-cookie-in-request:
         description:
-            - max count of cookie request, default value is 128 [0,1023] (range: 0-1023)
+            - max count of cookie request, default value is 128 [0,1023] 
         type: integer
     max-cookie-in-request-action:
         description:
@@ -323,7 +324,7 @@ options:
             - 'client-id-block-period'
     max-cookie-in-request-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-cookie-in-request-threat-weight:
         description:
@@ -354,7 +355,7 @@ options:
             - 'disable'
     max-header-line-request:
         description:
-            - max count of header line request, default value is 64 [0,128] (range: 0-128)
+            - max count of header line request, default value is 64 [0,128] 
         type: integer
     max-header-line-request-action:
         description:
@@ -368,7 +369,7 @@ options:
             - 'client-id-block-period'
     max-header-line-request-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-header-line-request-threat-weight:
         description:
@@ -392,7 +393,7 @@ options:
             - 'Info'
     Illegal-http-request-method-check:
         description:
-            - 
+            - switch of Illegal HTTP Request Method Check
         type: string
         choices:
             - 'enable'
@@ -409,7 +410,7 @@ options:
             - 'client-id-block-period'
     Illegal-http-request-method-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     Illegal-http-request-method-threat-weight:
         description:
@@ -440,7 +441,7 @@ options:
             - 'disable'
     max-url-parameter:
         description:
-            - max number of url parameter, default value is 128 [0,1023] (range: 0-1023)
+            - max number of url parameter, default value is 128 [0,1023] 
         type: integer
     max-url-parameter-action:
         description:
@@ -454,7 +455,7 @@ options:
             - 'client-id-block-period'
     max-url-parameter-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-url-parameter-threat-weight:
         description:
@@ -478,7 +479,7 @@ options:
             - 'Info'
     Illegal-host-name-check:
         description:
-            - 
+            - switch of Illegal Host Name Check
         type: string
         choices:
             - 'enable'
@@ -495,7 +496,7 @@ options:
             - 'client-id-block-period'
     Illegal-host-name-check-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     Illegal-host-name-check-threat-weight:
         description:
@@ -510,7 +511,7 @@ options:
             - 'severe'
     Illegal-host-name-check-severity:
         description:
-            - severity:High, Medium, Low or Informative
+            - severity
         type: string
         choices:
             - 'High'
@@ -526,7 +527,7 @@ options:
             - 'disable'
     number-of-ranges-in-range-header:
         description:
-            - max ranges in Range Header,default value is 5 [0 ,64] (range: 0-64)
+            - max ranges in Range Header,default value is 5 [0 ,64] 
         type: integer
     number-of-ranges-in-range-header-action:
         description:
@@ -540,7 +541,7 @@ options:
             - 'client-id-block-period'
     number-of-ranges-in-range-header-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     number-of-ranges-in-range-header-threat-weight:
         description:
@@ -571,7 +572,7 @@ options:
             - 'disable'
     http2-max-requests:
         description:
-            - max number of requests in HTTP2 connection, default value is 1000 [0 ,65535] (range: 0-65535)
+            - max number of requests in HTTP2 connection, default value is 1000 [0 ,65535] 
         type: integer
     http2-max-requests-action:
         description:
@@ -585,7 +586,7 @@ options:
             - 'client-id-block-period'
     http2-max-requests-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     http2-max-requests-severity:
         description:
@@ -626,7 +627,7 @@ options:
             - 'client-id-block-period'
     block-malformed-request-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     block-malformed-request-threat-weight:
         description:
@@ -650,14 +651,14 @@ options:
             - 'Info'
     Illegal-content-length-check:
         description:
-            - 
+            - switch of Illegal Content Length Check
         type: string
         choices:
             - 'enable'
             - 'disable'
     Illegal-content-length-check-action:
         description:
-            - action
+            - Action of Illegal Content Length Check
         type: string
         choices:
             - 'alert'
@@ -667,11 +668,11 @@ options:
             - 'client-id-block-period'
     Illegal-content-length-check-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period 
         type: integer
     Illegal-content-length-check-threat-weight:
         description:
-            - threat weight
+            - threat weight of Illegal Content Length Check
         type: string
         choices:
             - 'low'
@@ -682,7 +683,7 @@ options:
             - 'severe'
     Illegal-content-length-check-severity:
         description:
-            - severity:High, Medium, Low or Informative
+            - severity of Illegal Content Length Check
         type: string
         choices:
             - 'High'
@@ -691,7 +692,7 @@ options:
             - 'Info'
     Illegal-content-type-check:
         description:
-            - 
+            - switch of Illegal Content Type Check
         type: string
         choices:
             - 'enable'
@@ -708,7 +709,7 @@ options:
             - 'client-id-block-period'
     Illegal-content-type-check-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     Illegal-content-type-check-threat-weight:
         description:
@@ -732,7 +733,7 @@ options:
             - 'Info'
     Illegal-response-code-check:
         description:
-            - 
+            - switch of Illegal Response Code Check
         type: string
         choices:
             - 'enable'
@@ -749,7 +750,7 @@ options:
             - 'client-id-block-period'
     Illegal-response-code-check-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     Illegal-response-code-check-threat-weight:
         description:
@@ -790,7 +791,7 @@ options:
             - 'client-id-block-period'
     Post-request-ctype-check-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     Post-request-ctype-check-threat-weight:
         description:
@@ -821,7 +822,7 @@ options:
             - 'disable'
     max-http-header-name-length:
         description:
-            - max length of header name, default value is 50 (range: 0-255)
+            - max length of header name, default value is 50 
         type: integer
     max-http-header-name-length-action:
         description:
@@ -835,7 +836,7 @@ options:
             - 'client-id-block-period'
     max-http-header-name-length-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-http-header-name-length-threat-weight:
         description:
@@ -866,7 +867,7 @@ options:
             - 'disable'
     max-http-header-value-length:
         description:
-            - max length of header value, default value is 4096 (range: 0-12288)
+            - max length of header value, default value is 4096 
         type: integer
     max-http-header-value-length-action:
         description:
@@ -880,7 +881,7 @@ options:
             - 'client-id-block-period'
     max-http-header-value-length-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-http-header-value-length-threat-weight:
         description:
@@ -921,7 +922,7 @@ options:
             - 'client-id-block-period'
     parameter-name-check-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     parameter-name-check-threat-weight:
         description:
@@ -962,7 +963,7 @@ options:
             - 'client-id-block-period'
     parameter-value-check-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     parameter-value-check-threat-weight:
         description:
@@ -1003,7 +1004,7 @@ options:
             - 'client-id-block-period'
     Illegal-header-name-check-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     Illegal-header-name-check-threat-weight:
         description:
@@ -1044,7 +1045,7 @@ options:
             - 'client-id-block-period'
     Illegal-header-value-check-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     Illegal-header-value-check-threat-weight:
         description:
@@ -1075,7 +1076,7 @@ options:
             - 'disable'
     max-http-body-parameter-length:
         description:
-            - max length of body parameter, default value is 8192 (range: 0-16384)
+            - max length of body parameter, default value is 8192 
         type: integer
     max-http-body-parameter-length-action:
         description:
@@ -1089,7 +1090,7 @@ options:
             - 'client-id-block-period'
     max-http-body-parameter-length-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-http-body-parameter-length-threat-weight:
         description:
@@ -1120,7 +1121,7 @@ options:
             - 'disable'
     max-http-request-filename-length:
         description:
-            - max length of request filename, default value is 2048 (range: 0-12288)
+            - max length of request filename, default value is 2048 
         type: integer
     max-http-request-filename-length-action:
         description:
@@ -1134,7 +1135,7 @@ options:
             - 'client-id-block-period'
     max-http-request-filename-length-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-http-request-filename-length-threat-weight:
         description:
@@ -1175,7 +1176,7 @@ options:
             - 'client-id-block-period'
     web-socket-protocol-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     web-socket-protocol-severity:
         description:
@@ -1195,7 +1196,7 @@ options:
             - 'disable'
     max-setting-header-table-size:
         description:
-            - max setting header table size, default value is 4096 (range: 0-16777215)
+            - max setting header table size, default value is 4096 
         type: integer
     max-setting-header-table-size-action:
         description:
@@ -1209,7 +1210,7 @@ options:
             - 'client-id-block-period'
     max-setting-header-table-size-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-setting-header-table-size-severity:
         description:
@@ -1229,7 +1230,7 @@ options:
             - 'disable'
     max-setting-current-streams-num:
         description:
-            - max setting current streams number, default value is 256 (range: 0-100000)
+            - max setting current streams number, default value is 256 
         type: integer
     max-setting-current-streams-num-action:
         description:
@@ -1243,7 +1244,7 @@ options:
             - 'client-id-block-period'
     max-setting-current-streams-num-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-setting-current-streams-num-severity:
         description:
@@ -1263,7 +1264,7 @@ options:
             - 'disable'
     max-setting-initial-window-size:
         description:
-            - max setting initial window size, default value is 6291456 (range: 0-2147483647)
+            - max setting initial window size, default value is 6291456 
         type: integer
     max-setting-initial-window-size-action:
         description:
@@ -1277,7 +1278,7 @@ options:
             - 'client-id-block-period'
     max-setting-initial-window-size-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-setting-initial-window-size-severity:
         description:
@@ -1297,7 +1298,7 @@ options:
             - 'disable'
     max-setting-frame-size:
         description:
-            - max setting frame size, default value is 16384 (range: 0-16777215)
+            - max setting frame size, default value is 16384 
         type: integer
     max-setting-frame-size-action:
         description:
@@ -1311,7 +1312,7 @@ options:
             - 'client-id-block-period'
     max-setting-frame-size-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-setting-frame-size-severity:
         description:
@@ -1331,7 +1332,7 @@ options:
             - 'disable'
     max-setting-header-list-size:
         description:
-            - max setting header list size, default value is 65536 (range: 0-16777215)
+            - max setting header list size, default value is 65536 
         type: integer
     max-setting-header-list-size-action:
         description:
@@ -1345,7 +1346,7 @@ options:
             - 'client-id-block-period'
     max-setting-header-list-size-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-setting-header-list-size-severity:
         description:
@@ -1365,7 +1366,7 @@ options:
             - 'disable'
     max-url-param-name-len:
         description:
-            - max url parameter name length, default value is 4096 (range: 0-8192)
+            - max url parameter name length, default value is 4096 
         type: integer
     max-url-param-name-len-action:
         description:
@@ -1379,7 +1380,7 @@ options:
             - 'client-id-block-period'
     max-url-param-name-len-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-url-param-name-len-threat-weight:
         description:
@@ -1410,7 +1411,7 @@ options:
             - 'disable'
     max-url-param-value-len:
         description:
-            - max url parameter value length, default value is 4096 (range: 0-8192)
+            - max url parameter value length, default value is 4096 
         type: integer
     max-url-param-value-len-action:
         description:
@@ -1424,7 +1425,7 @@ options:
             - 'client-id-block-period'
     max-url-param-value-len-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     max-url-param-value-len-threat-weight:
         description:
@@ -1465,7 +1466,7 @@ options:
             - 'client-id-block-period'
     url-param-name-check-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     url-param-name-check-threat-weight:
         description:
@@ -1506,7 +1507,7 @@ options:
             - 'client-id-block-period'
     url-param-value-check-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     url-param-value-check-threat-weight:
         description:
@@ -1547,7 +1548,7 @@ options:
             - 'client-id-block-period'
     null-byte-in-url-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     null-byte-in-url-threat-weight:
         description:
@@ -1588,7 +1589,7 @@ options:
             - 'client-id-block-period'
     illegal-byte-in-url-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     illegal-byte-in-url-threat-weight:
         description:
@@ -1629,7 +1630,7 @@ options:
             - 'client-id-block-period'
     malformed-url-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     malformed-url-severity:
         description:
@@ -1670,7 +1671,7 @@ options:
             - 'client-id-block-period'
     redundant-header-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     redundant-header-threat-weight:
         description:
@@ -1711,7 +1712,7 @@ options:
             - 'client-id-block-period'
     chunk-size-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     chunk-size-severity:
         description:
@@ -1752,7 +1753,7 @@ options:
             - 'client-id-block-period'
     Internal-resource-limits-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     Internal-resource-limits-severity:
         description:
@@ -1793,7 +1794,7 @@ options:
             - 'client-id-block-period'
     rpc-protocol-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     rpc-protocol-severity:
         description:
@@ -1834,7 +1835,7 @@ options:
             - 'client-id-block-period'
     duplicate-paramname-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     duplicate-paramname-threat-weight:
         description:
@@ -1875,7 +1876,7 @@ options:
             - 'client-id-block-period'
     odd-and-even-space-attack-block-period:
         description:
-            - block period(1-3600) (range: 1-3600)
+            - block period(1-3600) 
         type: integer
     odd-and-even-space-attack-severity:
         description:
@@ -2284,7 +2285,8 @@ def replace_key(src_dict, rep_dict):
 def add_obj(module, connection):
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     replace_key(payload1['data'], rep_dict)
 
     code, response = connection.send_request(obj_url, payload1)
@@ -2334,7 +2336,8 @@ def needs_update(module, data):
     res = False
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     replace_key(payload1['data'], rep_dict)
 
     res = combine_dict(payload1['data'], data)
@@ -2365,7 +2368,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -2385,7 +2389,14 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+      module.exit_json(**result)
+
+    if action == 'add':
         code, response = add_obj(module, connection)
         result['res'] = response
         result['changed'] = True

@@ -5,6 +5,13 @@
   connection: httpapi
   gather_facts: false
   tasks:
+
+    - name: Create
+      fwebos_waf_url_access_rule:
+       action: add
+       name: test4
+       vdom: root
+
     - name: Create
       fwebos_waf_url_access_rule_condition:
        action: add
@@ -12,3 +19,35 @@
        url_type: simple-string
        reg_exp: /999
        vdom: root
+
+    - name: get
+      fwebos_waf_url_access_rule_condition:
+       action: get
+       table_name: test4
+       id: 1
+
+    - name: edit
+      fwebos_waf_url_access_rule_condition:
+       action: edit
+       table_name: test4
+       id: 1
+       url_type: simple-string
+       reg_exp: /875
+
+    - name: get
+      fwebos_waf_url_access_rule_condition:
+       action: get
+       table_name: test4
+       id: 1
+
+    - name: delete
+      fwebos_waf_url_access_rule_condition:
+       action: delete
+       id: 1
+       table_name: test4
+
+    - name: delete
+      fwebos_waf_url_access_rule_condition:
+       action: delete
+       id: 2
+       table_name: test4

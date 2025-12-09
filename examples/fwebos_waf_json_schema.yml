@@ -1,0 +1,35 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a json protection schema
+      fwebos_waf_json_schema:
+        action: add 
+        name: js1
+        json_schema_version: auto-identify
+        jsonfile: json_scheme1.txt
+
+    - name: add a json protection schema with same name again
+      fwebos_waf_json_schema:
+        action: add 
+        name: js1
+        json_schema_version: auto-identify
+        jsonfile: json_scheme1.txt
+
+    - name: get a json protection schema
+      fwebos_waf_json_schema:
+        action: get 
+        name: js1
+
+    - name: delete a json protection schema
+      fwebos_waf_json_schema:
+        action: delete 
+        name: js1
+
+    - name: delete a json protection schema again
+      fwebos_waf_json_schema:
+        action: delete 
+        name: js1

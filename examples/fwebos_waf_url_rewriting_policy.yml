@@ -1,0 +1,21 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a URL rewriting policy
+      fwebos_waf_url_rewriting_policy:
+       action: add 
+       name: rp1
+
+    - name: get a URL rewriting policy
+      fwebos_waf_url_rewriting_policy:
+       action: get 
+       name: rp1
+      
+    - name: get a URL rewriting policy
+      fwebos_waf_url_rewriting_policy:
+       action: delete 
+       name: rp1

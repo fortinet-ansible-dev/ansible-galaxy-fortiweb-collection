@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_ip_members
+short_description: Config FortiWeb IP Protection IP List member
 description:
   - Config FortiWeb IP Protection IP List member
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -70,9 +71,11 @@ res:
 obj_url = '/api/v2.0/cmdb/waf/ip-list/members'
 
 
+rep_dict = {}
+
 def add_obj(module, connection):
 
-    table_name = module.params['table_name']
+    table_name = module.params['name']
     name = module.params['name']
     member_type = module.params['member_type']
     ip = module.params['ip']
@@ -93,31 +96,31 @@ def add_obj(module, connection):
 
 
 def edit_obj(module, payload, connection):
-    table_name = module.params['table_name']
-    name = module.params['name']
-    url = obj_url + '?mkey=' + table_name + '&sub_mkey=' + name
+    table_name = module.params['name']
+    id = module.params['id']
+    url = obj_url + '?mkey=' + table_name + '&sub_mkey=' + id
     code, response = connection.send_request(url, payload, 'PUT')
 
     return code, response
 
 
 def get_obj(module, connection):
-    table_name = module.params['table_name']
-    name = module.params['name']
+    table_name = module.params['name']
+    id = module.params['id']
     payload = {}
     url = obj_url + '?mkey=' + table_name
-    if name:
-        url += '&sub_mkey=' + name
+    if id:
+        url += '&sub_mkey=' + id
     code, response = connection.send_request(url, payload, 'GET')
 
     return code, response
 
 
 def delete_obj(module, connection):
-    table_name = module.params['table_name']
-    name = module.params['name']
+    table_name = module.params['name']
+    id = module.params['id']
     payload = {}
-    url = obj_url + '?mkey=' + table_name + '&sub_mkey=' + name
+    url = obj_url + '?mkey=' + table_name + '&sub_mkey=' + id
     code, response = connection.send_request(url, payload, 'DELETE')
 
     return code, response
@@ -143,21 +146,23 @@ def param_check(module, connection):
     action = module.params['action']
     err_msg = ''
 
-    if (action == 'add' or action == 'edit' or action == 'delete') and module.params['table_name'] is None:
-        err_msg = 'table_name need to set'
+    if (action == 'add' or action == 'edit' or action == 'delete' or action == 'get') and module.params['name'] is None:
+        err_msg = '\'name\' cannot be empty.'
         res = False
-    # if (action == 'add' or action == 'edit' or action == 'delete') and module.params['name'] != str(connection.get_option('remote_user')):
-    #    err_msg = 'name need to set'
-    #    res = False
-
+    if action == 'add' and module.params['ip'] is None:
+        err_msg = '\'ip\' cannot be empty for action \''+action+'\'.'
+        res = False
+    if (action == 'edit' or action == 'delete') and module.params['id'] is None:
+        err_msg = '\'id\' cannot be empty for action \''+action+'\'.'
+        res = False
     return res, err_msg
 
 
 def main():
     argument_spec = dict(
         action=dict(type='str', required=True),
-        table_name=dict(type='str'),
         name=dict(type='str'),
+        id=dict(type='str'),
         member_type=dict(type='str'),
         ip=dict(type='str'),
         vdom=dict(type='str'),
@@ -167,7 +172,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -187,7 +193,21 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, None)
+    if module.check_mode:
+      if action == 'add':
+        if isinstance(data['results'], list) and all(isinstance(item, dict) for item in data['results']):
+          for entry in data['results']:
+            if entry.get("ip") == module.params['ip']:
+                result['changed'] = False
+                result['res'] = 'The IP has already existed in the table.'
+                break
+      module.exit_json(**result)
+
+    if action == 'add':
         code, response, out_data = add_obj(module, connection)
         result['res'] = response
         result['changed'] = True

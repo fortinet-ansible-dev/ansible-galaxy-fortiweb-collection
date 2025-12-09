@@ -23,11 +23,10 @@
        action: edit 
        name: test1
        access_profile: admin_no_access
-       trusthostv4: 0.0.0.0/0 
+       trusthostv4: 2.1.0.0/0 
        trusthostv6: ::/0 
        domains: root1
-       type: remote-user
-       admin_usergrp: test 
+
 
     - name: delete admin 
       fwebos_admin:

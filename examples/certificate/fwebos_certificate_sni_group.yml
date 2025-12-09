@@ -4,15 +4,29 @@
   vars:
   connection: httpapi
   gather_facts: false
-  tasks:
+  tasks:       
+    - name: Create xml client certificate group 
+      fwebos_certificate_sni_group:
+       action: add 
+       name: test1
+       vdom: root1
+      check_mode: true
+
+    - name: Create xml client certificate group 
+      fwebos_certificate_sni_group:
+       action: add 
+       name: test1
+       vdom: root1
+
     - name: deletet sni certificate group 
       fwebos_certificate_sni_group:
        action: delete 
        name: test1 
        vdom: root1
-          
-    - name: Create xml client certificate group 
+      check_mode: true
+
+    - name: deletet sni certificate group 
       fwebos_certificate_sni_group:
-       action: add 
-       name: test1
+       action: delete 
+       name: test1 
        vdom: root1

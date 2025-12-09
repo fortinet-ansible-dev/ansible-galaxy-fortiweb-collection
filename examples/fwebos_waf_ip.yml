@@ -10,3 +10,22 @@
        action: add
        name: test4
        vdom: root
+
+    - name: get
+      fwebos_waf_ip:
+       action: get
+       name: test4
+       vdom: root
+
+    - name: edit
+      fwebos_waf_ip:
+       action: edit
+       name: test4
+       vdom: root
+       severity: High
+
+    - name: delete
+      fwebos_waf_ip:
+       action: delete
+       name: test4
+       vdom: root

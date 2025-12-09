@@ -5,10 +5,36 @@
   connection: httpapi
   gather_facts: false
   tasks:
+
+    - name: Create
+      fwebos_waf_ip:
+       action: add
+       name: test4
+       vdom: root
+       
     - name: Create
       fwebos_waf_ip_members:
        action: add
-       table_name: test4
+       name: test4
        member_type: trust-ip
-       ip: 5.5.5.5
+       ip: 5.5.5.6
        vdom: root
+
+    - name: get
+      fwebos_waf_ip_members:
+       action: get
+       name: test4
+      #  id: 2
+
+    - name: edit
+      fwebos_waf_ip_members:
+       action: edit
+       name: test4
+       id: 1
+       ip: 7.10.25.53
+
+    - name: delete
+      fwebos_waf_ip_members:
+       action: delete
+       name: test4
+       id: 1

@@ -1,0 +1,35 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a known bot profile
+      fwebos_waf_known_bots:
+        action: add 
+        name: Bot1
+        dos_status: enable
+        dos_action: alert_deny
+        dos_block_period: 600
+        dos_severity: Low
+        dos_threat_weight: critical
+
+    - name: edit a known bot profile
+      fwebos_waf_known_bots:
+        action: edit
+        name: Bot1
+        feed_fetcher_status: enable
+        feed_fetcher_action: redirect
+        feed_fetcher_severity: Info
+        feed_fetcher_threat_weight: substantial
+        
+    - name: get a known bot profile
+      fwebos_waf_known_bots:
+        action: get
+        name: Bot1
+
+    # - name: delete a known bot profile
+    #   fwebos_waf_known_bots:
+    #     action: delete
+    #     name: Bot1

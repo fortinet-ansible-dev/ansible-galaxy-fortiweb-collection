@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_xff
+short_description: Config FortiWeb X-Forward-For policy
 description:
   - Config FortiWeb X-Forward-For policy
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -184,8 +185,10 @@ rep_dict = {
     'x_forwarded_proto': 'x-forwarded-proto',
     'block_based_on_original_ip': 'block-based-on-original-ip',
     'ip_location': 'ip-location',
+    'ip_location_add': 'ip-location-add',
     'original_ip_header': 'original-ip-header',
     'block_based_on_full_scan': 'block-based-on-full-scan',
+    'delete_headers': 'delete-headers'
 }
 
 
@@ -199,16 +202,21 @@ def replace_key(src_dict, rep_dict):
 def add_obj(module, connection):
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     replace_key(payload1['data'], rep_dict)
     code, response = connection.send_request(obj_url, payload1)
 
     return code, response
 
 
-def edit_obj(module, payload, connection):
+def edit_obj(module, content, connection):
     name = module.params['name']
-    url = obj_url + '?mkey=' + name
+    payload = {}
+    payload['data'] = content
+    url = obj_url
+    if name:
+        url += '?mkey=' + name
     code, response = connection.send_request(url, payload, 'PUT')
 
     return code, response
@@ -248,7 +256,8 @@ def needs_update(module, data):
     res = False
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     replace_key(payload1['data'], rep_dict)
     res = combine_dict(payload1['data'], data)
 
@@ -261,7 +270,7 @@ def param_check(module, connection):
     err_msg = ''
 
     if (action == 'add' or action == 'edit' or action == 'delete') and module.params['name'] is None:
-        err_msg = 'name need to set'
+        err_msg = 'name cannot be empty'
         res = False
 
     return res, err_msg
@@ -279,15 +288,18 @@ def main():
         x_forwarded_proto=dict(type='str'),
         block_based_on_original_ip=dict(type='str'),
         ip_location=dict(type='str'),
+        ip_location_add=dict(type='str'),
         original_ip_header=dict(type='str'),
         block_based_on_full_scan=dict(type='str'),
+        delete_headers=dict(type='str'),
         name=dict(type='str'),
     )
     argument_spec.update(fwebos_argument_spec)
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -305,7 +317,14 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+      module.exit_json(**result)
+
+    if action == 'add':
         code, response = add_obj(module, connection)
         result['res'] = response
         result['changed'] = True
@@ -314,7 +333,7 @@ def main():
         result['res'] = response
     elif action == 'edit':
         code, data = get_obj(module, connection)
-        if 'errcode' in str(data):
+        if 'errcode' in str(data) or result['diff'] == {} or result['diff']['after'] == {}:
             result['changed'] = False
             result['res'] = data
         else:

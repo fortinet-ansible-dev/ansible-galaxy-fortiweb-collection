@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_waf_file_upload_rule_filetype
+short_description: Config FortiWeb Input Validation File Security Rule file types
 description:
   - Config FortiWeb Input Validation File Security Rule file types
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -80,10 +81,12 @@ def find_type_value(all_filetype, data):
     return -1
 
 
+rep_dict = {}
+
 def add_obj(module, connection):
 
     table_name = module.params['table_name']
-    name = module.params['name']
+    id = module.params['id']
     video_files = module.params['video_files']
     compressed_file = module.params['compressed_file']
     whole_suffixes_files = module.params['whole_suffixes_files']
@@ -156,7 +159,7 @@ def add_obj(module, connection):
 
 def get_obj(module, connection):
     table_name = module.params['table_name']
-    name = module.params['name']
+    name = module.params['id']
     payload = {}
     url = get_obj_url + '?mkey=' + table_name
     if name:
@@ -195,7 +198,7 @@ def main():
     argument_spec = dict(
         action=dict(type='str', required=True),
         table_name=dict(type='str'),
-        name=dict(type='str'),
+        id=dict(type='str'),
         video_files=dict(type='list'),
         compressed_file=dict(type='list'),
         whole_suffixes_files=dict(type='list'),
@@ -207,9 +210,8 @@ def main():
     )
     argument_spec.update(fwebos_argument_spec)
 
-    required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -229,7 +231,14 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'post':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+      module.exit_json(**result)
+
+    if action == 'post':
         code, response = delete_all_obj(module, connection)
         code, response, out = add_obj(module, connection)
         result['out'] = out

@@ -1,0 +1,60 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a json protection schema group
+      fwebos_waf_json_schema_group:
+        action: add 
+        name: json_schema_group_1
+
+    - name: add a json schema group member
+      fwebos_waf_json_schema_group_member:
+        action: add 
+        name: json_schema_group_1
+        member_name: js
+
+    - name: add another json schema group
+      fwebos_waf_json_schema_group_member:
+        action: add 
+        name: json_schema_group_1
+        member_name: aa
+
+    - name: edit a json schema group member
+      fwebos_waf_json_schema_group_member:
+        action: edit 
+        name: json_schema_group_1
+        id: 2
+        member_name: aaa
+
+    - name: get all json schema group member
+      fwebos_waf_json_schema_group_member:
+        action: get 
+        name: json_schema_group_1
+
+    - name: get a json schema group member
+      fwebos_waf_json_schema_group_member:
+        action: get 
+        name: json_schema_group_1
+        id: 1
+
+    - name: edit a json schema group member
+      fwebos_waf_json_schema_group_member:
+        action: edit 
+        name: json_schema_group_1
+        id: 1
+        member_name: aaaz
+
+    - name: delete a json schema group member
+      fwebos_waf_json_schema_group_member:
+        action: delete 
+        name: json_schema_group_1
+        id: 1
+
+    - name: delete a json schema group member again
+      fwebos_waf_json_schema_group_member:
+        action: delete 
+        name: json_schema_group_1
+        id: 1

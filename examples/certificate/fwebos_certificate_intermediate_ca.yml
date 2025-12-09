@@ -10,7 +10,13 @@
        action: add
        vdom: root1
        type: localPC
-       uploadedFile: ca.crt
+       uploadedFile: intermediate.crt
+    
+    - name: get intermediate ca 
+      fwebos_certificate_intermediate_ca:
+       action: get
+       vdom: root1
+       name: Inter_Cert_1
 
     - name: delete intermediate ca 
       fwebos_certificate_intermediate_ca:

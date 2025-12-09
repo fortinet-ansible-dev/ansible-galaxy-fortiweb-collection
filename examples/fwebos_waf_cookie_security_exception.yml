@@ -8,8 +8,33 @@
     - name: Create
       fwebos_waf_cookie_security_exception:
        action: add
-       table_name: test4
+       table_name: test
        cookie_name: test_cookie
        cookie_domain: test_domain
        cookie_path: test_path
        vdom: root
+
+    - name: get
+      fwebos_waf_cookie_security_exception:
+       action: get
+       table_name: test
+       name: 1
+
+    - name: edit
+      fwebos_waf_cookie_security_exception:
+       action: edit
+       table_name: test
+       name: 1
+       cookie_name: test_cookie_1
+
+    - name: delete
+      fwebos_waf_cookie_security_exception:
+       action: delete
+       table_name: test
+       name: 1
+
+    - name: delete
+      fwebos_waf_cookie_security_exception:
+       action: delete
+       table_name: test
+       name: 2

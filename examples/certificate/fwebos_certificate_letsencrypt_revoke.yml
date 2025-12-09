@@ -5,6 +5,7 @@
   connection: httpapi
   gather_facts: false
   tasks:
+
     - name: revoke certificate letsencrypt
       fwebos_certificate_letsencrypt_revoke:
        action: revoke 

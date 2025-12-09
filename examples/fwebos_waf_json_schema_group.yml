@@ -1,0 +1,22 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a json protection schema group
+      fwebos_waf_json_schema_group:
+        action: add 
+        name: json_schema_group_1
+
+    - name: get a json protection schema group
+      fwebos_waf_json_schema_group:
+        action: get
+        name: json_schema_group_1
+
+    - name: delete a json protection schema group
+      fwebos_waf_json_schema_group:
+        action: delete
+        name: json_schema_group_1
+

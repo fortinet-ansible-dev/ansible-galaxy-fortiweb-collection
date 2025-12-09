@@ -4,15 +4,35 @@
   vars:
   connection: httpapi
   gather_facts: false
-  tasks:
-    - name: delete offline sni certificate group 
+  tasks:         
+    - name: Create offline sni certificate group check_mode
       fwebos_certificate_offline_sni_group:
-       action: delete 
-       name: test2 
+       action: add 
+       name: test2
        vdom: root1
-          
+      check_mode: true
+
     - name: Create offline sni certificate group 
       fwebos_certificate_offline_sni_group:
        action: add 
        name: test2
+       vdom: root1
+
+    - name: get offline sni certificate group 
+      fwebos_certificate_offline_sni_group:
+       action: get 
+       name: test2
+       vdom: root1
+
+    - name: delete offline sni certificate group check_mode
+      fwebos_certificate_offline_sni_group:
+       action: delete 
+       name: test2 
+       vdom: root1
+      check_mode: true
+      
+    - name: delete offline sni certificate group 
+      fwebos_certificate_offline_sni_group:
+       action: delete 
+       name: test2 
        vdom: root1

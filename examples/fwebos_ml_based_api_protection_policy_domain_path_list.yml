@@ -1,0 +1,25 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a ml_based_api_protection_policy_domain
+      fwebos_ml_based_api_protection_policy_domain_path_list:
+        action: add 
+        domain_id: 1
+        api_path_type: plain
+        api_path: /avcd
+
+    - name: get a ml_based_api_protection_policy_domain
+      fwebos_ml_based_api_protection_policy_domain_path_list:
+        action: get 
+        domain_id: 1
+        path_id: 1
+
+    - name: delete a bot detection policy
+      fwebos_ml_based_api_protection_policy_domain_path_list:
+        action: delete 
+        domain_id: 1
+        path_id: 1

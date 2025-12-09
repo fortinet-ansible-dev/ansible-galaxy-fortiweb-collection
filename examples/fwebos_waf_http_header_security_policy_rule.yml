@@ -1,0 +1,69 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a Secure Header policy first
+      fwebos_waf_http_header_security_policy:
+       action: add 
+       name: HP 
+
+    - name: add a New Secure Header Rule
+      fwebos_waf_http_header_security_policy_rule:
+       action: add 
+       name: HP
+       request_status: disable
+       request_type: plain
+       protection_mode: sanitizing-mode
+       secure_header_type: x-xss-protection
+
+    - name: edit a Secure Header Rule
+      fwebos_waf_http_header_security_policy_rule:
+       action: edit 
+       name: HP
+       id: 1
+       secure_header_type: x-frame-options
+       protection_mode: allow-from
+       allow_from_source: "http://www.google.com"
+      #  exception: hse1
+
+    - name: edit a Secure Header Rule
+      fwebos_waf_http_header_security_policy_rule:
+       action: edit 
+       name: HP
+       id: 1
+       secure_header_type: content-security-policy
+       header_value: "http://www.amazon.ca"
+      #  exception: hse1
+
+    - name: edit a Secure Header Rule
+      fwebos_waf_http_header_security_policy_rule:
+       action: edit 
+       name: HP
+       id: 1
+       secure_header_type: referrer-policy
+       referrer_policy_value: no-referrer
+       exception: ""
+
+    - name: get a Secure Header Rule
+      fwebos_waf_http_header_security_policy_rule:
+       action: get 
+       name: HP
+       id: 1
+
+    - name: delete a Secure Header Rule
+      fwebos_waf_http_header_security_policy_rule:
+       action: delete 
+       name: HP
+       id: 1
+
+    # - name: delete a policy again
+    #   fwebos_waf_http_header_security_policy_rule:
+    #    action: delete 
+    #    name: aaa
+
+    # - name: get policies
+    #   fwebos_waf_http_header_security_policy_rule:
+    #    action: get 

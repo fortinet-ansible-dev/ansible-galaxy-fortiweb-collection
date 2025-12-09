@@ -7,7 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
@@ -21,10 +21,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_server_policy
+short_description: Config FortiWeb Policy Server Policy
 description:
   - Config FortiWeb Policy Server Policy
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -105,7 +106,7 @@ options:
             - 'disable'
     send-buffers-number:
         description:
-            - the number of the send buffers used for forwarding data, range 0-256, 0 means no limit, each buffer size is 4kB (range: 0-256)
+            - the number of the send buffers used for forwarding data, range 0-256, 0 means no limit, each buffer size is 4kB 
         type: integer
     certificate-type:
         description:
@@ -266,7 +267,7 @@ options:
             - 'disable'
     urlcert-hlen:
         description:
-            - URL based client certificate max http request length if matched(16-10240K) (range: 16-10240)
+            - URL based client certificate max http request length if matched(16-10240K) 
         type: integer
     case-sensitive:
         description:
@@ -277,7 +278,7 @@ options:
             - 'disable'
     status:
         description:
-            - status: enable/disable
+            - status
         type: string
         choices:
             - 'enable'
@@ -288,35 +289,35 @@ options:
         type: string
     noparse:
         description:
-            - Enable pure proxy or not: enable/disable
+            - Enable pure proxy or not 
         type: string
         choices:
             - 'enable'
             - 'disable'
     monitor-mode:
         description:
-            - Monitor mode: enable/disable
+            - Monitor mode 
         type: string
         choices:
             - 'enable'
             - 'disable'
     web-cache:
         description:
-            - WEB cache mode: enable/disable
+            - WEB cache mode 
         type: string
         choices:
             - 'enable'
             - 'disable'
     http-to-https:
         description:
-            - Redirect naked domain request to "www" domain requests: enable/disable
+            - Redirect naked domain request to "www" domain requests 
         type: string
         choices:
             - 'enable'
             - 'disable'
     redirect_naked_domain:
         description:
-            - Redirect HTTP to HTTPs: enable/disable
+            - Redirect HTTP to HTTPs
         type: string
         choices:
             - 'enable'
@@ -330,18 +331,18 @@ options:
             - 'disable'
     syncookie:
         description:
-            - syn cookie: enable/disable
+            - syn cookie
         type: string
         choices:
             - 'enable'
             - 'disable'
     half-open-threshold:
         description:
-            - half-open threshold (10~10000) (range: 10-10000)
+            - half-open threshold (10~10000) 
         type: integer
     client-certificate-forwarding:
         description:
-            - client certificate forwarding: enable/disable
+            - client certificate forwarding
         type: string
         choices:
             - 'enable'
@@ -356,7 +357,7 @@ options:
         type: string
     http-pipeline:
         description:
-            - HTTP pipeline support: enable/disable
+            - HTTP pipeline support 
         type: string
         choices:
             - 'enable'
@@ -370,7 +371,7 @@ options:
             - 'disable'
     hsts-max-age:
         description:
-            - max age value(unit: second, 1 hour-1 year) (range: 3600-31536000)
+            - max age value
         type: integer
     hsts-include-subdomains:
         description:
@@ -409,33 +410,33 @@ options:
             - 'disable'
     tcp-recv-timeout:
         description:
-            - max age value(unit: second) of the first http request after tcp handshake (range: 0-300)
+            - max age value of the first http request after tcp handshake 
         type: integer
     http-header-timeout:
         description:
-            - max age value(unit: second) of receiving a successful http header (range: 0-1200)
+            - max age value of receiving a successful http header 
         type: integer
     tcp-conn-timeout:
         description:
-            - max age value(unit: second) of TCP connection timeout (range: 0-600)
+            - max age value of TCP connection timeout 
         type: integer
     internal-cookie-httponly:
         description:
-            - internal cookie http only: enable/disable
+            - internal cookie http only 
         type: string
         choices:
             - 'enable'
             - 'disable'
     internal-cookie-secure:
         description:
-            - internal cookie secure: enable/disable
+            - internal cookie secure 
         type: string
         choices:
             - 'enable'
             - 'disable'
     internal-cookie-samesite:
         description:
-            - internal cookie samesite: enable/disable
+            - internal cookie samesite 
         type: string
         choices:
             - 'enable'
@@ -450,7 +451,7 @@ options:
             - 'none'
     content-security-policy-inline:
         description:
-            - content security policy inline: enable/disable
+            - content security policy inline 
         type: string
         choices:
             - 'enable'
@@ -464,11 +465,11 @@ options:
             - 'disable'
     ssl-session-timeout:
         description:
-            - ssl session timeout setting, default value 7200s, range (1, 14400) (range: 1-14400)
+            - ssl session timeout setting, default value 7200s, range 1-14400 
         type: integer
     client-timeout:
         description:
-            - max age value(unit: second):Prevent front end connection from closing for a long time, especially when multiplexing function is turned on (range: 0-1200)
+            - max age value to prevent front end connection from closing for a long time, especially when multiplexing function is turned on 
         type: integer
     retry-on:
         description:
@@ -479,7 +480,7 @@ options:
             - 'disable'
     retry-on-cache-size:
         description:
-            - the http request cache size when retry on(32~2048 kB) (range: 32-2048)
+            - the http request cache size when retry on 
         type: integer
     retry-on-connect-failure:
         description:
@@ -490,7 +491,7 @@ options:
             - 'disable'
     retry-times-on-connect-failure:
         description:
-            - retry times on connect failure, range 1-5 (range: 1-5)
+            - retry times on connect failure, range 1-5 
         type: integer
     retry-on-http-layer:
         description:
@@ -501,7 +502,7 @@ options:
             - 'disable'
     retry-times-on-http-layer:
         description:
-            - retry times on http layer, range 1-5 (range: 1-5)
+            - retry times on http layer, range 1-5 
         type: integer
     retry-on-http-response-codes:
         description:
@@ -531,7 +532,7 @@ options:
             - 'disable'
     tlog:
         description:
-            - tlog: enable/disable
+            - tlog 
         type: string
         choices:
             - 'enable'
@@ -759,11 +760,11 @@ changed:
 invocation:
   description: The parameters in ansible tasks.
   returned: always
-  type: JSON
+  type: dict
 res:
   description: The return from related Rest API.
   returned: always
-  type: JSON
+  type: dict
 """
 
 obj_url = '/api/v2.0/cmdb/server-policy/policy'
@@ -833,7 +834,8 @@ def replace_key(src_dict, rep_dict):
 def add_obj(module, connection):
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     replace_key(payload1['data'], rep_dict)
 
     code, response = connection.send_request(obj_url, payload1)
@@ -883,7 +885,8 @@ def needs_update(module, data):
     res = False
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     replace_key(payload1['data'], rep_dict)
 
     res = combine_dict(payload1['data'], data)
@@ -975,7 +978,8 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
@@ -995,7 +999,14 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+      module.exit_json(**result)
+
+    if action == 'add':
         code, response = add_obj(module, connection)
         result['res'] = response
         result['changed'] = True

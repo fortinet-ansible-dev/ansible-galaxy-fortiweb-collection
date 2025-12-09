@@ -1,0 +1,58 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+
+    - name: add a authentication server pool
+      fwebos_waf_site_publish_authentication_server_pool:
+        action: add 
+        name: asp1
+
+    - name: add a authentication server pool member
+      fwebos_waf_site_publish_authentication_server_pool_member:
+       action: add 
+       name: asp1
+       server_type: radius
+       radius_server: radius_server_1
+       rsa_securid: enable
+
+    - name: get a authentication server pool member
+      fwebos_waf_site_publish_authentication_server_pool_member:
+       action: get 
+       name: asp1
+       id: 1
+
+    - name: get all authentication server pool member
+      fwebos_waf_site_publish_authentication_server_pool_member:
+       action: get 
+       name: asp1
+
+    - name: edit a authentication server pool member
+      fwebos_waf_site_publish_authentication_server_pool_member:
+       action: edit 
+       name: asp1
+       id: 1
+       server_type: ldap
+       ldap_server: ls1
+
+    - name: edit a non-existant authentication server pool member
+      fwebos_waf_site_publish_authentication_server_pool_member:
+       action: edit 
+       name: asp1
+       id: 123
+       radius_server: radius_server2
+
+    - name: delete a authentication server pool member
+      fwebos_waf_site_publish_authentication_server_pool_member:
+       action: delete 
+       name: asp1
+       id: 1
+
+    - name: delete a non-existant authentication server pool member
+      fwebos_waf_site_publish_authentication_server_pool_member:
+       action: delete 
+       name: asp1
+       id: 188

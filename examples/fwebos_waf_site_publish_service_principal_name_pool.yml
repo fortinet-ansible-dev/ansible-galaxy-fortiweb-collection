@@ -1,0 +1,31 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a authentication server pool
+      fwebos_waf_site_publish_service_principal_name_pool:
+        action: add 
+        name: server_name_pool1
+
+    - name: get a authentication server pool
+      fwebos_waf_site_publish_service_principal_name_pool:
+        action: get 
+        name: server_name_pool1
+
+    - name: delete a authentication server pool
+      fwebos_waf_site_publish_service_principal_name_pool:
+        action: delete 
+        name: server_name_pool1
+
+    - name: delete a non-existant authentication server pool
+      fwebos_waf_site_publish_service_principal_name_pool:
+        action: delete 
+        name: server_name_pool1
+
+    - name: get a non-existant authentication server pool
+      fwebos_waf_site_publish_service_principal_name_pool:
+        action: get 
+        name: server_name_pool1

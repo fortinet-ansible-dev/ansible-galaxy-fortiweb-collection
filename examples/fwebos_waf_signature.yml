@@ -8,7 +8,7 @@
     - name: delete 
       fwebos_waf_signature:
        action: delete 
-       name: aaa
+       name: 111
        vdom: root
           
     - name: Create
@@ -25,6 +25,6 @@
        action: edit 
        vdom: root
        comment: 
-       name: 1231
+       name: 111
        customSignatureGroup: t1
        creditCardDetectionThreshold: 1

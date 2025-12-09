@@ -1,0 +1,40 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a site_publish policy
+      fwebos_waf_site_publish_policy:
+        action: add 
+        name: pp1
+        account_block_period: 600  
+        account_lockout: enable 
+        security_action: alert_deny
+        credential_stuffing_online_query: enable
+        credential_stuffing_protection: enable   
+        limit_users: enable
+        max_login_failures: 5  
+        maximum_users: 1  
+        session_idle_timeout: 30  
+        severity: Medium 
+        within: 3  
+
+    - name: get a site_publish policy
+      fwebos_waf_site_publish_policy:
+       action: get 
+       name: pp1
+
+    - name: edit a dlp dictionary
+      fwebos_waf_site_publish_policy:
+       action: edit 
+       name: pp1
+       account_lockout: disable 
+       security_action: alert
+
+    - name: delete a site_publish
+      fwebos_waf_site_publish_policy:
+        action: delete 
+        name: pp1  
+

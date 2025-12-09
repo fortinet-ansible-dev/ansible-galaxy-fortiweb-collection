@@ -5,6 +5,16 @@
   connection: httpapi
   gather_facts: false
   tasks:
+
+    - name: Create
+      fwebos_waf_signature:
+       action: add
+       vdom: root
+       comment: 
+       name: test
+       customSignatureGroup: 12313
+       creditCardDetectionThreshold: 1
+
     - name: delete 
       fwebos_waf_signature_filter_list:
        action: delete 
@@ -33,8 +43,8 @@
        id: 1
        match_target: URI
        operator: REGEXP_MATCH
-       value_check: disable
+       value_check: enable
        concatenate_type: AND
        http_method:          
        signature_id: 030000128
-       value: aaaa*
+       value: aadaa*

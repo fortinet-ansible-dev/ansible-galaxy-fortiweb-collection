@@ -5,17 +5,35 @@
   connection: httpapi
   gather_facts: false
   tasks:
+    # - name: get HSM server
+    #   fwebos_hsm_server:
+    #     action: get 
+    #     vdom: root
+    #     # name: test4
+
+    # - name: Delete HSM server
+    #   fwebos_hsm_server:
+    #     action: delete 
+    #     vdom: root
+    #     name: test4
+
     - name: Add HSM server
       fwebos_hsm_server:
-       action: add
-       name: test4
-       ip: 172.30.30.13
-       timeout: 20000
-       vdom: root
-       srcfile: hsm7-server.pem
+        action: add
+        name: test4
+        ip: 192.168.0.1
+        timeout: 20000
+        vdom: root
+        srcfile: server.pem
 
     - name: Delete HSM server
       fwebos_hsm_server:
-       action: delete 
-       vdom: root
-       name: test
+        action: delete 
+        vdom: root
+        name: test4
+
+    - name: Delete HSM server
+      fwebos_hsm_server:
+        action: delete 
+        vdom: root
+        name: test4

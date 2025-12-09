@@ -5,6 +5,20 @@
   connection: httpapi
   gather_facts: false
   tasks:
+    - name: Create urlcert certificate group 
+      fwebos_certificate_urlcert_group:
+       action: add 
+       name: test1
+
+    - name: Create certificate urlcert list
+      fwebos_certificate_urlcert_list:
+       action: add 
+       vdom: root1 
+       table_name: test1 
+       url: test1.com
+       require: enable
+      check_mode: true
+
     - name: Create certificate urlcert list
       fwebos_certificate_urlcert_list:
        action: add 
@@ -21,6 +35,16 @@
        name: 1 
        url: test1.com
        require: enable
+      check_mode: true
+
+    - name: edit certificate urlcert list
+      fwebos_certificate_urlcert_list:
+       action: edit 
+       vdom: root1
+       table_name: test1 
+       name: 1 
+       url: test1.com
+       require: enable
 
     - name: delete certificate urlcert list
       fwebos_certificate_urlcert_list:
@@ -28,3 +52,11 @@
        vdom: root1
        table_name: test1 
        name: 1 
+
+    - name: delete certificate urlcert list
+      fwebos_certificate_urlcert_list:
+       action: delete 
+       vdom: root1
+       table_name: test1 
+       name: 1 
+      check_mode: true

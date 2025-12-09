@@ -1,0 +1,42 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a rule
+      fwebos_waf_custom_rule:
+       action: add 
+       name: test1
+       security_action: alert
+       severity: Medium
+       block_period: 500
+       bot_confirmation: enable
+       bot_recognition: real-browser-enforcement
+       mobile_app_identification: disabled
+       validation_timeout: 30
+
+    - name: get a rule
+      fwebos_waf_custom_rule:
+       action: get 
+       name: test1
+
+    - name: edit a rule
+      fwebos_waf_custom_rule:
+       action: edit 
+       name: test1
+       severity: High
+       security_action: client-id-block-period
+       block_period: 400
+       bot_confirmation: disable
+
+    - name: delete a rule
+      fwebos_waf_custom_rule:
+       action: delete 
+       name: test1
+
+    - name: delete a rule
+      fwebos_waf_custom_rule:
+       action: delete 
+       name: test1

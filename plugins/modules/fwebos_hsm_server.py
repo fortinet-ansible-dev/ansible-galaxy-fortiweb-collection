@@ -8,7 +8,7 @@
 from __future__ import (absolute_import, division, print_function)
 import json
 from urllib import parse
-from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable)
+from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.urls import prepare_multipart
@@ -23,10 +23,11 @@ ANSIBLE_METADATA = {'metadata_version': '1.1',
 DOCUMENTATION = """
 ---
 module: fwebos_hsm_server
+short_description: Config FortiWeb HSM Server info
 description:
   - Config FortiWeb HSM Server info
 version_added: "7.0.0"
-authors:
+author:
   - Jie Li
   - Brad Zhang
 requirements:
@@ -99,7 +100,12 @@ def add_obj(module, connection):
             'filename': payload1['data']['srcfile'],
         },
     }
-    content_type, b_data = prepare_multipart(data1)
+    try:
+        content_type, b_data = prepare_multipart(data1)
+    except Exception as e:
+        response = 'Error in preparing file. Please check whether the uploadedFile exists'
+        code = False
+        return code, response
 
     headers = {
         'Content-type': content_type,
@@ -142,7 +148,8 @@ def needs_update(module, data):
     res = False
     payload1 = {}
     payload1['data'] = module.params
-    payload1['data'].pop('action')
+    if 'action' in payload1['data'].keys():
+        payload1['data'].pop('action')
     replace_key(payload1['data'], rep_dict)
 
     res = combine_dict(payload1['data'], data)
@@ -175,8 +182,13 @@ def main():
 
     required_if = [('name')]
     module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+                           required_if=required_if,
+                           supports_check_mode=True)
     action = module.params['action']
+    if action == 'edit':
+        result['err_msg'] = 'error action: ' + action
+        result['failed'] = True
+        module.exit_json(**result)
     result = {}
     connection = Connection(module._socket_path)
     param_pass, param_err = param_check(module, connection)
@@ -193,22 +205,46 @@ def main():
     if not param_pass:
         result['err_msg'] = param_err
         result['failed'] = True
-    elif action == 'add':
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection)
+    result = check_mode_process(module, data, rep_dict)
+    if module.check_mode:
+      if action == 'delete':
+            after = {}
+            after['deleted'] = module.params 
+            after['deleted'].pop('action') 
+            result['diff'] = {
+            'before': {},
+            'after': after
+            }
+      module.exit_json(**result)
+
+    if action == 'add':
         code, response = add_obj(module, connection)
         result['res'] = response
-        result['changed'] = True
+        if code == False:
+            result['changed'] = False
+            result['failed'] = True
+        else:
+            result['changed'] = True
     elif action == 'get':
         code, response = get_obj(module, connection)
         result['res'] = response
     elif action == 'delete':
-        code, data = get_obj(module, connection)
-        if 'results' in data.keys() and data['results'] and type(data['results']) is not int:
-            code, response = delete_obj(module, connection)
-            result['res'] = response
-            result['changed'] = True
-        else:
-            res = False
-            result['err_msg'] = 'Entry not found'
+        code, response = delete_obj(module, connection)
+        result['res'] = response
+        # the get action cannot turn any invalid entry from the API. Thus deletion has to be process this way.
+        if 'success' in str(response):
+            after = {}
+            after['deleted'] = module.params 
+            after['deleted'].pop('action') 
+            result['diff'] = {
+            'before': {},
+            'after': after
+            }
+
+        result['changed'] = True
     else:
         result['err_msg'] = 'error action: ' + action
         result['failed'] = True
@@ -216,6 +252,11 @@ def main():
     if 'errcode' in str(result):
         result['changed'] = False
         result['failed'] = True
+        if 'errcode' in result['res'].keys() and result['res']['errcode'] == "-8131":
+            result['failed'] = False # Two different API has different return format
+        if 'results' in result['res'].keys() and 'errcode' in result['res']['results'].keys() and result['res']['results']['errcode'] == -3:
+            result['failed'] = False
+
 
     module.exit_json(**result)
 

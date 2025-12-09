@@ -1,0 +1,30 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a dlp dictionary
+      fwebos_waf_dlp_dictionary:
+       action: add 
+       name: dict1
+       match_type: any
+       comment: zzzzz
+
+    - name: get a dlp dictionary
+      fwebos_waf_dlp_dictionary:
+       action: get 
+       name: dict1
+
+    - name: edit a dlp dictionary
+      fwebos_waf_dlp_dictionary:
+       action: edit 
+       name: dict1
+       match_type: all
+       comment: xxxx
+
+    - name: delete a dlp dictionary
+      fwebos_waf_dlp_dictionary:
+       action: delete 
+       name: dict1
