@@ -1,0 +1,45 @@
+---
+- name: Test FortiWeb system time settings
+  hosts: all
+  connection: httpapi
+  gather_facts: false
+
+  vars:
+    # Set to true to test a real sync-interval update. The original value is restored.
+    run_mutating_tests: false
+
+  tasks:
+    - name: Get current system time settings
+      fwebos_system_time:
+        action: get
+      register: system_time_before
+
+
+    - name: Test time zone and daylight saving change detection
+      fwebos_system_time:
+        action: edit
+        daylightSaving: 0
+        timeZone: 6
+      diff: true
+
+    - name: Test sync interval 
+      fwebos_system_time:
+        action: edit
+        mode: ntpServer
+        syncinterval: 54
+
+    - name: Test FortiWeb manual time input
+      fwebos_system_time:
+        action: edit
+        mode: setTime
+        daylightSaving: 1
+        time: "3/25/2026 18:08:17"
+      # check_mode: true
+      diff: true
+
+    - name: Test a negative time zone
+      fwebos_system_time:
+        action: edit
+        timeZone: -1
+      register: negative_timeZone
+      ignore_errors: true

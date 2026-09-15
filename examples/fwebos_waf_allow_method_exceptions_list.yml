@@ -1,0 +1,50 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_allow_method_exceptions_list:
+       action: add
+       name: ae1
+       host: host3
+       host_status: enable
+       allow_request: 
+        - head 
+        - options 
+        - put
+       request_type: regular
+       request_file: truiryeyei
+
+
+    - name: edit
+      fwebos_waf_allow_method_exceptions_list:
+       action: edit
+       name: ae1
+       id: 2
+       host_status: disable
+       allow_request: 
+        - head 
+        - rpc 
+        - connect
+       request_type: plain
+       request_file: /folder1/abc/*
+
+    - name: get
+      fwebos_waf_allow_method_exceptions_list:
+       action: get
+       name: ae1
+
+    - name: get detail
+      fwebos_waf_allow_method_exceptions_list:
+       action: get
+       name: ae1
+       id: 2
+
+    - name: delete
+      fwebos_waf_allow_method_exceptions_list:
+       action: delete
+       name: ae1
+       id: 3

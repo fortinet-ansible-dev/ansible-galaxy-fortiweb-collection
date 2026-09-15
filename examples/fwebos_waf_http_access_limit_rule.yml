@@ -1,0 +1,68 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_http_access_limit_rule:
+       action: add
+       vdom: root
+       name: htl_ansible_test
+       access_limit_standalone_ip: 100
+       access_limit_share_ip: 200
+       access_action: alert
+       block_period: 600
+       severity: Medium
+       bot_confirmation: disable
+       bot_recognition: disabled
+       validation_timeout: 20
+       max_attempt_times: 3
+       mobile_app_identification: disabled
+
+    - name: Create again with the same name
+      fwebos_waf_http_access_limit_rule:
+       action: add
+       vdom: root
+       name: htl_ansible_test
+       access_limit_standalone_ip: 100
+       access_limit_share_ip: 200
+       access_action: alert
+       block_period: 600
+       severity: Medium
+       bot_confirmation: disable
+       bot_recognition: disabled
+       validation_timeout: 20
+       max_attempt_times: 3
+       mobile_app_identification: disabled
+
+    - name: get all
+      fwebos_waf_http_access_limit_rule:
+       action: get
+       vdom: root
+
+    - name: get with name
+      fwebos_waf_http_access_limit_rule:
+       action: get
+       vdom: root
+       name: htl_ansible_test
+
+    - name: edit
+      fwebos_waf_http_access_limit_rule:
+       action: edit
+       vdom: root
+       name: htl_ansible_test
+       access_limit_standalone_ip: 150
+       access_limit_share_ip: 250
+       access_action: block-period
+       block_period: 900
+       severity: High
+       trigger_policy: trigger_policy1
+       exception_policy: exception_policy1
+
+    - name: delete
+      fwebos_waf_http_access_limit_rule:
+       action: delete
+       vdom: root
+       name: htl_ansible_test

@@ -1,0 +1,39 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_tcp_flood_prevention:
+       action: add
+       vdom: root
+       name: tcp_flood_ansible_test
+       layer4_connection_threshold: 100
+       tcp_action: alert
+       severity: High
+
+    - name: get
+      fwebos_waf_tcp_flood_prevention:
+       action: get
+       vdom: root
+       name: tcp_flood_ansible_test
+
+    - name: edit
+      fwebos_waf_tcp_flood_prevention:
+       action: edit
+       vdom: root
+       name: tcp_flood_ansible_test
+       layer4_connection_threshold: 200
+       tcp_action: block-period
+       block_period: 900
+       severity: Medium
+       exception_policy: exception_policy1
+       trigger_policy: trigger_policy1
+
+    - name: delete
+      fwebos_waf_tcp_flood_prevention:
+       action: delete
+       vdom: root
+       name: tcp_flood_ansible_test

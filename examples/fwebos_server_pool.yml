@@ -8,18 +8,19 @@
     - name: delete server pool 
       fwebos_server_pool:
        action: delete 
-       vdom: root
+      #  vdom: root
        name: test 
           
     - name: Create server pool 
       fwebos_server_pool:
        action: add 
-       vdom: root
+      #  vdom: root
        name: test
        type: reverse-proxy
        server_balance: enable
        lb_algo: round-robin
        comment: test111
+       protocol: HTTP
        health: HLTHCK_ICMP
       #  persistence: test
        reuse_conn_total_time: 100
@@ -29,7 +30,7 @@
     - name: edit server pool
       fwebos_server_pool:
        action: edit 
-       vdom: root
+      #  vdom: root
        name: test
        type: reverse-proxy
        server_balance: enable
@@ -41,3 +42,12 @@
        reuse_conn_idle_time: 20
        reuse_conn_max_request: 100
        reuse_conn_max_count: 100
+
+    - name: Create an ADFS server pool 
+      fwebos_server_pool:
+       action: add 
+       name: adfs_t1
+       protocol: ADFSPIP
+       adfs_server_name: ADFS_SERV_NAME_ONE
+       comment: adfs_t1_versasldj
+       server_balance: disable

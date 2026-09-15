@@ -1,0 +1,53 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create parent IP group
+      fwebos_ip_group:
+       action: add
+       vdom: root
+       name: ip_group_member_ansible_test
+
+    - name: Create
+      fwebos_ip_group_member:
+       action: add
+       vdom: root
+       name: ip_group_member_ansible_test
+       ip: 1.2.3.4,2001::1,1.2.3.4-1.2.3.40,2001::1-2001::101
+
+    - name: get
+      fwebos_ip_group_member:
+       action: get
+       vdom: root
+       name: ip_group_member_ansible_test
+
+    - name: get detail
+      fwebos_ip_group_member:
+       action: get
+       vdom: root
+       name: ip_group_member_ansible_test
+       id: 1
+
+    - name: edit
+      fwebos_ip_group_member:
+       action: edit
+       vdom: root
+       name: ip_group_member_ansible_test
+       id: 1
+       ip: 1.23.4.211
+
+    - name: delete
+      fwebos_ip_group_member:
+       action: delete
+       vdom: root
+       name: ip_group_member_ansible_test
+       id: 1
+
+    - name: Delete parent IP group
+      fwebos_ip_group:
+       action: delete
+       vdom: root
+       name: ip_group_member_ansible_test

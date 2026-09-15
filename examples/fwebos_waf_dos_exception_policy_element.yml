@@ -1,0 +1,55 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create parent policy
+      fwebos_waf_dos_exception_policy:
+       action: add
+       vdom: root
+       name: dos_exception_policy_element_ansible_test
+
+    - name: Create
+      fwebos_waf_dos_exception_policy_element:
+       action: add
+       vdom: root
+       name: dos_exception_policy_element_ansible_test
+       element_type: CLIENT_IP
+       ip: 2.3.4.5
+
+    - name: get
+      fwebos_waf_dos_exception_policy_element:
+       action: get
+       vdom: root
+       name: dos_exception_policy_element_ansible_test
+
+    - name: get detail
+      fwebos_waf_dos_exception_policy_element:
+       action: get
+       vdom: root
+       name: dos_exception_policy_element_ansible_test
+       id: 1
+
+    - name: edit
+      fwebos_waf_dos_exception_policy_element:
+       action: edit
+       vdom: root
+       name: dos_exception_policy_element_ansible_test
+       id: 1
+       element_type: CLIENT_IP
+       ip: 2.3.4.6
+
+    - name: delete
+      fwebos_waf_dos_exception_policy_element:
+       action: delete
+       vdom: root
+       name: dos_exception_policy_element_ansible_test
+       id: 1
+
+    - name: Delete parent policy
+      fwebos_waf_dos_exception_policy:
+       action: delete
+       vdom: root
+       name: dos_exception_policy_element_ansible_test

@@ -1,0 +1,37 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_dos_protection_policy:
+       action: add
+       vdom: root
+       name: dos_policy_ansible_test
+       enable_http_session_based_prevention: disable
+       enable_layer4_dos_prevention: disable
+       layer3_fragment_protection: disable
+
+    - name: get
+      fwebos_waf_dos_protection_policy:
+       action: get
+       vdom: root
+       name: dos_policy_ansible_test
+
+    - name: edit
+      fwebos_waf_dos_protection_policy:
+       action: edit
+       vdom: root
+       name: dos_policy_ansible_test
+       enable_http_session_based_prevention: disable
+       enable_layer4_dos_prevention: disable
+       layer3_fragment_protection: enable
+       exception_policy: exception_policy1
+
+    # - name: delete
+    #   fwebos_waf_dos_protection_policy:
+    #    action: delete
+    #    vdom: root
+    #    name: dos_policy_ansible_test

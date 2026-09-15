@@ -6,13 +6,13 @@
   gather_facts: false
   tasks:
 
-    - name: add a bot detection policy
-      fwebos_bot_detection:
-        action: add 
-        policy_id: 6814698978843458079
-        allow_ip:
-          - 11.2.3.4
-          - 192.168.253.1
+    # - name: add a bot detection policy
+    #   fwebos_bot_detection:
+    #     action: add 
+    #     policy_id: 6814698978843458079
+    #     allow_ip:
+    #       - 11.2.3.4
+    #       - 192.168.253.1
 
     - name: add a bot detection policy ip
       fwebos_bot_detection_ip:

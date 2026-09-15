@@ -1,0 +1,62 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create parent protected hostname
+      fwebos_protected_hostname:
+       action: add
+       vdom: root
+       name: protected_hostname_entry_ansible_test
+       default_action: allow
+
+    - name: Create
+      fwebos_protected_hostname_entry:
+       action: add
+       vdom: root
+       name: protected_hostname_entry_ansible_test
+       host: host1
+       ignore_port: enable
+       include_subdomains: enable
+       override_header: enable
+       host_action: deny_no_log
+
+    - name: get
+      fwebos_protected_hostname_entry:
+       action: get
+       vdom: root
+       name: protected_hostname_entry_ansible_test
+
+    - name: get detail
+      fwebos_protected_hostname_entry:
+       action: get
+       vdom: root
+       name: protected_hostname_entry_ansible_test
+       id: 1
+
+    - name: edit
+      fwebos_protected_hostname_entry:
+       action: edit
+       vdom: root
+       name: protected_hostname_entry_ansible_test
+       id: 1
+       host: host1
+       ignore_port: disable
+       include_subdomains: enable
+       override_header: enable
+       host_action: allow
+
+    - name: delete
+      fwebos_protected_hostname_entry:
+       action: delete
+       vdom: root
+       name: protected_hostname_entry_ansible_test
+       id: 1
+
+    - name: Delete parent protected hostname
+      fwebos_protected_hostname:
+       action: delete
+       vdom: root
+       name: protected_hostname_entry_ansible_test

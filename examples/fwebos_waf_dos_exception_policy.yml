@@ -1,0 +1,29 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_dos_exception_policy:
+       action: add
+       vdom: root
+       name: dos_exception_policy_ansible_test
+
+    - name: get
+      fwebos_waf_dos_exception_policy:
+       action: get
+       vdom: root
+       name: dos_exception_policy_ansible_test
+
+    - name: get all
+      fwebos_waf_dos_exception_policy:
+       action: get
+       vdom: root
+
+    - name: delete
+      fwebos_waf_dos_exception_policy:
+       action: delete
+       vdom: root
+       name: dos_exception_policy_ansible_test

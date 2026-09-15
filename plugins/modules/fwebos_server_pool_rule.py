@@ -194,6 +194,7 @@ rep_dict = {
     'client_certificate_forwarding': 'client-certificate-forwarding',
     'hsts_preload': 'hsts-preload',
     'certificate_type': 'certificate-type',
+    'client_certificate': 'client-certificate'
 }
 
 
@@ -341,6 +342,7 @@ def main():
         http2=dict(type='str'),
         hsts_preload=dict(type='str'),
         certificate_type=dict(type='str'),
+        client_certificate=dict(type='str'),
         domain=dict(type='str'),
         vdom=dict(type='str'),
     )

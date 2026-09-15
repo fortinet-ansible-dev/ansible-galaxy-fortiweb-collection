@@ -7,6 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
+import re
 from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
@@ -24,6 +25,8 @@ module: fwebos_ntp
 short_description: Config FortiWeb NTP settings
 description:
   - Config FortiWeb NTP settings
+  - Supports FortiWeb OS versions earlier than 7.6.0. Use
+    M(fortinet.fortiweb.fwebos_system_time) on 7.6.0 and later.
 version_added: "7.0.0"
 author:
   - Jie Li
@@ -67,10 +70,39 @@ res:
 """
 
 obj_url = '/api/v2.0/system/maintenance.systemtime'
+SYSTEM_STATUS_URL = '/api/v2.0/system/status.systemstatus'
+MAXIMUM_FIRMWARE_VERSION = (7, 6, 0)
 
 
 rep_dict = {
 }
+
+
+def get_firmware_version(module, connection):
+    code, response = connection.send_request(SYSTEM_STATUS_URL, {}, 'GET')
+    if not isinstance(code, int) or not 200 <= code < 300:
+        module.fail_json(
+            msg='Unable to determine the FortiWeb OS version.',
+            changed=False,
+            res=response,
+        )
+
+    status = response.get('results') if isinstance(response, dict) else None
+    firmware = status.get('firmwareVersion', '') if isinstance(status, dict) else ''
+    match = re.search(r'\b[vV]?(\d+)\.(\d+)(?:\.(\d+))?', str(firmware))
+    if match is None:
+        module.fail_json(
+            msg="Unable to parse the FortiWeb OS version from '{0}'.".format(firmware),
+            changed=False,
+            res=response,
+        )
+
+    version = (
+        int(match.group(1)),
+        int(match.group(2)),
+        int(match.group(3) or 0),
+    )
+    return version, firmware
 
 
 def replace_key(src_dict, rep_dict):
@@ -147,6 +179,17 @@ def main():
     action = module.params['action']
     result = {}
     connection = Connection(module._socket_path)
+
+    firmware_version, firmware = get_firmware_version(module, connection)
+    if firmware_version >= MAXIMUM_FIRMWARE_VERSION:
+        module.fail_json(
+            msg=(
+                'fwebos_ntp only supports FortiWeb with firmware version earlier than '
+                "7.6.0. Detected '{0}'. Use fwebos_system_time on this device."
+            ).format(firmware),
+            changed=False,
+        )
+
     param_pass, param_err = param_check(module, connection)
 
     if action == 'add':

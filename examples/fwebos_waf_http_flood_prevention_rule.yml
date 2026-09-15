@@ -1,0 +1,45 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_http_flood_prevention_rule:
+       action: add
+       vdom: root
+       name: http_flood_ansible_test
+       access_limit_in_http_session: 100
+       flood_action: alert
+       block_period: 600
+       severity: High
+       bot_confirmation: disable
+       bot_recognition: disabled
+       validation_timeout: 20
+       max_attempt_times: 3
+       mobile_app_identification: disabled
+
+    - name: get
+      fwebos_waf_http_flood_prevention_rule:
+       action: get
+       vdom: root
+       name: http_flood_ansible_test
+
+    - name: edit
+      fwebos_waf_http_flood_prevention_rule:
+       action: edit
+       vdom: root
+       name: http_flood_ansible_test
+       access_limit_in_http_session: 200
+       flood_action: block-period
+       block_period: 900
+       trigger_policy: trigger_policy1
+       exception_policy: exception_policy1
+       severity: Medium
+
+    # - name: delete
+    #   fwebos_waf_http_flood_prevention_rule:
+    #    action: delete
+    #    vdom: root
+    #    name: http_flood_ansible_test

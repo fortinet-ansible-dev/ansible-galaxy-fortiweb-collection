@@ -1,0 +1,40 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_allow_method:
+       action: add
+       name: test3
+       allow_method: 
+          - post
+          - head 
+          - connect
+          - put
+       override_header: enable
+       severity: Low
+       triggered_action: trigger_policy1
+
+    - name: edit
+      fwebos_waf_allow_method:
+       action: edit
+       name: test1
+       severity: High
+       allow_method: 
+          - post
+          - rpc 
+          - trace
+          - patch
+
+    - name: get
+      fwebos_waf_allow_method:
+       action: get
+       name: test2
+
+    - name: delete
+      fwebos_waf_allow_method:
+       action: delete
+       name: test2

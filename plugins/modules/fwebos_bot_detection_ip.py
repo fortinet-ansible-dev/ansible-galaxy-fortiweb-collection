@@ -7,6 +7,7 @@
 
 from __future__ import (absolute_import, division, print_function)
 import json
+import re
 from ansible_collections.fortinet.fortiweb.plugins.module_utils.network.fwebos.fwebos import (fwebos_argument_spec, is_global_admin, is_vdom_enable, check_mode_process)
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.basic import AnsibleModule
@@ -93,7 +94,9 @@ res:
   type: JSON
 """
 
-obj_url = '/api/v2.0/cmdb/waf/bot-detection-policy/allow-source-ip'
+SYSTEM_STATUS_URL = '/api/v2.0/system/status.systemstatus'
+SOURCE_IP_LIST_URL = '/api/v2.0/cmdb/waf/bot-detection-policy/source-ip-list'
+LEGACY_SOURCE_IP_LIST_URL = '/api/v2.0/cmdb/waf/bot-detection-policy/allow-source-ip'
 
 
 rep_dict = {
@@ -106,7 +109,30 @@ def replace_key(src_dict, rep_dict):
             new_key = rep_dict[key]
             src_dict[new_key] = src_dict.pop(key)
 
-def add_obj(module, connection):
+def get_obj_url(connection):
+    code, response = connection.send_request(SYSTEM_STATUS_URL, {}, 'GET')
+    if code != 200 or not isinstance(response, dict):
+        raise ValueError('Unable to determine the FortiWeb firmware version.')
+
+    system_status = response.get('results', {})
+    if isinstance(system_status, dict):
+        firmware_version = system_status.get('firmwareVersion', '')
+    else:
+        firmware_version = ''
+
+    version_match = re.search(r'\b(\d+)\.(\d+)', firmware_version)
+    if version_match is None:
+        raise ValueError(
+            "Unable to parse the FortiWeb firmware version from '%s'." % firmware_version
+        )
+
+    major_version = int(version_match.group(1))
+    if major_version >= 8:
+        return SOURCE_IP_LIST_URL
+    return LEGACY_SOURCE_IP_LIST_URL
+
+
+def add_obj(module, connection, obj_url):
     policy_id = module.params['policy_id']
     url = obj_url + '?mkey=' + policy_id
     payload1 = {}
@@ -120,7 +146,7 @@ def add_obj(module, connection):
 
     return code, response, payload1['data']
 
-def edit_obj(module, connection):
+def edit_obj(module, connection, obj_url):
     policy_id = module.params['policy_id']
     url = obj_url + '?mkey=' + policy_id
     if 'id' in module.params and module.params['id'] is not None:
@@ -138,7 +164,7 @@ def edit_obj(module, connection):
     return code, response, payload1['data']
 
 
-def get_obj(module, connection):
+def get_obj(module, connection, obj_url):
     payload = {}
     policy_id = module.params['policy_id']
     url = obj_url + '?mkey=' + policy_id
@@ -147,7 +173,7 @@ def get_obj(module, connection):
     code, response = connection.send_request(url, payload, 'GET')
     return code, response
 
-def delete_obj(module, connection):
+def delete_obj(module, connection, obj_url):
     policy_id = module.params['policy_id']
     url = obj_url + '?mkey=' + policy_id
     if 'id' in module.params and module.params['id'] is not None:
@@ -242,7 +268,15 @@ def main():
         result['failed'] = True
         module.exit_json(**result)
 
-    code, data = get_obj(module, connection)
+    try:
+        obj_url = get_obj_url(connection)
+    except Exception as e:
+        result['changed'] = False
+        result['failed'] = True
+        result['err_msg'] = str(e)
+        module.exit_json(**result)
+
+    code, data = get_obj(module, connection, obj_url)
     result = check_mode_process(module, data, rep_dict)
     if module.check_mode == True:
         module.exit_json(**result)
@@ -251,20 +285,20 @@ def main():
         result['err_msg'] = param_err
         result['failed'] = True
     elif action == 'add':
-        code, response, out_data = add_obj(module, connection)
+        code, response, out_data = add_obj(module, connection, obj_url)
         result['res'] = response
         result['changed'] = True
     elif action == 'get':
-        code, response = get_obj(module, connection)
+        code, response = get_obj(module, connection, obj_url)
         result['res'] = response
     elif action == 'edit':
-        code, response, out_data = edit_obj(module, connection)
+        code, response, out_data = edit_obj(module, connection, obj_url)
         result['res'] = response
         result['changed'] = True
     elif action == 'delete':
-        code, data = get_obj(module, connection)
+        code, data = get_obj(module, connection, obj_url)
         if 'results' in data.keys() and data['results'] and type(data['results']) is not int and 'The entry is not found' not in str(data['results']):
-            code, response = delete_obj(module, connection)
+            code, response = delete_obj(module, connection, obj_url)
             result['res'] = response
             result['changed'] = True
         else:

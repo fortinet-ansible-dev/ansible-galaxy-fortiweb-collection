@@ -184,15 +184,6 @@ def param_check(module, connection):
         err_msg = 'table_name need to set'
         res = False
 
-    if action == 'add':
-        check_list = ['local_cert']
-        for item in check_list:
-            if item in module.params.keys() and module.params[item] is not None:
-                file_path = Path(module.params[item])
-                if file_path.exists() is False:
-                    res = False
-                    err_msg= "Cannot find the local file " + module.params[item] 
-
     return res, err_msg
 
 

@@ -1,0 +1,35 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_allow_method_exceptions:
+       action: add
+       name: mytest1
+
+    - name: Create
+      fwebos_waf_allow_method_exceptions:
+       action: add
+       name: mytest2
+
+    - name: get
+      fwebos_waf_allow_method_exceptions:
+       action: get
+
+    - name: get1
+      fwebos_waf_allow_method_exceptions:
+       action: get
+       name: mytest1
+
+    - name: delete
+      fwebos_waf_allow_method_exceptions:
+       action: delete
+       name: mytest1
+
+    - name: get1
+      fwebos_waf_allow_method_exceptions:
+       action: get
+       name: mytest1

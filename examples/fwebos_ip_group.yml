@@ -1,0 +1,21 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: add a IP Group
+      fwebos_ip_group:
+       action: add
+       name: ip_group_test1
+
+    - name: get a DoS exception policy
+      fwebos_ip_group:
+       action: get
+       name: ip_group_test1
+
+    # - name: delete a DoS exception policy
+    #   fwebos_ip_group:
+    #    action: delete
+    #    name: ip_group_test1

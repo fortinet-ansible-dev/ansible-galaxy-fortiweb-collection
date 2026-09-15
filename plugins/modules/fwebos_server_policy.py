@@ -894,6 +894,22 @@ def needs_update(module, data):
     return res, data
 
 
+def is_mkey_valid(module, connection, url_base, mkey):
+    url = url_base + '?mkey=' + mkey
+    if module.params['vdom'] is not None:
+        url += '&vdom=' + module.params['vdom']
+    code, response = connection.send_request(url, {}, 'GET')
+
+    if response is None or 'results' not in response:
+        return False
+    if 'errcode' in str(response):
+        return False
+    if isinstance(response['results'], dict) and response['results'].get('name') == mkey:
+        return True
+
+    return False
+
+
 def param_check(module, connection):
     res = True
     action = module.params['action']
@@ -902,9 +918,33 @@ def param_check(module, connection):
     if (action == 'add' or action == 'edit' or action == 'delete') and module.params['name'] is None:
         err_msg = 'name need to set'
         res = False
+    if res and (action == 'add' or action == 'edit') and (module.params['server_pool'] is None or module.params['server_pool'].strip() == ''):
+        err_msg = 'server_pool need to set'
+        res = False
+    if res and (action == 'add' or action == 'edit') and (module.params['vserver'] is None or module.params['vserver'].strip() == ''):
+        err_msg = 'vserver need to set'
+        res = False
+    if res and (action == 'add'):
+        service_is_empty = module.params['service'] is None or module.params['service'].strip() == ''
+        https_service_is_empty = module.params['https_service'] is None or module.params['https_service'].strip() == ''
+        http3_service_is_empty = module.params['http3_service'] is None or module.params['http3_service'].strip() == ''
+        if service_is_empty and https_service_is_empty and http3_service_is_empty:
+            err_msg = 'At least one of service, https_service, or http3_service need to set'
+            res = False
+    if res and (action == 'add' or action == 'edit'):
+        if not is_mkey_valid(module, connection, '/api/v2.0/cmdb/server-policy/server-pool', module.params['server_pool']):
+            err_msg = 'server_pool is invalid: ' + module.params['server_pool']
+            res = False
+    if res and (action == 'add' or action == 'edit'):
+        if not is_mkey_valid(module, connection, '/api/v2.0/cmdb/server-policy/vserver', module.params['vserver']):
+            err_msg = 'vserver is invalid: ' + module.params['vserver']
+            res = False
+    if res and module.params['allow_hosts'] is not None and module.params['allow_hosts'].strip() != '':
+        if not is_mkey_valid(module, connection, '/api/v2.0/cmdb/server-policy/allow-hosts', module.params['allow_hosts']):
+            err_msg = 'allow_hosts is invalid: ' + module.params['allow_hosts']
+            res = False
 
     return res, err_msg
-
 
 def main():
     argument_spec = dict(

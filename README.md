@@ -104,7 +104,7 @@ ansible_network_os=fortinet.fortiweb.fwebos
 ansible_httpapi_use_ssl=yes
 ansible_httpapi_validate_certs=no
 ansible_httpapi_port=443
-
+ansible_connection: httpapi
 ```
 
 Run the playbook:

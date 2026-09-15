@@ -1,0 +1,32 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_protected_hostname:
+       action: add
+       vdom: root
+       name: protected_hostname_ansible_test
+       default_action: allow
+
+    - name: get
+      fwebos_protected_hostname:
+       action: get
+       vdom: root
+       name: protected_hostname_ansible_test
+
+    - name: edit
+      fwebos_protected_hostname:
+       action: edit
+       vdom: root
+       name: protected_hostname_ansible_test
+       default_action: deny_no_log
+
+    - name: delete
+      fwebos_protected_hostname:
+       action: delete
+       vdom: root
+       name: protected_hostname_ansible_test

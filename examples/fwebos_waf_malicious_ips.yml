@@ -1,0 +1,45 @@
+---
+- name:
+  hosts: all
+  vars:
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Create
+      fwebos_waf_malicious_ips:
+       action: add
+       vdom: root
+       name: malicious_ips_ansible_test
+       http_connection_threshold: 10
+       malicious_ips_action: alert
+       block_period: 600
+       severity: Medium
+
+    - name: get
+      fwebos_waf_malicious_ips:
+       action: get
+       vdom: root
+       name: malicious_ips_ansible_test
+
+    - name: get all
+      fwebos_waf_malicious_ips:
+       action: get
+       vdom: root
+
+    - name: edit
+      fwebos_waf_malicious_ips:
+       action: edit
+       vdom: root
+       name: malicious_ips_ansible_test
+       http_connection_threshold: 20
+       malicious_ips_action: block-period
+       block_period: 900
+       severity: High
+       trigger_policy: trigger_policy1
+       exception_policy: exception_policy1
+
+    # - name: delete
+    #   fwebos_waf_malicious_ips:
+    #    action: delete
+    #    vdom: root
+    #    name: malicious_ips_ansible_test
